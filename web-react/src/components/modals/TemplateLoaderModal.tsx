@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { useUIStore } from '@/stores/uiStore';
 import { useDocumentStore } from '@/stores/documentStore';
@@ -318,16 +317,16 @@ export function TemplateLoaderModal() {
   };
 
   return (
-    <Dialog open={templateLoaderOpen} onOpenChange={(open) => !open && handleClose()}>
+    <Dialog open={templateLoaderOpen} onOpenChange={setTemplateLoaderOpen}>
       <DialogContent className="sm:max-w-2xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden">
-        <DialogHeader className="bg-background px-6 py-4 border-b shrink-0">
+        <DialogHeader className="bg-background px-6 py-4 border-b shrink-0 z-10">
           <DialogTitle className="flex items-center gap-2">
             <FolderOpen className="h-5 w-5" />
             Load Template
           </DialogTitle>
         </DialogHeader>
 
-        <div className="p-4 border-b shrink-0 space-y-3">
+        <div className="p-4 border-b shrink-0 space-y-3 bg-background z-10">
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -343,7 +342,7 @@ export function TemplateLoaderModal() {
           <div className="flex flex-wrap gap-2">
             <Badge
               variant={selectedCategory === null ? 'default' : 'outline'}
-              className="cursor-pointer"
+              className="cursor-pointer hover:bg-primary/80"
               onClick={() => setSelectedCategory(null)}
             >
               All
@@ -352,7 +351,7 @@ export function TemplateLoaderModal() {
               <Badge
                 key={category}
                 variant={selectedCategory === category ? 'default' : 'outline'}
-                className="cursor-pointer"
+                className="cursor-pointer hover:bg-primary/80"
                 onClick={() => setSelectedCategory(category)}
               >
                 {category}
@@ -361,7 +360,7 @@ export function TemplateLoaderModal() {
           </div>
         </div>
 
-        <ScrollArea className="flex-1 min-h-0">
+        <div className="flex-1 min-h-0 overflow-y-auto">
           <div className="p-4 grid gap-2">
             {filteredTemplates.length === 0 ? (
               <div className="text-center text-muted-foreground py-8">
@@ -405,10 +404,10 @@ export function TemplateLoaderModal() {
               ))
             )}
           </div>
-        </ScrollArea>
+        </div>
 
         {selectedTemplate && (
-          <div className="p-4 border-t bg-muted/30 shrink-0">
+          <div className="p-4 border-t bg-muted/50 shrink-0 z-10">
             <div className="text-sm">
               <span className="font-medium">Preview:</span>
               <p className="text-muted-foreground mt-1">
@@ -421,11 +420,19 @@ export function TemplateLoaderModal() {
           </div>
         )}
 
-        <DialogFooter className="bg-background px-6 py-4 border-t shrink-0">
-          <Button variant="outline" onClick={handleClose}>
+        <DialogFooter className="bg-background px-6 py-4 border-t shrink-0 z-10">
+          <Button
+            variant="outline"
+            onClick={handleClose}
+            className="hover:bg-accent"
+          >
             Cancel
           </Button>
-          <Button onClick={handleLoadTemplate} disabled={!selectedTemplate}>
+          <Button
+            onClick={handleLoadTemplate}
+            disabled={!selectedTemplate}
+            className="hover:bg-primary/90"
+          >
             <FileText className="h-4 w-4 mr-2" />
             Load Template
           </Button>
