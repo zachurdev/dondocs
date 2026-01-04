@@ -8,8 +8,12 @@ import { MobilePreviewModal } from '@/components/modals/MobilePreviewModal';
 import { AboutModal } from '@/components/modals/AboutModal';
 import { NISTComplianceModal } from '@/components/modals/NISTComplianceModal';
 import { BatchModal } from '@/components/modals/BatchModal';
+import { FindReplaceModal } from '@/components/modals/FindReplaceModal';
+import { TemplateLoaderModal } from '@/components/modals/TemplateLoaderModal';
+import { WelcomeModal } from '@/components/modals/WelcomeModal';
 import { useUIStore } from '@/stores/uiStore';
 import { useDocumentStore } from '@/stores/documentStore';
+import { useHistoryStore } from '@/stores/historyStore';
 import { useProfileStore } from '@/stores/profileStore';
 import { useLatexEngine } from '@/hooks/useLatexEngine';
 import { generateAllLatexFiles } from '@/services/latex/generator';
@@ -38,9 +42,10 @@ function getClassificationInfo(classLevel: string | undefined): ClassificationIn
 }
 
 function App() {
-  const { theme, setIsMobile } = useUIStore();
+  const { theme, setIsMobile, setFindReplaceOpen } = useUIStore();
   const documentStore = useDocumentStore();
-  const { setFormData } = useDocumentStore();
+  const { setFormData, applySnapshot } = useDocumentStore();
+  const { undo, redo } = useHistoryStore();
   const { selectedProfile, profiles } = useProfileStore();
   const { isReady, compile, error: engineError } = useLatexEngine();
 
@@ -64,6 +69,45 @@ function App() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, [setIsMobile]);
+
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+H or Cmd+H for Find & Replace
+      if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
+        e.preventDefault();
+        setFindReplaceOpen(true);
+      }
+
+      // Ctrl+Z or Cmd+Z for Undo
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        // Only trigger if not in an input/textarea (those have native undo)
+        const target = e.target as HTMLElement;
+        if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          const snapshot = undo();
+          if (snapshot) {
+            applySnapshot(snapshot);
+          }
+        }
+      }
+
+      // Ctrl+Y or Cmd+Shift+Z for Redo
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+        const target = e.target as HTMLElement;
+        if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          const snapshot = redo();
+          if (snapshot) {
+            applySnapshot(snapshot);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [setFindReplaceOpen, undo, redo, applySnapshot]);
 
   // Sync selected profile with form data on initial load
   useEffect(() => {
@@ -277,6 +321,9 @@ function App() {
       <AboutModal />
       <NISTComplianceModal />
       <BatchModal />
+      <FindReplaceModal />
+      <TemplateLoaderModal />
+      <WelcomeModal />
     </div>
   );
 }

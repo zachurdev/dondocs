@@ -19,12 +19,16 @@ interface UIState {
   aboutModalOpen: boolean;
   nistModalOpen: boolean;
   batchModalOpen: boolean;
+  findReplaceOpen: boolean;
+  templateLoaderOpen: boolean;
   setProfileModalOpen: (open: boolean) => void;
   setRestoreModalOpen: (open: boolean) => void;
   setReferenceLibraryOpen: (open: boolean) => void;
   setAboutModalOpen: (open: boolean) => void;
   setNistModalOpen: (open: boolean) => void;
   setBatchModalOpen: (open: boolean) => void;
+  setFindReplaceOpen: (open: boolean) => void;
+  setTemplateLoaderOpen: (open: boolean) => void;
 
   // Mobile
   isMobile: boolean;
@@ -59,12 +63,16 @@ export const useUIStore = create<UIState>()(
       aboutModalOpen: false,
       nistModalOpen: false,
       batchModalOpen: false,
+      findReplaceOpen: false,
+      templateLoaderOpen: false,
       setProfileModalOpen: (open) => set({ profileModalOpen: open }),
       setRestoreModalOpen: (open) => set({ restoreModalOpen: open }),
       setReferenceLibraryOpen: (open) => set({ referenceLibraryOpen: open }),
       setAboutModalOpen: (open) => set({ aboutModalOpen: open }),
       setNistModalOpen: (open) => set({ nistModalOpen: open }),
       setBatchModalOpen: (open) => set({ batchModalOpen: open }),
+      setFindReplaceOpen: (open) => set({ findReplaceOpen: open }),
+      setTemplateLoaderOpen: (open) => set({ templateLoaderOpen: open }),
 
       // Mobile
       isMobile: false,

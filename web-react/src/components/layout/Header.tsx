@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Moon, Sun, Download, FileText, RefreshCw, Github, Bug, Save, RotateCcw, Shield, HelpCircle, Info, Layers } from 'lucide-react';
+import { Moon, Sun, Download, FileText, RefreshCw, Github, Bug, Save, RotateCcw, Shield, HelpCircle, Info, Layers, FolderOpen, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -40,7 +40,7 @@ export function Header({
   onRefreshPreview,
   isCompiling,
 }: HeaderProps) {
-  const { theme, toggleTheme, autoSaveStatus, setAboutModalOpen, setNistModalOpen, setBatchModalOpen } = useUIStore();
+  const { theme, toggleTheme, autoSaveStatus, setAboutModalOpen, setNistModalOpen, setBatchModalOpen, setTemplateLoaderOpen, setFindReplaceOpen } = useUIStore();
   const documentStore = useDocumentStore();
   const { resetForm } = useDocumentStore();
   const [showResetDialog, setShowResetDialog] = useState(false);
@@ -195,6 +195,17 @@ export function Header({
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Templates */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setTemplateLoaderOpen(true)}
+            title="Load a pre-built letter template"
+          >
+            <FolderOpen className="h-4 w-4 mr-2" />
+            Templates
+          </Button>
+
           {/* Batch Generation */}
           <Button
             variant="outline"
@@ -204,6 +215,16 @@ export function Header({
           >
             <Layers className="h-4 w-4 mr-2" />
             Batch
+          </Button>
+
+          {/* Find & Replace */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setFindReplaceOpen(true)}
+            title="Find & Replace (Ctrl+H)"
+          >
+            <Search className="h-4 w-4" />
           </Button>
 
           {/* GitHub links */}

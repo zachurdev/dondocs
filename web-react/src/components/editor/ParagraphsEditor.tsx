@@ -25,9 +25,25 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { RichTextToolbar, applyFormat } from './RichTextToolbar';
 import { useDocumentStore } from '@/stores/documentStore';
-import type { Paragraph } from '@/types/document';
+import type { Paragraph, PortionMarking } from '@/types/document';
+
+const PORTION_MARKING_OPTIONS: { value: PortionMarking; label: string; color: string }[] = [
+  { value: 'U', label: '(U)', color: 'text-green-600' },
+  { value: 'CUI', label: '(CUI)', color: 'text-purple-600' },
+  { value: 'FOUO', label: '(FOUO)', color: 'text-amber-600' },
+  { value: 'C', label: '(C)', color: 'text-blue-600' },
+  { value: 'S', label: '(S)', color: 'text-red-600' },
+  { value: 'TS', label: '(TS)', color: 'text-orange-600' },
+];
 
 const LEVEL_COLORS = [
   'bg-blue-500',
@@ -66,7 +82,9 @@ interface SortableParagraphProps {
   paragraph: Paragraph;
   index: number;
   label: string;
+  showPortionMarking: boolean;
   onUpdate: (text: string) => void;
+  onUpdatePortionMarking: (marking: PortionMarking | undefined) => void;
   onRemove: () => void;
   onIndent: () => void;
   onOutdent: () => void;
@@ -77,7 +95,9 @@ function SortableParagraph({
   paragraph,
   index,
   label,
+  showPortionMarking,
   onUpdate,
+  onUpdatePortionMarking,
   onRemove,
   onIndent,
   onOutdent,
@@ -186,6 +206,26 @@ function SortableParagraph({
               <ArrowDown className="h-4 w-4 mr-1" />
               <Plus className="h-3 w-3" />
             </Button>
+
+            {/* Portion Marking */}
+            {showPortionMarking && (
+              <Select
+                value={paragraph.portionMarking || ''}
+                onValueChange={(v) => onUpdatePortionMarking(v as PortionMarking || undefined)}
+              >
+                <SelectTrigger className="h-7 w-[70px] text-xs">
+                  <SelectValue placeholder="Mark" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PORTION_MARKING_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      <span className={opt.color}>{opt.label}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+
             <div className="flex-1" />
             <span className="text-xs text-muted-foreground mr-2">
               {wordCount} {wordCount === 1 ? 'word' : 'words'}
@@ -208,6 +248,7 @@ function SortableParagraph({
 
 export function ParagraphsEditor() {
   const {
+    formData,
     paragraphs,
     addParagraph,
     updateParagraph,
@@ -216,6 +257,9 @@ export function ParagraphsEditor() {
     indentParagraph,
     outdentParagraph,
   } = useDocumentStore();
+
+  // Show portion marking when document has classification
+  const showPortionMarking = formData.classLevel && formData.classLevel !== 'unclassified';
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -269,7 +313,9 @@ export function ParagraphsEditor() {
                     paragraph={para}
                     index={index}
                     label={labels[index]}
+                    showPortionMarking={!!showPortionMarking}
                     onUpdate={(text) => updateParagraph(index, { text })}
+                    onUpdatePortionMarking={(marking) => updateParagraph(index, { portionMarking: marking })}
                     onRemove={() => removeParagraph(index)}
                     onIndent={() => indentParagraph(index)}
                     onOutdent={() => outdentParagraph(index)}

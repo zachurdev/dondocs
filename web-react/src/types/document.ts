@@ -20,9 +20,12 @@ export interface Enclosure {
   coverPageDescription?: string; // Optional description text for the cover page
 }
 
+export type PortionMarking = 'U' | 'CUI' | 'FOUO' | 'C' | 'S' | 'TS';
+
 export interface Paragraph {
   text: string;
   level: number;
+  portionMarking?: PortionMarking;
 }
 
 export interface CopyTo {

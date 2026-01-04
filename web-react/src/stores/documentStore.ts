@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import type { Reference, Enclosure, Paragraph, CopyTo, DocumentData, DocumentMode } from '@/types/document';
 import { DOC_TYPE_CONFIG } from '@/types/document';
+import { useHistoryStore } from './historyStore';
+import type { DocumentSnapshot } from './historyStore';
 
 interface DocumentState {
   // Document data
@@ -43,6 +45,10 @@ interface DocumentState {
   addCopyTo: (text: string) => void;
   updateCopyTo: (index: number, text: string) => void;
   removeCopyTo: (index: number) => void;
+
+  // History (Undo/Redo)
+  applySnapshot: (snapshot: DocumentSnapshot) => void;
+  getSnapshot: () => DocumentSnapshot;
 }
 
 const getNextReferenceLetter = (refs: Reference[]): string => {
@@ -92,7 +98,7 @@ const DEFAULT_FORM_DATA: Partial<DocumentData> = {
   includeHyperlinks: false,
 };
 
-export const useDocumentStore = create<DocumentState>((set) => ({
+export const useDocumentStore = create<DocumentState>((set, get) => ({
   documentMode: 'compliant',
   docType: 'naval_letter',
   formData: { ...DEFAULT_FORM_DATA },
@@ -247,4 +253,52 @@ export const useDocumentStore = create<DocumentState>((set) => ({
   removeCopyTo: (index) => set((state) => ({
     copyTos: state.copyTos.filter((_, i) => i !== index),
   })),
+
+  // History (Undo/Redo)
+  applySnapshot: (snapshot) => set({
+    documentMode: snapshot.documentMode,
+    docType: snapshot.docType,
+    formData: snapshot.formData,
+    references: snapshot.references,
+    enclosures: snapshot.enclosures,
+    paragraphs: snapshot.paragraphs,
+    copyTos: snapshot.copyTos,
+  }),
+
+  getSnapshot: (): DocumentSnapshot => {
+    const state = get();
+    return {
+      documentMode: state.documentMode,
+      docType: state.docType,
+      formData: state.formData,
+      references: state.references,
+      enclosures: state.enclosures,
+      paragraphs: state.paragraphs,
+      copyTos: state.copyTos,
+    };
+  },
 }));
+
+// Subscribe to document changes and save snapshots
+// Debounce to avoid saving on every keystroke
+let saveTimeout: ReturnType<typeof setTimeout> | null = null;
+
+useDocumentStore.subscribe((state: DocumentState) => {
+  // Debounce snapshot saving
+  if (saveTimeout) {
+    clearTimeout(saveTimeout);
+  }
+
+  saveTimeout = setTimeout(() => {
+    const snapshot: DocumentSnapshot = {
+      documentMode: state.documentMode,
+      docType: state.docType,
+      formData: state.formData,
+      references: state.references,
+      enclosures: state.enclosures,
+      paragraphs: state.paragraphs,
+      copyTos: state.copyTos,
+    };
+    useHistoryStore.getState().saveSnapshot(snapshot);
+  }, 500); // Save snapshot 500ms after last change
+});
