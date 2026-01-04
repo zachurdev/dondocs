@@ -44,6 +44,7 @@ function App() {
   const [isCompiling, setIsCompiling] = useState(false);
   const [compileError, setCompileError] = useState<string | null>(null);
   const compileTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isResettingRef = useRef(false);
 
   // Apply theme to document
   useEffect(() => {
@@ -90,7 +91,10 @@ function App() {
   const compilePdf = useCallback(async () => {
     if (!isReady) return;
 
-    setIsCompiling(true);
+    // Don't show new compiling state if we're recovering from a reset
+    if (!isResettingRef.current) {
+      setIsCompiling(true);
+    }
     setCompileError(null);
 
     try {
@@ -113,9 +117,18 @@ function App() {
         const url = URL.createObjectURL(blob);
         setPdfUrl(url);
       }
+      // Clear reset flag on success
+      isResettingRef.current = false;
     } catch (err) {
       console.error('Compilation error:', err);
-      setCompileError(err instanceof Error ? err.message : 'Compilation failed');
+      const errorMessage = err instanceof Error ? err.message : 'Compilation failed';
+
+      // If engine reset is needed, mark that we're resetting so next compile doesn't flash
+      if (errorMessage === 'ENGINE_RESET_NEEDED') {
+        isResettingRef.current = true;
+      } else {
+        setCompileError(errorMessage);
+      }
     } finally {
       setIsCompiling(false);
     }

@@ -18,8 +18,10 @@ import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Plus, Trash2, Upload, FileText, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
@@ -44,6 +46,8 @@ interface SortableEnclosureProps {
   onRemoveFile: () => void;
   onRemove: () => void;
   onUpdatePageStyle: (style: EnclosurePageStyle) => void;
+  onUpdateCoverPage: (hasCoverPage: boolean) => void;
+  onUpdateCoverDescription: (description: string) => void;
 }
 
 function SortableEnclosure({
@@ -54,6 +58,8 @@ function SortableEnclosure({
   onRemoveFile,
   onRemove,
   onUpdatePageStyle,
+  onUpdateCoverPage,
+  onUpdateCoverDescription,
 }: SortableEnclosureProps) {
   const {
     attributes,
@@ -140,6 +146,25 @@ function SortableEnclosure({
                   </SelectContent>
                 </Select>
               </div>
+              {/* Cover page option */}
+              <div className="flex items-center gap-2 pt-1">
+                <Checkbox
+                  id={`cover-${index}`}
+                  checked={enclosure.hasCoverPage || false}
+                  onCheckedChange={(checked) => onUpdateCoverPage(checked === true)}
+                />
+                <Label htmlFor={`cover-${index}`} className="text-xs text-muted-foreground cursor-pointer">
+                  Add cover page
+                </Label>
+              </div>
+              {enclosure.hasCoverPage && (
+                <Textarea
+                  placeholder="Optional description for cover page..."
+                  value={enclosure.coverPageDescription || ''}
+                  onChange={(e) => onUpdateCoverDescription(e.target.value)}
+                  className="text-xs min-h-[60px]"
+                />
+              )}
             </div>
           ) : (
             <label className="flex items-center gap-2 p-2 border border-dashed border-border rounded cursor-pointer hover:bg-secondary/30 transition-colors">
@@ -278,6 +303,8 @@ export function EnclosuresManager() {
                     onRemoveFile={() => updateEnclosure(index, { file: undefined })}
                     onRemove={() => removeEnclosure(index)}
                     onUpdatePageStyle={(pageStyle) => updateEnclosure(index, { pageStyle })}
+                    onUpdateCoverPage={(hasCoverPage) => updateEnclosure(index, { hasCoverPage })}
+                    onUpdateCoverDescription={(coverPageDescription) => updateEnclosure(index, { coverPageDescription })}
                   />
                 ))}
               </SortableContext>

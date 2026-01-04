@@ -16,6 +16,8 @@ export interface Enclosure {
     data: ArrayBuffer;
   };
   pageStyle?: EnclosurePageStyle; // 'border' = 85% with border, 'fullpage' = full page, 'fit' = fit to margins
+  hasCoverPage?: boolean; // If true, add a cover page before the enclosure content
+  coverPageDescription?: string; // Optional description text for the cover page
 }
 
 export interface Paragraph {

@@ -114,7 +114,7 @@ export function LetterheadSection() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="dod">Department of Defense</SelectItem>
-                  <SelectItem value="dow">Department of War (Historical)</SelectItem>
+                  <SelectItem value="dow">Department of War</SelectItem>
                 </SelectContent>
               </Select>
             </div>

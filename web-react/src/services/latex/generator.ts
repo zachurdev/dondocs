@@ -360,6 +360,8 @@ export interface EnclosureData {
   title: string;
   data?: ArrayBuffer; // undefined = text-only enclosure (no PDF)
   pageStyle?: 'border' | 'fullpage' | 'fit';
+  hasCoverPage?: boolean;
+  coverPageDescription?: string;
 }
 
 export interface GeneratedFiles {
@@ -388,6 +390,8 @@ export function generateAllLatexFiles(store: DocumentStore): GeneratedFiles {
     title: encl.title || 'Untitled',
     data: encl.file?.data, // undefined if no PDF attached
     pageStyle: encl.pageStyle,
+    hasCoverPage: encl.hasCoverPage,
+    coverPageDescription: encl.coverPageDescription,
   }));
 
   return { texFiles, enclosures };

@@ -5,6 +5,8 @@ export interface EnclosureData {
   title: string;
   data?: ArrayBuffer; // undefined = text-only enclosure (no PDF)
   pageStyle?: 'border' | 'fullpage' | 'fit';
+  hasCoverPage?: boolean; // If true, add a cover page before the enclosure content
+  coverPageDescription?: string; // Optional description text for the cover page
 }
 
 export interface ClassificationInfo {
@@ -102,11 +104,17 @@ export async function mergeEnclosures(
   // Process each enclosure in order
   for (const enclosure of enclosures) {
     try {
+      // Add optional cover page before the enclosure content
+      if (enclosure.hasCoverPage) {
+        addCoverPage(mainPdf, enclosure, helveticaBold, helvetica, classification);
+      }
+
       if (enclosure.data) {
         // PDF enclosure - load and add pages
-        await addPdfEnclosure(mainPdf, enclosure, helveticaBold, classification);
-      } else {
-        // Text-only enclosure - create placeholder page
+        await addPdfEnclosure(mainPdf, enclosure, helveticaBold, helvetica, classification);
+      } else if (!enclosure.hasCoverPage) {
+        // Text-only enclosure without cover page - create placeholder page
+        // (If there's a cover page, it already serves as the placeholder)
         addPlaceholderPage(mainPdf, enclosure, helveticaBold, helvetica, false, classification);
       }
     } catch (err) {
@@ -126,6 +134,7 @@ async function addPdfEnclosure(
   mainPdf: PDFDocument,
   enclosure: EnclosureData,
   helveticaBold: Awaited<ReturnType<typeof mainPdf.embedFont>>,
+  _helvetica: Awaited<ReturnType<typeof mainPdf.embedFont>>,
   classification?: ClassificationInfo
 ): Promise<void> {
   if (!enclosure.data) return;
@@ -143,7 +152,8 @@ async function addPdfEnclosure(
     const page = mainPdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
 
     // Add named destination on first page for hyperlink navigation
-    if (i === 0) {
+    // (Skip if there's a cover page - the cover page has the destination)
+    if (i === 0 && !enclosure.hasCoverPage) {
       addNamedDestination(mainPdf, page, `enclosure${enclosure.number}`);
     }
 
@@ -319,6 +329,89 @@ function addPlaceholderPage(
 }
 
 /**
+ * Adds a cover page for an enclosure with title and optional description
+ */
+function addCoverPage(
+  mainPdf: PDFDocument,
+  enclosure: EnclosureData,
+  helveticaBold: Awaited<ReturnType<typeof mainPdf.embedFont>>,
+  helvetica: Awaited<ReturnType<typeof mainPdf.embedFont>>,
+  classification?: ClassificationInfo
+): void {
+  const page = mainPdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+
+  // Add named destination for hyperlink navigation (cover page is the target)
+  addNamedDestination(mainPdf, page, `enclosure${enclosure.number}`);
+
+  // Add classification marking at top
+  if (classification?.marking) {
+    addClassificationMarking(page, classification.marking, helveticaBold, 'top');
+  }
+
+  // Add title in center (slightly higher to leave room for description)
+  const titleFontSize = 18;
+  const title = enclosure.title;
+  const titleWidth = helveticaBold.widthOfTextAtSize(title, titleFontSize);
+
+  page.drawText(title, {
+    x: (PAGE_WIDTH - titleWidth) / 2,
+    y: PAGE_HEIGHT / 2 + 80,
+    size: titleFontSize,
+    font: helveticaBold,
+    color: rgb(0, 0, 0),
+  });
+
+  // Add description if provided
+  if (enclosure.coverPageDescription) {
+    const descFontSize = 12;
+    const lineHeight = 16;
+    const maxWidth = PAGE_WIDTH - 2 * MARGIN;
+
+    // Simple word wrapping
+    const words = enclosure.coverPageDescription.split(' ');
+    const lines: string[] = [];
+    let currentLine = '';
+
+    for (const word of words) {
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      const testWidth = helvetica.widthOfTextAtSize(testLine, descFontSize);
+
+      if (testWidth > maxWidth && currentLine) {
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
+    }
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+
+    // Draw each line centered
+    let y = PAGE_HEIGHT / 2 + 20;
+    for (const line of lines) {
+      const lineWidth = helvetica.widthOfTextAtSize(line, descFontSize);
+      page.drawText(line, {
+        x: (PAGE_WIDTH - lineWidth) / 2,
+        y,
+        size: descFontSize,
+        font: helvetica,
+        color: rgb(0.2, 0.2, 0.2),
+      });
+      y -= lineHeight;
+    }
+  }
+
+  // Add enclosure label at bottom right
+  addEnclosureLabel(page, enclosure.number, helveticaBold);
+
+  // Add classification marking at bottom
+  if (classification?.marking) {
+    addClassificationMarking(page, classification.marking, helveticaBold, 'bottom');
+  }
+}
+
+/**
  * Adds enclosure label at bottom right of page
  */
 function addEnclosureLabel(
@@ -372,19 +465,6 @@ function addClassificationMarking(
   const fontSize = 12;
   const textWidth = font.widthOfTextAtSize(marking, fontSize);
 
-  // Determine color based on classification level
-  let color = rgb(0, 0, 0); // Default black
-  const upperMarking = marking.toUpperCase();
-  if (upperMarking.includes('TOP SECRET')) {
-    color = rgb(1, 0.5, 0); // Orange
-  } else if (upperMarking.includes('SECRET')) {
-    color = rgb(1, 0, 0); // Red
-  } else if (upperMarking.includes('CONFIDENTIAL')) {
-    color = rgb(0, 0, 1); // Blue
-  } else if (upperMarking.includes('CUI')) {
-    color = rgb(0.5, 0, 0.5); // Purple
-  }
-
   const y = position === 'top'
     ? PAGE_HEIGHT - 24  // 1/3 inch from top
     : 18;               // 1/4 inch from bottom
@@ -394,6 +474,6 @@ function addClassificationMarking(
     y,
     size: fontSize,
     font,
-    color,
+    color: rgb(0, 0, 0), // Always black
   });
 }

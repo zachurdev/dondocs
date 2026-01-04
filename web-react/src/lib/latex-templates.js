@@ -344,7 +344,7 @@ const LATEX_TEMPLATES = {
 % CUI Field Setters
 %-----------------------------------------------------------------------------
 
-\\newcommand{\\setCUI}{\\CUIEnabledtrue\\ClassificationEnabledtrue}
+\\newcommand{\\setCUI}{\\CUIEnabledtrue\\ClassificationEnabledtrue\\renewcommand{\\ClassificationMarking}{CUI}}
 \\newcommand{\\setCUIControlledBy}[1]{\\renewcommand{\\CUIControlledBy}{#1}}
 \\newcommand{\\setCUICategory}[1]{\\renewcommand{\\CUICategory}{#1}}
 \\newcommand{\\setCUIDissemination}[1]{\\renewcommand{\\CUIDissemination}{#1}}
