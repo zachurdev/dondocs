@@ -176,8 +176,7 @@ export function useLatexEngine() {
       }
 
       // Load seal images into virtual filesystem
-      // Only load dod-seal.png (dow-seal.png is historical and not included)
-      const sealFiles = ['dod-seal.png'];
+      const sealFiles = ['dod-seal.png', 'dow-seal.png'];
       console.log('Loading seal images...');
       for (const sealFile of sealFiles) {
         try {
@@ -188,7 +187,7 @@ export function useLatexEngine() {
             console.log(`Loaded seal: ${sealFile}`);
           }
         } catch (err) {
-          console.warn(`Could not load seal ${sealFile}:`, err);
+          // Silently ignore missing seal files - they're optional
         }
       }
 

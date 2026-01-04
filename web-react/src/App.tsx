@@ -200,7 +200,7 @@ function App() {
       />
 
       <main className="flex flex-1 overflow-hidden">
-        <div className="w-full max-w-xl">
+        <div className="flex-1 min-w-0">
           <FormPanel />
         </div>
 

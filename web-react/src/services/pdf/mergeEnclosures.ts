@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts, PDFPage } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts, PDFPage, PDFName, PDFArray, PDFDict, PDFNumber } from 'pdf-lib';
 
 export interface EnclosureData {
   number: number;
@@ -16,6 +16,69 @@ export interface ClassificationInfo {
 const PAGE_WIDTH = 612;
 const PAGE_HEIGHT = 792;
 const MARGIN = 72; // 1 inch margins
+
+/**
+ * Adds a named destination to a page for hyperlink navigation.
+ * This creates an anchor that can be targeted by \hyperlink{name} in LaTeX.
+ */
+function addNamedDestination(
+  pdfDoc: PDFDocument,
+  page: PDFPage,
+  name: string
+): void {
+  // Get the PDF's catalog (root object)
+  const catalog = pdfDoc.catalog;
+
+  // Get or create the Names dictionary
+  let namesDict = catalog.lookup(PDFName.of('Names'));
+  if (!namesDict) {
+    namesDict = pdfDoc.context.obj({});
+    catalog.set(PDFName.of('Names'), namesDict);
+  }
+
+  // Ensure namesDict is a PDFDict
+  if (!(namesDict instanceof PDFDict)) {
+    namesDict = pdfDoc.context.obj({});
+    catalog.set(PDFName.of('Names'), namesDict);
+  }
+
+  // Get or create the Dests dictionary within Names
+  let destsDict = (namesDict as PDFDict).lookup(PDFName.of('Dests'));
+  if (!destsDict) {
+    destsDict = pdfDoc.context.obj({});
+    (namesDict as PDFDict).set(PDFName.of('Dests'), destsDict);
+  }
+
+  // Ensure destsDict is a PDFDict
+  if (!(destsDict instanceof PDFDict)) {
+    destsDict = pdfDoc.context.obj({});
+    (namesDict as PDFDict).set(PDFName.of('Dests'), destsDict);
+  }
+
+  // Get or create the Names array within Dests (name tree leaf)
+  let namesArray = (destsDict as PDFDict).lookup(PDFName.of('Names'));
+  if (!namesArray || !(namesArray instanceof PDFArray)) {
+    namesArray = pdfDoc.context.obj([]);
+    (destsDict as PDFDict).set(PDFName.of('Names'), namesArray);
+  }
+
+  // Create the destination array: [page /XYZ left top zoom]
+  // XYZ means position the page at coordinates (left, top) with given zoom
+  // null values mean "keep current value"
+  const pageRef = page.ref;
+  const destArray = pdfDoc.context.obj([
+    pageRef,
+    PDFName.of('XYZ'),
+    PDFNumber.of(0),
+    PDFNumber.of(PAGE_HEIGHT),
+    PDFNumber.of(0), // 0 = inherit current zoom
+  ]);
+
+  // Add the name-destination pair to the Names array
+  // Format: [name1, dest1, name2, dest2, ...]
+  (namesArray as PDFArray).push(pdfDoc.context.obj(name));
+  (namesArray as PDFArray).push(destArray);
+}
 
 /**
  * Merges enclosure pages into the main document.
@@ -78,6 +141,11 @@ async function addPdfEnclosure(
 
     // Create a new page in the main document
     const page = mainPdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+
+    // Add named destination on first page for hyperlink navigation
+    if (i === 0) {
+      addNamedDestination(mainPdf, page, `enclosure${enclosure.number}`);
+    }
 
     // Add classification marking at top (before content)
     if (classification?.marking) {
@@ -204,6 +272,9 @@ function addPlaceholderPage(
   classification?: ClassificationInfo
 ): void {
   const page = mainPdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+
+  // Add named destination for hyperlink navigation
+  addNamedDestination(mainPdf, page, `enclosure${enclosure.number}`);
 
   // Add classification marking at top
   if (classification?.marking) {

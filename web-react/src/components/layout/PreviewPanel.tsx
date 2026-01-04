@@ -38,9 +38,17 @@ export function PreviewPanel({ pdfUrl, isCompiling, error }: PreviewPanelProps) 
 
   if (!previewVisible) {
     return (
-      <div className="w-12 bg-card border-l border-border flex flex-col items-center py-4">
-        <Button variant="ghost" size="icon" onClick={togglePreview} title="Show Preview">
-          <Eye className="h-4 w-4" />
+      <div className="w-14 bg-card border-l border-border flex flex-col items-center py-4 gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={togglePreview}
+          title="Show Preview"
+          className="writing-mode-vertical h-auto py-4 px-2"
+          style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+        >
+          <Eye className="h-4 w-4 mb-2" />
+          Show Preview
         </Button>
       </div>
     );

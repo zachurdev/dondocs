@@ -41,8 +41,8 @@ export const useUIStore = create<UIState>()(
       })),
       setTheme: (theme) => set({ theme }),
 
-      // Preview
-      previewVisible: true,
+      // Preview - hidden by default
+      previewVisible: false,
       togglePreview: () => set((state) => ({ previewVisible: !state.previewVisible })),
       setPreviewVisible: (visible) => set({ previewVisible: visible }),
 
