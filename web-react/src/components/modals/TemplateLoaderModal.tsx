@@ -12,7 +12,17 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useUIStore } from '@/stores/uiStore';
 import { useDocumentStore } from '@/stores/documentStore';
-import type { Paragraph, Reference } from '@/types/document';
+
+interface TemplateParagraph {
+  text: string;
+  level: number;
+}
+
+interface TemplateReference {
+  letter: string;
+  title: string;
+  url?: string;
+}
 
 interface LetterTemplate {
   id: string;
@@ -21,8 +31,8 @@ interface LetterTemplate {
   description: string;
   docType: string;
   subject: string;
-  paragraphs: Paragraph[];
-  references?: Reference[];
+  paragraphs: TemplateParagraph[];
+  references?: TemplateReference[];
 }
 
 // Pre-built letter templates for common correspondence
@@ -245,7 +255,6 @@ const CATEGORIES = [...new Set(LETTER_TEMPLATES.map(t => t.category))];
 
 export function TemplateLoaderModal() {
   const { templateLoaderOpen, setTemplateLoaderOpen } = useUIStore();
-  const { setDocType, setField, addReference, addParagraph, paragraphs, references } = useDocumentStore();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -266,43 +275,41 @@ export function TemplateLoaderModal() {
   const handleLoadTemplate = () => {
     if (!selectedTemplate) return;
 
+    const store = useDocumentStore.getState();
+
     // Set document type
-    setDocType(selectedTemplate.docType);
+    store.setDocType(selectedTemplate.docType);
 
     // Set subject
     if (selectedTemplate.subject) {
-      setField('subject', selectedTemplate.subject);
+      store.setField('subject', selectedTemplate.subject);
     }
 
-    // Clear existing paragraphs and add template paragraphs
-    // We need to remove existing paragraphs first
-    while (paragraphs.length > 0) {
-      useDocumentStore.getState().removeParagraph(0);
+    // Clear existing paragraphs by removing from the end (avoids index shifting issues)
+    const currentParagraphCount = store.paragraphs.length;
+    for (let i = currentParagraphCount - 1; i >= 0; i--) {
+      store.removeParagraph(i);
     }
 
     // Add template paragraphs
-    selectedTemplate.paragraphs.forEach((para, index) => {
-      if (index === 0) {
-        // Add first paragraph
-        addParagraph(para.text, para.level);
-      } else {
-        // Add subsequent paragraphs after the previous one
-        addParagraph(para.text, para.level);
-      }
+    selectedTemplate.paragraphs.forEach((para) => {
+      store.addParagraph(para.text, para.level);
     });
 
-    // Clear existing references and add template references
-    while (references.length > 0) {
-      useDocumentStore.getState().removeReference(0);
+    // Clear existing references by removing from the end
+    const currentRefCount = store.references.length;
+    for (let i = currentRefCount - 1; i >= 0; i--) {
+      store.removeReference(i);
     }
 
+    // Add template references
     if (selectedTemplate.references) {
       selectedTemplate.references.forEach((ref) => {
-        addReference(ref.title, ref.url);
+        store.addReference(ref.title, ref.url);
       });
     }
 
-    // Close modal
+    // Close modal and reset state
     setTemplateLoaderOpen(false);
     setSelectedTemplate(null);
     setSearchQuery('');
