@@ -16,10 +16,11 @@
 
 | Feature | LIBO-SECURED | Competitor A | Competitor B |
 |---------|:------------:|:------------:|:------------:|
-| **Unit Database** | 2,805 units | **3,688 units** | 1,861 units |
-| **SSIC Codes** | 2,240 codes | **2,709 codes** | 2,240 codes |
+| **Unit Database** | **3,129 units** | 3,688 units | 1,861 units |
+| **SSIC Codes** | **2,240 codes** | 2,144 codes | 2,240 codes |
 | **Reference Library** | **107 references** | Limited | 107 references |
 | **Letter Templates** | **38 templates** | 3 templates | 37 templates |
+| **Office Codes** | **74 codes** | No | 74 codes |
 | **Document Types** | **17 types** | 3 types | 3 types |
 | **PDF Engine** | **LaTeX (publication quality)** | React-PDF | jsPDF |
 | **DOCX Export** | **Yes** | Yes | Yes |
@@ -48,9 +49,10 @@
 - Consistent spacing, margins, and font handling per SECNAV specifications
 
 ### Comprehensive Data Libraries
-- **2,805 military units** with full addresses, MCC codes, and organizational data
+- **3,129 military units** with full addresses, MCC codes, and organizational data
 - **2,240 SSIC codes** from SECNAV M-5210.2 (August 2018)
 - **107 regulatory references** across 12 categories (MCO, SECNAVINST, NAVADMIN)
+- **74 office codes** (S-1, G-3, CO, XO, etc.) for signature blocks
 - **65+ military ranks** (USMC and Navy)
 
 ### Security-First Design
@@ -120,7 +122,8 @@
 - **Profiles System** - Save and reuse unit information and signature images
 - **Template Library** - 38 pre-built letter templates for common correspondence
 - **Reference Library** - 107 searchable military references with one-click insert
-- **Unit Directory** - 2,805 units searchable by name, abbreviation, MCC, or location
+- **Unit Directory** - 3,129 units searchable by name, abbreviation, MCC, or location
+- **Office Codes** - 74 standard military position codes for signature blocks
 - **SSIC Lookup** - 2,240 codes searchable by number or description
 - **Batch Generation** - Generate multiple documents using {{placeholder}} syntax
 - **Find & Replace** - Search and replace text across your document

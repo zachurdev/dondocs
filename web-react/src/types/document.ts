@@ -53,6 +53,7 @@ export interface Profile {
   sigLast: string;
   sigRank: string;
   sigTitle: string;
+  officeCode?: string;
   byDirection?: boolean;
   byDirectionAuthority?: string;
   cuiControlledBy?: string;
@@ -96,6 +97,7 @@ export interface DocumentData {
   sigLast: string;
   sigRank: string;
   sigTitle: string;
+  officeCode: string;
   byDirection: boolean;
   byDirectionAuthority: string;
   signatureImage?: SignatureImage;

@@ -109,6 +109,7 @@ const DEFAULT_FORM_DATA: Partial<DocumentData> = {
   sigLast: 'DOE',
   sigRank: 'Lieutenant Colonel',
   sigTitle: 'Commanding Officer',
+  officeCode: '',
   byDirection: false,
   byDirectionAuthority: '',
   // Classification

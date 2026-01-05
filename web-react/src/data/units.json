@@ -1,6 +1,6 @@
 {
-  "source": "MCC/RUC List, SNDL, naval-letter-formatter, and competitor databases",
-  "version": "4.2",
+  "source": "Merged MCC/RUC List, SNDL, naval-letter-formatter, and navalletterformat",
+  "version": "5.0",
   "lastUpdated": "2026-01-05",
   "units": [
     {
@@ -27592,6 +27592,2598 @@
       "service": "USMC",
       "ruc": "77142",
       "uic": "M77142"
+    },
+    {
+      "name": "MARCOR INSTR STAFF NROTC",
+      "abbrev": "",
+      "mcc": "H81",
+      "address": "LEON NETTERVILLE DR\nBATON ROUGE\u00bf LA 70813-8000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (FT BUCHANAN PR) CLR 45 4TH MLG",
+      "abbrev": "",
+      "mcc": "E93",
+      "address": "218 BROOK ST\nFORT BUCHANAN PR 00934-0428",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SPECIAL EDUCATION PROGRAMS - BATON ROUGE LA",
+      "abbrev": "",
+      "mcc": "JTL",
+      "address": "1 EAST CAMPUS DRIVE\nBATON ROUGE\u00bf LA 70803-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "12TH MARINE CORPS DISTRICT HQTRS",
+      "abbrev": "",
+      "mcc": "A83",
+      "address": "4090 TRUXEL RD SUITE 100\nSACRAMENTO CA 95834-1633",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "1ST MARINE CORPS DISTRICT HQTRS",
+      "abbrev": "",
+      "mcc": "902",
+      "address": "605 STEWART AVE\nGARDEN CITY NY 11530-4761",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "1ST MARINE CORPS DISTRICT HQTRS",
+      "abbrev": "",
+      "mcc": "980",
+      "address": "605 STEWART AVE\nGARDEN CITY NY 11530-4761",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "1ST MARINE FORCE STORAGE BN MFSC",
+      "abbrev": "",
+      "mcc": "1LJ",
+      "address": "BOX 110100\nBARSTOW CA 92311-0100",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "ADV INF TRNG BN SOI WEST TRNG COM",
+      "abbrev": "",
+      "mcc": "KAQ",
+      "address": "BOX 555061\nCAMP PENDLETON CA 92055-5061",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "ASLT AMPHIB SCOL BN TRNG COM MCB CAMPEN CA",
+      "abbrev": "",
+      "mcc": "KA1",
+      "address": "BOX 555041\nCAMP PENDLETON CA 92055-5041",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "CE 3D MEB III MEF",
+      "abbrev": "",
+      "mcc": "UKH",
+      "address": "OPC 559 BOX 65\nFPO AP 96377-9001",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "CE I MEF",
+      "abbrev": "",
+      "mcc": "1C0",
+      "address": "BOX 555300\nCAMP PENDLETON CA 92055-5300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "CE II MEF",
+      "abbrev": "",
+      "mcc": "1F1",
+      "address": "PSC BOX 20080\nCAMP LEJEUNE NC 28542-0080",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "CE III MEF",
+      "abbrev": "",
+      "mcc": "UKF",
+      "address": "OPC 559 BOX 62\nFPO AP 96377-9001",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "CO D MARINE CRYPTO SPT BN MCIC",
+      "abbrev": "",
+      "mcc": "NCT",
+      "address": "7115 S BOUNDARY BLVD\nMACDILL AFB FL 33621-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "CO I MARINE CRYPTO SPT BN MCIC",
+      "abbrev": "",
+      "mcc": "815",
+      "address": "NSGA KUNIA\nSCHOFIELD BARRACKS HI 96857-5300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DC PLANS POLICIES & OPS (PP&O) DEPT HQMC",
+      "abbrev": "",
+      "mcc": "MB1",
+      "address": "3000 MARINE CORPS PENTAGON\nWASHINGTON DC 20350-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF ADV RESEARCH PROJ AGENCY (DARPA)",
+      "abbrev": "",
+      "mcc": "TN6",
+      "address": "3701 N FAIRFAX ST\nARLINGTON VA 22203-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF INFO SYSTEMS AGENCY (DISA)",
+      "abbrev": "",
+      "mcc": "TAF",
+      "address": "6910 COOPER AVE\nFORT GEORGE G MEADE MD 20755-5291",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF INFO SYSTEMS AGENCY (DISA)",
+      "abbrev": "",
+      "mcc": "TZZ",
+      "address": "6910 COOPER AVE\nFORT GEORGE G MEADE MD 20755-5291",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF INFO SYSTEMS AGENCY (DISA)",
+      "abbrev": "",
+      "mcc": "UAL",
+      "address": "2743 DEFENSE BLVD ANACOSTIA ANNEX SW\nJB ANACOSTIA BOLLING DC 20373-5817",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF INFO SYSTEMS AGENCY (DISA)",
+      "abbrev": "",
+      "mcc": "T99",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF INFO SYSTEMS AGENCY (DISA)",
+      "abbrev": "",
+      "mcc": "NEH",
+      "address": "US NAVAL BASE\nPEARL HARBOR HI 96860-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF INFO SYSTEMS AGENCY (DISA)",
+      "abbrev": "",
+      "mcc": "T34",
+      "address": "7010 DEFENSE PENTAGON\nWASHINGTON DC 20301-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF INTEL AGENCY (DIA)",
+      "abbrev": "",
+      "mcc": "NB1",
+      "address": "1000 NAVY PENTAGON\nWASHINGTON DC 20350-1000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF INTEL AGENCY (DIA)",
+      "abbrev": "",
+      "mcc": "TBU",
+      "address": "200 MACDILL BLVD\nJB ANACOSTIA BOLLING DC 20373-5817",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF INTEL AGENCY (DIA)",
+      "abbrev": "",
+      "mcc": "TA9",
+      "address": "1555 SOUTHGATE RD\nARLINGTON VA 22214-5000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF POW MIA ACCT AGENCY (DPAA)",
+      "abbrev": "",
+      "mcc": "NBJ",
+      "address": "590 MOFFET ST BLDG 4077\nHICKAM AFB HI 96853-5530",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF POW MIA ACCT AGENCY (DPAA)",
+      "abbrev": "",
+      "mcc": "NBN",
+      "address": "241 18TH ST S SUITE 800\nARLINGTON VA 22202-5000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF THREAT REDUCTION AGENCY",
+      "abbrev": "",
+      "mcc": "TJD",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF THREAT REDUCTION AGENCY",
+      "abbrev": "",
+      "mcc": "NE3",
+      "address": "8725 JOHN KINGMAN RD\nFORT BELVOIR VA 22060-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DEF THREAT REDUCTION AGENCY",
+      "abbrev": "",
+      "mcc": "NB9",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DET CNATT MCAS CHERRY POINT NC",
+      "abbrev": "",
+      "mcc": "MC9",
+      "address": "PSC BOX 8055\nCHERRY POINT NC 28533-0055",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DOD ACTIVITIES MISC",
+      "abbrev": "",
+      "mcc": "N1D",
+      "address": "3000 MARINE CORPS PENTAGON RM 3C959\nWASHINGTON DC 20350-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DOD ACTIVITIES MISC",
+      "abbrev": "",
+      "mcc": "861",
+      "address": "1555 SOUTHGATE RD\nARLINGTON VA 22214-5000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "DOD ACTIVITIES MISC",
+      "abbrev": "",
+      "mcc": "THY",
+      "address": "HART SENATE OFFICE BLDG SUITE 716\nWASHINGTON DC 20510-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "EXPED READINESS CO",
+      "abbrev": "",
+      "mcc": "LIS",
+      "address": "CONTACT MISSO-09 FOR ADDRESS\nFORT BRAGG NC 28304-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "EXPED WARFARE TRNG GRP (EWTG) LANT MAGTFTC",
+      "abbrev": "",
+      "mcc": "IAA",
+      "address": "1575 GATOR BLVD\nVIRGINIA BEACH VA 23459-2740",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "H&S CO MARINE BARRACKS WASH DC",
+      "abbrev": "",
+      "mcc": "233",
+      "address": "MBKS 8TH & I ST\nWASHINGTON DC 20390-5000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HMHT-302 MAG-29 2D MAW",
+      "abbrev": "",
+      "mcc": "1TE",
+      "address": "PSC BOX 21008\nMCAS NEW RIVER NC 28545-1008",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HMHT-302 MAG-29 2D MAW",
+      "abbrev": "",
+      "mcc": "1T4",
+      "address": "PSC BOX 21008\nMCAS NEW RIVER NC 28545-1008",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HMLAT-303 MAG-39 3D MAW",
+      "abbrev": "",
+      "mcc": "1TD",
+      "address": "BOX 555881\nCAMP PENDLETON CA 92055-5881",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQMC SEPARATE OFFICES",
+      "abbrev": "",
+      "mcc": "QLA",
+      "address": "3000 MARINE CORPS PENTAGON\nWASHINGTON DC 20350-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQMC SEPARATE OFFICES",
+      "abbrev": "",
+      "mcc": "QAB",
+      "address": "3000 MARINE CORPS PENTAGON\nWASHINGTON DC 20350-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS DEF LOGISTICS AGENCY",
+      "abbrev": "",
+      "mcc": "WAD",
+      "address": "2001 MISSION DR\nNEW CUMBERLAND PA 17070-5098",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS DEF LOGISTICS AGENCY",
+      "abbrev": "",
+      "mcc": "U28",
+      "address": "3990 EAST BROAD ST\nCOLUMBUS OH 43213-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS DEF LOGISTICS AGENCY",
+      "abbrev": "",
+      "mcc": "U33",
+      "address": "8000 JEFFERSON DAVIS HWY\nRICHMOND VA 23297-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS DEF LOGISTICS AGENCY",
+      "abbrev": "",
+      "mcc": "NC6",
+      "address": "8000 JEFFERSON DAVIS HWY\nRICHMOND VA 23297-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS DEF LOGISTICS AGENCY",
+      "abbrev": "",
+      "mcc": "NB4",
+      "address": "8725 JOHN KINGMAN RD\nFORT BELVOIR VA 22060-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS DEF LOGISTICS AGENCY",
+      "abbrev": "",
+      "mcc": "T57",
+      "address": "25600 S CHRISMAN RD\nTRACY CA 95304-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS DEF LOGISTICS AGENCY",
+      "abbrev": "",
+      "mcc": "NLB",
+      "address": "814 RADFORD BLVD BLDG 1638\nALBANY GA 31704-1128",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS DEF LOGISTICS AGENCY",
+      "abbrev": "",
+      "mcc": "NC5",
+      "address": "3990 EAST BROAD ST\nCOLUMBUS OH 43213-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS US SPEC OPS COM (USSOCOM)",
+      "abbrev": "",
+      "mcc": "TJ5",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS US SPEC OPS COM (USSOCOM)",
+      "abbrev": "",
+      "mcc": "NBM",
+      "address": "7701 TAMPA POINT BLVD\nMACDILL AFB FL 33621-5323",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS US SPEC OPS COM (USSOCOM)",
+      "abbrev": "",
+      "mcc": "TWE",
+      "address": "7701 TAMPA POINT BLVD\nMACDILL AFB FL 33621-5323",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS US SPEC OPS COM (USSOCOM)",
+      "abbrev": "",
+      "mcc": "UAS",
+      "address": "7701 TAMPA POINT BLVD\nMACDILL AFB FL 33621-5323",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS US SPEC OPS COM (USSOCOM)",
+      "abbrev": "",
+      "mcc": "TX1",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS US SPEC OPS COM (USSOCOM)",
+      "abbrev": "",
+      "mcc": "NFF",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS US SPEC OPS COM (USSOCOM)",
+      "abbrev": "",
+      "mcc": "T84",
+      "address": "250 VANDENBERG SUITE B016\nPETERSON SFB CO 80914-5601",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS US SPEC OPS COM (USSOCOM)",
+      "abbrev": "",
+      "mcc": "TW1",
+      "address": "UNIT 15708\nAPO AP 96251-0085",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS US SPEC OPS COM (USSOCOM)",
+      "abbrev": "",
+      "mcc": "NE7",
+      "address": "BOX 64046\nCAMP H M SMITH HI 96861-4046",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS US SPEC OPS COM (USSOCOM)",
+      "abbrev": "",
+      "mcc": "TZK",
+      "address": "8725 JOHN KINGMAN RD\nFORT BELVOIR VA 22060-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS US SPEC OPS COM (USSOCOM)",
+      "abbrev": "",
+      "mcc": "T03",
+      "address": "29401 SW 125TH AVE BLDG 600\nHOMESTEAD ARB FL 33039-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "HQTRS US SPEC OPS COM (USSOCOM)",
+      "abbrev": "",
+      "mcc": "NA9",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "NVS",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "TWZ",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "T0E",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "T47",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "T50",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "T59",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "T82",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "TL8",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "NFW",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "NCF",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "NAV",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "NA5",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "NA2",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "NA1",
+      "address": "PSC 81  BOX 300\nAPO AE 09742-0300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "N50",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "N24",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "N0Z",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "N0B",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "N0A",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "T04",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "TSL",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "TSJ",
+      "address": "PSC 807 BOX 5\nFPO AE 09729-0807",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "INTL MIL ACT NATO",
+      "abbrev": "",
+      "mcc": "TSF",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "JOINT INFO OPS WARFARE CTR (JIOWC)",
+      "abbrev": "",
+      "mcc": "NFM",
+      "address": "3000 JOINT STAFF PENTAGON\nWASHINGTON DC 20350-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCOR ASGN TO THE JOINT STAFF",
+      "abbrev": "",
+      "mcc": "NJW",
+      "address": "8000 JOINT STAFF PENTAGON\nWASHINGTON DC 20318-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCOR ASGN TO THE JOINT STAFF",
+      "abbrev": "",
+      "mcc": "NBR",
+      "address": "116 LAKEVIEW PKY\nSUFFOLK VA 23435-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCOR ASGN TO THE JOINT STAFF",
+      "abbrev": "",
+      "mcc": "TCE",
+      "address": "116 LAKEVIEW PKY\nSUFFOLK VA 23435-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCOR ASGN TO THE JOINT STAFF",
+      "abbrev": "",
+      "mcc": "NAU",
+      "address": "104 BISCAYNE RD\nEGLIN AFB FL 32542-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCOR ASGN TO THE JOINT STAFF",
+      "abbrev": "",
+      "mcc": "434",
+      "address": "1775 FORRESTAL DR\nNORFOLK VA 23551-2400",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCOR DET USA CMD GEN STF COLL EDCOM FT LVNWRTH",
+      "abbrev": "",
+      "mcc": "NEX",
+      "address": "100 STIMSON AVE\nFORT LEAVENWORTH KS 66027-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCOR FIELD SERVICE ASGN",
+      "abbrev": "",
+      "mcc": "U85",
+      "address": "BOX 555031\nCAMP PENDLETON CA 92055-5031",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCOR FIELD SERVICE ASGN",
+      "abbrev": "",
+      "mcc": "W04",
+      "address": "BOX 555031\nCAMP PENDLETON CA 92055-5031",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCOR FIELD SERVICE ASGN",
+      "abbrev": "",
+      "mcc": "TFA",
+      "address": "PSC BOX 20005\nCAMP LEJEUNE NC 28542-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCOR FIELD SERVICE ASGN",
+      "abbrev": "",
+      "mcc": "U70",
+      "address": "PSC BOX 20041\nCAMP LEJEUNE NC 28542-0041",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCOR REP NATL DEF UNIV (NDU) EDCOM",
+      "abbrev": "",
+      "mcc": "NBL",
+      "address": "1775 FORRESTAL DR\nNORFOLK VA 23551-2400",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCOR REP NATL DEF UNIV (NDU) EDCOM",
+      "abbrev": "",
+      "mcc": "NJN",
+      "address": "1775 FORRESTAL DR\nNORFOLK VA 23551-2400",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCOR REP USA INFANTRY SCOL TRNG COM FT BENNING",
+      "abbrev": "",
+      "mcc": "NFV",
+      "address": "6680 WOLD AVENUE BLDG 71\nFORT BENNING GA 31905-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCOR UNIV EDCOM TECOM STUDENT",
+      "abbrev": "",
+      "mcc": "J66",
+      "address": "2076 SOUTH ST\nQUANTICO VA 22134-5068",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCORSYSCOM QUANTICO VA",
+      "abbrev": "",
+      "mcc": "MCB",
+      "address": "300 US 361\nCRANE IN 47522-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARCORSYSCOM QUANTICO VA",
+      "abbrev": "",
+      "mcc": "W08",
+      "address": "6501 E 11 MILE RD BLDG 3600 RM 200\nWARREN MI 48089-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARFOR EUCOM",
+      "abbrev": "",
+      "mcc": "1EA",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE AVN SPT NWS CHINA LAKE CA",
+      "abbrev": "",
+      "mcc": "U00",
+      "address": "1 ADMINISTRATION CIRCLE\nCHINA LAKE CA 93555-6001",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE AVN SPT NWS CHINA LAKE CA",
+      "abbrev": "",
+      "mcc": "L38",
+      "address": "1 ADMINISTRATION CIRCLE\nCHINA LAKE CA 93555-6001",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "TC0",
+      "address": "UNIT 2400\nFPO AA 34012-2400",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "TEX",
+      "address": "UNIT 2400\nFPO AA 34012-2400",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "TP7",
+      "address": "UNIT 2400\nFPO AA 34012-2400",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "UF1",
+      "address": "UNIT 2400\nFPO AA 34012-2400",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "L14",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "M44",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "M60",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "MAJ",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "MDD",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "MDE",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "NB7",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "NE1",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "TH6",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "TL4",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "TZ2",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "UDA",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "UF2",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS ASSIGNED ALLIED/UN COMMANDS",
+      "abbrev": "",
+      "mcc": "TH7",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS INTEL ACT",
+      "abbrev": "",
+      "mcc": "NCN",
+      "address": "4 AVIAKONSTRUCTOR IGOR SIKORSKY ST\nFPO AE 04112-5850",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS INTEL ACT",
+      "abbrev": "",
+      "mcc": "NCR",
+      "address": "AMEMB MEXICO CITY DOS PO BOX 9000\nDPO AA 78520-5300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS INTEL ACT",
+      "abbrev": "",
+      "mcc": "NCV",
+      "address": "AMEMB MUSCAT UNIT 73000 BOX 9\nAPO AE 09890-3000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS PERS DON NON-DEPT",
+      "abbrev": "",
+      "mcc": "1HA",
+      "address": "NAS JRB BLDG 1068 RM 111\nFORT WORTH TX 76127-5000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS PERS DON NON-DEPT",
+      "abbrev": "",
+      "mcc": "1H9",
+      "address": "NAS JRB BLDG 1068 RM 111\nFORT WORTH TX 76127-5000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS PERS DON NON-DEPT",
+      "abbrev": "",
+      "mcc": "TMN",
+      "address": "3420 GUADALCANAL RD\nSAN DIEGO CA 92155-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS PERS DON NON-DEPT",
+      "abbrev": "",
+      "mcc": "M32",
+      "address": "1775 FORRESTAL DR\nNORFOLK VA 23551-2400",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS PERS DON NON-DEPT",
+      "abbrev": "",
+      "mcc": "MBN",
+      "address": "1775 FORRESTAL DR\nNORFOLK VA 23551-2400",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS PERS DON NON-DEPT",
+      "abbrev": "",
+      "mcc": "UD8",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS PERS DON NON-DEPT",
+      "abbrev": "",
+      "mcc": "UD9",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MARINE CORPS PERS DON NON-DEPT",
+      "abbrev": "",
+      "mcc": "UGH",
+      "address": "700 ROBBINS AVE\nPHILADELPHIA PA 19111-6000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MATSG-23 TRNG COM NAS PENSACOLA FL STUDENT",
+      "abbrev": "",
+      "mcc": "K09",
+      "address": "211 FARRAR RD\nPENSACOLA FL 32508-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MC PERS ASSIGNED TO USA/USAF",
+      "abbrev": "",
+      "mcc": "NG9",
+      "address": "114 ANDREWS ST\nLANGLEY AFB VA 23665-5000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCAS CAMPEN CA",
+      "abbrev": "",
+      "mcc": "UC5",
+      "address": "BOX 555151\nCAMP PENDLETON CA 92055-5151",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 1",
+      "abbrev": "",
+      "mcc": "R1N",
+      "address": "UNIT 7900 BOX 400\nAPO AE 09213-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 1",
+      "abbrev": "",
+      "mcc": "R1B",
+      "address": "UNIT 7900 BOX 400\nAPO AE 09213-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 2",
+      "abbrev": "",
+      "mcc": "R2O",
+      "address": "UNIT 6010 BOX 35\nDPO AP 09825-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 2",
+      "abbrev": "",
+      "mcc": "R2L",
+      "address": "UNIT 6010 BOX 35\nDPO AP 09825-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 2",
+      "abbrev": "",
+      "mcc": "R2J",
+      "address": "UNIT 6010 BOX 35\nDPO AE 09825-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 2",
+      "abbrev": "",
+      "mcc": "R2E",
+      "address": "UNIT 6010 BOX 35\nDPO AP 09825-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 2",
+      "abbrev": "",
+      "mcc": "R2D",
+      "address": "UNIT 6010 BOX 35\nDPO AE 09825-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 2",
+      "abbrev": "",
+      "mcc": "R2A",
+      "address": "UNIT 6010 BOX 35\nDPO AE 09825-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 4",
+      "abbrev": "",
+      "mcc": "R4M",
+      "address": "UNIT 4738\nAPO AA 34036-0001",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 5",
+      "abbrev": "",
+      "mcc": "R5W",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 5",
+      "abbrev": "",
+      "mcc": "R5V",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 5",
+      "abbrev": "",
+      "mcc": "R5S",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 5",
+      "abbrev": "",
+      "mcc": "R5Q",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 5",
+      "abbrev": "",
+      "mcc": "R5O",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 5",
+      "abbrev": "",
+      "mcc": "R5J",
+      "address": "PSC 59\nAPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 5",
+      "abbrev": "",
+      "mcc": "R5I",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 5",
+      "abbrev": "",
+      "mcc": "R50",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 5",
+      "abbrev": "",
+      "mcc": "R5A",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6H",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6G",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6F",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6E",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6D",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6C",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6B",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6A",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6J",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6K",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6L",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6N",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6O",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6P",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6Q",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6R",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6S",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6U",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6V",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 6",
+      "abbrev": "",
+      "mcc": "R6W",
+      "address": "UNIT 9300\nAPO AE 96212-9300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7A",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7J",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7K",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7L",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7M",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7N",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7O",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7P",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7Q",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7R",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7S",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7T",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7B",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7C",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7D",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7E",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7F",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R7G",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCESG REGION 7",
+      "abbrev": "",
+      "mcc": "R70",
+      "address": "UNIT 7900\nDPO AE 09213-0115",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCRC HOLDING RUC",
+      "abbrev": "",
+      "mcc": "LOD",
+      "address": "2089 ELROD AVE\nQUANTICO VA 22134-5035",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "MCTSSA CAMPEN CA",
+      "abbrev": "",
+      "mcc": "052",
+      "address": "BOX 555171\nCAMP PENDLETON CA 92055-5171",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "NAV FTR WPNS SCOL NAS FALLON NV",
+      "abbrev": "",
+      "mcc": "TFD",
+      "address": "4755 PASTURE RD\nFALLON NV 89406-1298",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "OFFICE OF THE SECNAV",
+      "abbrev": "",
+      "mcc": "T21",
+      "address": "1000 NAVY PENTAGON\nWASHINGTON DC 20350-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "OFFICE OF THE SECNAV",
+      "abbrev": "",
+      "mcc": "T35",
+      "address": "1000 NAVY PENTAGON\nWASHINGTON DC 20350-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "OFFICE OF THE SECNAV",
+      "abbrev": "",
+      "mcc": "T45",
+      "address": "1000 NAVY PENTAGON\nWASHINGTON DC 20350-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "OFFICE OF THE SECNAV",
+      "abbrev": "",
+      "mcc": "T44",
+      "address": "1000 NAVY PENTAGON\nWASHINGTON DC 20350-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "OFFICE OF THE SECNAV",
+      "abbrev": "",
+      "mcc": "T43",
+      "address": "1000 NAVY PENTAGON\nWASHINGTON DC 20350-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "OFFICE OF THE SECNAV",
+      "abbrev": "",
+      "mcc": "T42",
+      "address": "1000 NAVY PENTAGON\nWASHINGTON DC 20350-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "OFFICE OF THE SECNAV",
+      "abbrev": "",
+      "mcc": "T41",
+      "address": "1000 NAVY PENTAGON\nWASHINGTON DC 20350-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "OFFICE OF THE SECNAV",
+      "abbrev": "",
+      "mcc": "T37",
+      "address": "1000 NAVY PENTAGON\nWASHINGTON DC 20350-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "OFFICE OF THE SECNAV",
+      "abbrev": "",
+      "mcc": "T36",
+      "address": "1000 NAVY PENTAGON\nWASHINGTON DC 20350-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "OSD JOINT BILLETS",
+      "abbrev": "",
+      "mcc": "NBS",
+      "address": "1000 DEFENSE PENTAGON\nWASHINGTON DC 20301-1600",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "OUTSIDE OF DOD DETAILS",
+      "abbrev": "",
+      "mcc": "THD",
+      "address": "1555 SOUTHGATE RD\nARLINGTON VA 22214-5000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "OUTSIDE OF DOD DETAILS",
+      "abbrev": "",
+      "mcc": "THT",
+      "address": "EISENHOWER EXEC OFF BLDG RM 25\nWASHINGTON DC 20502-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "REGIONAL EAST JA DIV HQMC - SPT SERVICE CELL MCAS CHERRY PT",
+      "abbrev": "",
+      "mcc": "U53",
+      "address": "PSC BOX 8007\nCHERRY POINT NC 28533-8007",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "REGIONAL EAST JA DIV HQMC - SPT SERVICE CELL MCAS CHERRY PT",
+      "abbrev": "",
+      "mcc": "U5F",
+      "address": "PSC BOX 8007\nCHERRY POINT NC 28533-8007",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "REGIONAL EAST JA DIV HQMC - SPT SERVICE CELL MCRD PI",
+      "abbrev": "",
+      "mcc": "U5G",
+      "address": "PO BOX 19610\nPARRIS ISLAND SC 29905-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "REGIONAL EAST JA DIV HQMC - SPT SERVICE CELL MCRD PI",
+      "abbrev": "",
+      "mcc": "U55",
+      "address": "PO BOX 19610\nPARRIS ISLAND SC 29905-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "REGIONAL PAC JA DIV HQMC - SPT SERVICE CELL MCB KANEOHE BAY",
+      "abbrev": "",
+      "mcc": "U5E",
+      "address": "MCBH BOX 63062\nKANEOHE BAY HI 96863-3062",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "REGIONAL PAC JA DIV HQMC - SPT SERVICE CELL MCB KANEOHE BAY",
+      "abbrev": "",
+      "mcc": "U5J",
+      "address": "MCBH BOX 63062\nKANEOHE BAY HI 96863-3062",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "REGIONAL WEST JA DIV HQMC - SPT SERVICE CELL 29 PALMS",
+      "abbrev": "",
+      "mcc": "U52",
+      "address": "BOX 788108\nTWENTYNINE PALMS CA 92278-8108",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "REGIONAL WEST JA DIV HQMC - SPT SERVICE CELL 29 PALMS",
+      "abbrev": "",
+      "mcc": "U5I",
+      "address": "BOX 788108\nTWENTYNINE PALMS CA 92278-8108",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "REGIONAL WEST JA DIV HQMC - SPT SERVICE CELL MCAS MIRAMAR",
+      "abbrev": "",
+      "mcc": "U5C",
+      "address": "PO BOX 452022\nMCAS MIRAMAR CA 92145-2022",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "REGIONAL WEST JA DIV HQMC - SPT SERVICE CELL MCAS MIRAMAR",
+      "abbrev": "",
+      "mcc": "U51",
+      "address": "PO BOX 452022\nMCAS MIRAMAR CA 92145-2022",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "RESERVE BASE SUPPORT NOLA",
+      "abbrev": "",
+      "mcc": "01D",
+      "address": "2000 OPELOUSAS AVE\nNEW ORLEANS LA 70114-1500",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "RESERVE BASE SUPPORT NOLA",
+      "abbrev": "",
+      "mcc": "01C",
+      "address": "2000 OPELOUSAS AVE\nNEW ORLEANS LA 70114-1500",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "RESERVE BASE SUPPORT NOLA",
+      "abbrev": "",
+      "mcc": "01B",
+      "address": "2000 OPELOUSAS AVE\nNEW ORLEANS LA 70114-1500",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SCOL OF INF SOI EAST TRNG COM TECOM",
+      "abbrev": "",
+      "mcc": "KA2",
+      "address": "PSC BOX 20161\nCAMP LEJEUNE NC 28542-0161",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SCOL OF INF SOI WEST TRNG COM TECOM",
+      "abbrev": "",
+      "mcc": "KA3",
+      "address": "BOX 555061\nCAMP PENDLETON CA 92055-5061",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (AYER MA) CLB 451 4TH MLG",
+      "abbrev": "",
+      "mcc": "10E",
+      "address": "115 BARNUM RD\nAYER MA 01434-4440",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (BROOKLYN NY) 6TH COMM BN FHG MARFORRES",
+      "abbrev": "",
+      "mcc": "10C",
+      "address": "1 AVIATION RD\nBROOKLYN NY 11234-7097",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (CAMPEN CA) 1ST CIV AFF GRP FHG MARFORRES",
+      "abbrev": "",
+      "mcc": "DJM",
+      "address": "BOX 555123 BLDG 210822\nCAMP PENDLETON CA 92055-5123",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (CONCORD CA) FHG MARFORRES",
+      "abbrev": "",
+      "mcc": "10D",
+      "address": "3225 WILLOW PASS RD\nCONCORD CA 94519-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (GREAT LAKES IL) MACG-48 4TH MAW",
+      "abbrev": "",
+      "mcc": "G18",
+      "address": "2205 DEPOT DR BLDG 3200 SUITE 200\nGREAT LAKES IL 60088-3404",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (GREAT LAKES IL) MACG-48 4TH MAW",
+      "abbrev": "",
+      "mcc": "DJV",
+      "address": "2205 DEPOT DR BLDG 3200 SUITE 200\nGREAT LAKES IL 60088-3404",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (GREENSBORO NC) CLB 451 4TH MLG",
+      "abbrev": "",
+      "mcc": "C14",
+      "address": "7838 MCCLOUD RD\nGREENSBORO NC 27409-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (INDIANAPOLIS IN)14TH MAR REGT 4TH MARDIV",
+      "abbrev": "",
+      "mcc": "DJS",
+      "address": "9801 EAST 59TH ST\nINDIANAPOLIS IN 46216-1124",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (MIRAMAR CA) MAG-41 4TH MAW",
+      "abbrev": "",
+      "mcc": "DJX",
+      "address": "PO BOX 452024\nMCAS MIRAMAR CA 92145-2024",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (MOBILE AL) 4TH MARDIV",
+      "abbrev": "",
+      "mcc": "C48",
+      "address": "1630 S BROAD ST\nMOBILE AL 36605-1806",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (OCEANA VA) MACS-24 MACG-48 4TH MAW",
+      "abbrev": "",
+      "mcc": "DJ2",
+      "address": "1325 S BIRDNECK RD\nVIRGINIA BEACH VA 23451-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (ORLANDO FL) CLB 451 4TH MLG",
+      "abbrev": "",
+      "mcc": "C13",
+      "address": "9500 ARMED FORCES RESERVE DR SUITE 300\nORLANDO FL 32827-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (QUANTICO VA) 4TH LAR BN 4TH MARDIV",
+      "abbrev": "",
+      "mcc": "BAE",
+      "address": "26102 BAILEY STREET BLDG 26164\nQUANTICO VA 22134-5004",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (QUANTICO VA) 4TH LAR BN 4TH MARDIV",
+      "abbrev": "",
+      "mcc": "DKB",
+      "address": "26102 BAILEY STREET BLDG 26164\nQUANTICO VA 22134-5004",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (SAN ANTONIO TX) 4TH RECON BN 4TH MARDIV",
+      "abbrev": "",
+      "mcc": "B64",
+      "address": "3837 BINZ-ENGLEMAN RD\nFORT SAM HOUSTON TX 78219-2235",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (WASH DC) FHG MARFORRES",
+      "abbrev": "",
+      "mcc": "B45",
+      "address": "190 POREMBA CT SW ANACOSTIA BLDG 351\nJB ANACOSTIA BOLLING DC 20373-5817",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (WASH DC) FHG MARFORRES",
+      "abbrev": "",
+      "mcc": "DJR",
+      "address": "190 POREMBA CT SW ANACOSTIA BLDG 351\nJB ANACOSTIA BOLLING DC 20373-5817",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SITE SPT (WASH DC) FHG MARFORRES",
+      "abbrev": "",
+      "mcc": "10B",
+      "address": "190 POREMBA CT SW ANACOSTIA BLDG 351\nJB ANACOSTIA BOLLING DC 20373-5817",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SPECIAL OPERATIONS COMMAND CENTERAL (SOCCENT)",
+      "abbrev": "",
+      "mcc": "T61",
+      "address": "7115 S BOUNDARY BLVD\nMACDILL AFB FL 33621-5101",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SUPPORT CO",
+      "abbrev": "",
+      "mcc": "MT1",
+      "address": "CONTACT MISSO-09 FOR ADDRESS\nFORT BRAGG NC 28304-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SUPPORT CO",
+      "abbrev": "",
+      "mcc": "LDG",
+      "address": "CONTACT MISSO-09 FOR ADDRESS\nFORT BRAGG NC 28304-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SUPPORT DET",
+      "abbrev": "",
+      "mcc": "LT3",
+      "address": "CONTACT MISSO-09 FOR ADDRESS\nFPO AP 96349-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SUPPORT DET",
+      "abbrev": "",
+      "mcc": "LFB",
+      "address": "CONTACT MISSO-09 FOR ADDRESS\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SUPPORT DET",
+      "abbrev": "",
+      "mcc": "LFC",
+      "address": "CONTACT MISSO-09 FOR ADDRESS\nWASHINGTON DC 20001-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SUPPORT DET",
+      "abbrev": "",
+      "mcc": "LKA",
+      "address": "CONTACT MISSO-09 FOR ADDRESS\nWASHINGTON DC 20001-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "SUPPORT DET",
+      "abbrev": "",
+      "mcc": "LT2",
+      "address": "CONTACT MISSO-09 FOR ADDRESS\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "TBS TRNG COM QUANTICO VA",
+      "abbrev": "",
+      "mcc": "074",
+      "address": "24115 OKINAWA RD\nQUANTICO VA 22134-5086",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "TECHNICAL SERVICE CO",
+      "abbrev": "",
+      "mcc": "TCR",
+      "address": "CONTACT MISSO-09 FOR ADDRESS\nWASHINGTON DC 20001-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "TECHNICAL SERVICE CO",
+      "abbrev": "",
+      "mcc": "FF1",
+      "address": "CONTACT MISSO-09 FOR ADDRESS\nFORT GEORGE G MEADE MD 20755-5291",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "TRAINING DETACHMENT",
+      "abbrev": "",
+      "mcc": "MGA",
+      "address": "CONTACT MISSO-09 FOR ADDRESS\nWASHINGTON DC 20001-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "TRAINING FACILITATION CO",
+      "abbrev": "",
+      "mcc": "NFS",
+      "address": "CONTACT MISSO-09 FOR ADDRESS\nCAMP LEJEUNE NC 28542-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "TRAINING FACILITATION CO",
+      "abbrev": "",
+      "mcc": "EJJ",
+      "address": "CONTACT MISSO-09 FOR ADDRESS\nCAMP LEJEUNE NC 28542-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US AFRICA COMMAND (AFRICOM)",
+      "abbrev": "",
+      "mcc": "TR8",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US AFRICA COMMAND (AFRICOM)",
+      "abbrev": "",
+      "mcc": "N3A",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US AFRICA COMMAND (AFRICOM)",
+      "abbrev": "",
+      "mcc": "TA8",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US AFRICA COMMAND (AFRICOM)",
+      "abbrev": "",
+      "mcc": "TN3",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US AFRICA COMMAND (AFRICOM)",
+      "abbrev": "",
+      "mcc": "NGW",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US CENTCOM (USCENTCOM)",
+      "abbrev": "",
+      "mcc": "NJS",
+      "address": "7115 S BOUNDARY BLVD\nMACDILL AFB FL 33621-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US CYBER COMMAND (USCYBERCOM)",
+      "abbrev": "",
+      "mcc": "NFH",
+      "address": "9800 SAVAGE RD SUITE 6410\nFORT GEORGE G MEADE MD 20755-5291",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US EUROPEAN COMMAND (USEUCOM)",
+      "abbrev": "",
+      "mcc": "T90",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US EUROPEAN COMMAND (USEUCOM)",
+      "abbrev": "",
+      "mcc": "TMS",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US EUROPEAN COMMAND (USEUCOM)",
+      "abbrev": "",
+      "mcc": "NJH",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US EUROPEAN COMMAND (USEUCOM)",
+      "abbrev": "",
+      "mcc": "NG4",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US EUROPEAN COMMAND (USEUCOM)",
+      "abbrev": "",
+      "mcc": "NF4",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US EUROPEAN COMMAND (USEUCOM)",
+      "abbrev": "",
+      "mcc": "NBB",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US EUROPEAN COMMAND (USEUCOM)",
+      "abbrev": "",
+      "mcc": "NA8",
+      "address": "UNIT 30401\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US INDO-PACIFIC COMMAND (US INDO-PACOM)",
+      "abbrev": "",
+      "mcc": "NFK",
+      "address": "352 HALAWA DR\nPEARL HARBOR HI 96860-3120",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US INDO-PACIFIC COMMAND (US INDO-PACOM)",
+      "abbrev": "",
+      "mcc": "T95",
+      "address": "UNIT 5068\nAPO AP 96328-5068",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US INDO-PACIFIC COMMAND (US INDO-PACOM)",
+      "abbrev": "",
+      "mcc": "TD1",
+      "address": "5905 34TH AVE S\nMINNEAPOLIS MN 55450-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US INDO-PACIFIC COMMAND (US INDO-PACOM)",
+      "abbrev": "",
+      "mcc": "TD2",
+      "address": "7 N SNOWMASS ST BLDG 1301\nBUCKLEY SFB CO 80011-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US INDO-PACIFIC COMMAND (US INDO-PACOM)",
+      "abbrev": "",
+      "mcc": "NJA",
+      "address": "BOX 64022\nCAMP H M SMITH HI 96861-4022",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US INDO-PACIFIC COMMAND (US INDO-PACOM)",
+      "abbrev": "",
+      "mcc": "T1A",
+      "address": "UNIT 15237\nAPO AP 96251-0085",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US INDO-PACIFIC COMMAND (US INDO-PACOM)",
+      "abbrev": "",
+      "mcc": "TB6",
+      "address": "UNIT 15708\nFPO AP 96205-0708",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US INDO-PACIFIC COMMAND (US INDO-PACOM)",
+      "abbrev": "",
+      "mcc": "U06",
+      "address": "UNIT 15708\nAPO AP 96251-0085",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US INDO-PACIFIC COMMAND (US INDO-PACOM)",
+      "abbrev": "",
+      "mcc": "UCA",
+      "address": "UNIT 15708\nAPO AP 96251-0085",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US INDO-PACIFIC COMMAND (US INDO-PACOM)",
+      "abbrev": "",
+      "mcc": "NAN",
+      "address": "UNIT 5068\nAPO AP 96328-5068",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US INDO-PACIFIC COMMAND (US INDO-PACOM)",
+      "abbrev": "",
+      "mcc": "NKL",
+      "address": "UNIT 5068\nAPO AP 96328-5068",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US INDO-PACIFIC COMMAND (US INDO-PACOM)",
+      "abbrev": "",
+      "mcc": "THB",
+      "address": "BOX 64129\nCAMP H M SMITH HI 96861-4028",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US NORTHERN COMMAND (USNORTHCOM)",
+      "abbrev": "",
+      "mcc": "NKE",
+      "address": "250 VANDENBERG SUITE B016\nPETERSON SFB CO 80914-5601",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US NORTHERN COMMAND (USNORTHCOM)",
+      "abbrev": "",
+      "mcc": "NHD",
+      "address": "250 VANDENBERG SUITE B016\nPETERSON SFB CO 80914-5601",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US NORTHERN COMMAND (USNORTHCOM)",
+      "abbrev": "",
+      "mcc": "NAA",
+      "address": "250 VANDENBERG SUITE B016\nPETERSON SFB CO 80914-5601",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US NORTHERN COMMAND (USNORTHCOM)",
+      "abbrev": "",
+      "mcc": "TAE",
+      "address": "750 FLORIDA AVE\nTYNDALL AFB FL 32403-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US NORTHERN COMMAND (USNORTHCOM)",
+      "abbrev": "",
+      "mcc": "TWK",
+      "address": "250 VANDENBERG SUITE B016\nPETERSON SFB CO 80914-5601",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US NORTHERN COMMAND (USNORTHCOM)",
+      "abbrev": "",
+      "mcc": "N10",
+      "address": "5800 G DR SUITE 101\nELMENDORF AFB AK 99506-3610",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US NORTHERN COMMAND (USNORTHCOM)",
+      "abbrev": "",
+      "mcc": "NH9",
+      "address": "1504 MADISON AVE G 96\nFORT EUSTIS VA 23604-5000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US NORTHERN COMMAND (USNORTHCOM)",
+      "abbrev": "",
+      "mcc": "NHF",
+      "address": "103 THIRD AVE BLDG 46\nFORT MCNAIR DC 20319-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US NORTHERN COMMAND (USNORTHCOM)",
+      "abbrev": "",
+      "mcc": "THJ",
+      "address": "MCD 2 SHERIDAN RD BLDG 1003\nFORT BLISS TX 79916-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US PACIFIC FLEET/USNAVCENT",
+      "abbrev": "",
+      "mcc": "T9H",
+      "address": "4832 PACIFIC RD\nPORT HUENEME CA 93043-4326",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US PACIFIC FLEET/USNAVCENT",
+      "abbrev": "",
+      "mcc": "T9J",
+      "address": "4832 PACIFIC RD\nPORT HUENEME CA 93043-4326",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US PACIFIC FLEET/USNAVCENT",
+      "abbrev": "",
+      "mcc": "W45",
+      "address": "4832 PACIFIC RD\nPORT HUENEME CA 93043-4326",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US SOUTHERN COMMAND (USSOUTHCOM)",
+      "abbrev": "",
+      "mcc": "NAR",
+      "address": "9301 NW 33D ST\nMIAMI FL 33172-1202",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US SOUTHERN COMMAND (USSOUTHCOM)",
+      "abbrev": "",
+      "mcc": "THC",
+      "address": "9301 NW 33D ST\nMIAMI FL 33172-1202",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US SOUTHERN COMMAND (USSOUTHCOM)",
+      "abbrev": "",
+      "mcc": "NJC",
+      "address": "9301 NW 33D ST\nMIAMI FL 33172-1202",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US SOUTHERN COMMAND (USSOUTHCOM)",
+      "abbrev": "",
+      "mcc": "N04",
+      "address": "UNIT 2400\nFPO AA 34012-2400",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US SOUTHERN COMMAND (USSOUTHCOM)",
+      "abbrev": "",
+      "mcc": "NEM",
+      "address": "PO BOX 9051\nKEY WEST FL 33040-9051",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US SPACE COMMAND (USSPACECOM)",
+      "abbrev": "",
+      "mcc": "TLE",
+      "address": "747 NEBRASKA AVE SUITE A300-8\nVANDENBERG SFB CA 93437-6268",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US SPACE COMMAND (USSPACECOM)",
+      "abbrev": "",
+      "mcc": "NK3",
+      "address": "250 VANDENBERG SUITE B016\nPETERSON SFB CO 80914-5601",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US SPACE COMMAND (USSPACECOM)",
+      "abbrev": "",
+      "mcc": "NG1",
+      "address": "250 VANDENBERG SUITE B016\nPETERSON SFB CO 80914-5601",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US SPACE COMMAND (USSPACECOM)",
+      "abbrev": "",
+      "mcc": "NF8",
+      "address": "1 NORAD RD SUITE 101-213\nCHEYENNE MT COMPLEX CO 80914-6066",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US SPACE COMMAND (USSPACECOM)",
+      "abbrev": "",
+      "mcc": "N17",
+      "address": "UNIT 29951\nAPO AE 09154-0401",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US STRAT COM (USSTRATCOM)",
+      "abbrev": "",
+      "mcc": "NFN",
+      "address": "900 SAC BLVD BLDG 1000\nOFFUTT AFB NE 68113-6500",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US STRAT COM (USSTRATCOM)",
+      "abbrev": "",
+      "mcc": "NGG",
+      "address": "1320 TRUEMPER ST BLDG 9122\nLACKLAND AFB TX 78236-5502",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US STRAT COM (USSTRATCOM)",
+      "abbrev": "",
+      "mcc": "N23",
+      "address": "730 IRWIN AVE\nSCHRIEVER SFB CO 80912-7300",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US TRANS COM (USTRANSCOM)",
+      "abbrev": "",
+      "mcc": "NVM",
+      "address": "9712 VIRGINIA AVE BLDG X-132\nNORFOLK VA 23511-3227",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US TRANS COM (USTRANSCOM)",
+      "abbrev": "",
+      "mcc": "TMJ",
+      "address": "9712 VIRGINIA AVE BLDG X-132\nNORFOLK VA 23511-3227",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US TRANS COM (USTRANSCOM)",
+      "abbrev": "",
+      "mcc": "NF2",
+      "address": "9712 VIRGINIA AVE BLDG X-132\nNORFOLK VA 23511-3227",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US TRANS COM (USTRANSCOM)",
+      "abbrev": "",
+      "mcc": "UDB",
+      "address": "8532 MARINA BAY DR\nMACDILL AFB FL 33621-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "US TRANS COM (USTRANSCOM)",
+      "abbrev": "",
+      "mcc": "TG1",
+      "address": "508 SCOTT DRIVE\nSCOTT AFB IL 62225-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "USFFC/USNAVEUR",
+      "abbrev": "",
+      "mcc": "TPN",
+      "address": "4901 3D ST BLDG 114\nGULFPORT MS 39501-5008",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "USFFC/USNAVEUR",
+      "abbrev": "",
+      "mcc": "T9P",
+      "address": "4901 3D ST BLDG 114\nGULFPORT MS 39501-5008",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "USFFC/USNAVEUR",
+      "abbrev": "",
+      "mcc": "782",
+      "address": "1775 FORRESTAL DR\nNORFOLK VA 23551-2400",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "USFFC/USNAVEUR",
+      "abbrev": "",
+      "mcc": "460",
+      "address": "1775 FORRESTAL DR\nNORFOLK VA 23551-2400",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "VMFA-323 MAG-11 3D MAW",
+      "abbrev": "",
+      "mcc": "VFF",
+      "address": "PO BOX 452042\nMCAS MIRAMAR CA 92145-2042",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "VMFA-323 MAG-11 3D MAW STUDENT",
+      "abbrev": "",
+      "mcc": "J9U",
+      "address": "PO BOX 452042\nMCAS MIRAMAR CA 92145-2042",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "VMFAT-501 MAG-31 2D MAW",
+      "abbrev": "",
+      "mcc": "1TN",
+      "address": "PO BOX 66051\nBEAUFORT SC 29904-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "VMFAT-502 MAG-11 3D MAW",
+      "abbrev": "",
+      "mcc": "1TQ",
+      "address": "PO BOX 452039\nMCAS MIRAMAR CA 92145-2039",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "VMMT-204 MAG-26 2D MAW",
+      "abbrev": "",
+      "mcc": "1T3",
+      "address": "PSC BOX 21018\nMCAS NEW RIVER NC 28545-1018",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "WHITE HOUSE MILITARY OFFICE",
+      "abbrev": "",
+      "mcc": "NB5",
+      "address": "WHITE HOUSE EAST WING RM 102\nWASHINGTON DC 20502-0000",
+      "type": "unit",
+      "service": "usmc"
+    },
+    {
+      "name": "WPNS TRNG BN TRNG COM QUANTICO VA",
+      "abbrev": "",
+      "mcc": "UAN",
+      "address": "27211 GARAND RD\nQUANTICO VA 22134-5036",
+      "type": "unit",
+      "service": "usmc"
     }
   ]
 }

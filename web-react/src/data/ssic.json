@@ -1,7 +1,7 @@
 {
-  "source": "SECNAV M-5210.2 (August 2018) with supplementary codes",
-  "version": "4.0",
-  "lastUpdated": "2026-01-04",
+  "source": "SECNAV M-5210.2 (August 2018) merged with naval-letter-formatter",
+  "version": "2.0",
+  "lastUpdated": "2026-01-05",
   "notes": "Contains codes from SECNAV M-5210.2, naval-letter-formatter, and competitor databases",
   "codes": [
     {

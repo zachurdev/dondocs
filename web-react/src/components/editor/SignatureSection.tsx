@@ -22,6 +22,7 @@ import { Upload, X, FileImage, PenLine, Shield, Type } from 'lucide-react';
 import { useDocumentStore } from '@/stores/documentStore';
 import type { DocTypeConfig, SignatureImage, SignatureType } from '@/types/document';
 import { ALL_SERVICE_RANKS, formatRank } from '@/data/ranks';
+import { OFFICE_CODES, getOfficeCodesByCategory } from '@/data/officeCodes';
 
 // Convert ArrayBuffer to base64
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
@@ -259,6 +260,40 @@ export function SignatureSection({ config: _config }: SignatureSectionProps) {
                   />
                 </div>
               </div>
+            </div>
+
+            {/* Office Code */}
+            <div className="space-y-2">
+              <Label htmlFor="officeCode">Office Code (Optional)</Label>
+              <Select
+                value={formData.officeCode || ''}
+                onValueChange={(v) => setField('officeCode', v === 'none' ? '' : v)}
+              >
+                <SelectTrigger id="officeCode">
+                  <SelectValue placeholder="Select office code..." />
+                </SelectTrigger>
+                <SelectContent className="max-h-[300px]">
+                  <SelectItem value="none">None</SelectItem>
+                  {getOfficeCodesByCategory().map((category) => (
+                    <SelectGroup key={category.name}>
+                      <SelectLabel className="font-bold text-primary">
+                        {category.name}
+                      </SelectLabel>
+                      {category.codes.map((code) => (
+                        <SelectItem key={code.code} value={code.code}>
+                          <span className="flex items-center gap-2">
+                            <span className="font-mono text-xs w-16">{code.code}</span>
+                            <span className="text-muted-foreground">- {code.title}</span>
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                {OFFICE_CODES.length} office codes available (e.g., S-1, G-3, CO, XO)
+              </p>
             </div>
 
             {/* By Direction */}
