@@ -72,7 +72,7 @@ export function AddressingSection({ config }: AddressingSectionProps) {
               {/* SSIC / Serial / Date */}
               {config.ssic && (
                 <>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="ssic">SSIC</Label>
                     <div className="flex gap-1">
@@ -139,7 +139,7 @@ export function AddressingSection({ config }: AddressingSectionProps) {
 
             {/* From / To */}
             {config.fromTo && (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="from">From</Label>
                   <InputWithVariables

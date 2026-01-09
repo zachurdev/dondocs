@@ -138,8 +138,8 @@ export function SignatureSection({ config }: SignatureSectionProps) {
         <AccordionContent>
           <div className="space-y-4 pt-2">
             {/* Name fields */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4">
+              <div className="space-y-2 col-span-2 sm:col-span-1">
                 <Label htmlFor="sigFirst">First Name</Label>
                 <Input
                   id="sigFirst"
@@ -158,7 +158,7 @@ export function SignatureSection({ config }: SignatureSectionProps) {
                   maxLength={3}
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-3 sm:col-span-1">
                 <Label htmlFor="sigLast">Last Name</Label>
                 <Input
                   id="sigLast"
@@ -199,7 +199,7 @@ export function SignatureSection({ config }: SignatureSectionProps) {
                   Civilian / Other
                 </Button>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="sigRank">Rank / Title</Label>
                   {useCustomRank ? (
@@ -263,7 +263,7 @@ export function SignatureSection({ config }: SignatureSectionProps) {
             </div>
 
             {/* Office Code + POC Email on same row */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-2">
                 <Label htmlFor="officeCode">Office Code</Label>
                 <Select

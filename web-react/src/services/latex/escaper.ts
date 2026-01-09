@@ -53,6 +53,9 @@ export function escapeLatexUrl(url: string | undefined | null): string {
  * **bold** -> \textbf{bold}
  * *italic* -> \textit{italic}
  * __underline__ -> \underline{underline}
+ * Enclosure (1) -> \enclref{1} (clickable link when hyperlinks enabled)
+ * enclosure (1) -> \enclref{1}
+ * Encl (1) -> \enclref{1}
  */
 export function convertRichTextToLatex(text: string): string {
   let result = text;
@@ -65,6 +68,16 @@ export function convertRichTextToLatex(text: string): string {
 
   // Underline: __text__
   result = result.replace(/__(.+?)__/g, '\\underline{$1}');
+
+  // Enclosure references: "Enclosure (1)", "enclosure (1)", "Encl (1)", "encl (1)"
+  // These get converted to \enclref{1} which creates clickable hyperlinks when enabled
+  result = result.replace(/[Ee]nclosure\s*\((\d+)\)/g, '\\enclref{$1}');
+  result = result.replace(/[Ee]ncl\s*\((\d+)\)/g, '\\enclref{$1}');
+
+  // Also support "reference (a)" -> \ref{a} for document references
+  // Note: \ref{} in our LaTeX template creates clickable links to references
+  result = result.replace(/[Rr]eference\s*\(([a-zA-Z])\)/g, '\\reflink{$1}');
+  result = result.replace(/[Rr]ef\s*\(([a-zA-Z])\)/g, '\\reflink{$1}');
 
   return result;
 }

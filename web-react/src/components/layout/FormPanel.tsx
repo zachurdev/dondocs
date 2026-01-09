@@ -21,12 +21,12 @@ export function FormPanel() {
   const isMOAMode = config.uiMode === 'moa';
 
   return (
-    <div className="flex flex-col h-full border-r border-border bg-card overflow-hidden">
+    <div className="flex flex-col h-full border-r border-border bg-card overflow-hidden w-full">
       <ProfileBar />
 
       <div className="flex-1 min-h-0 overflow-hidden">
         <ScrollArea className="h-full">
-          <div className="p-density-4 space-y-density-6">
+          <div className="p-3 sm:p-density-4 space-y-density-6 max-w-full overflow-x-hidden">
           <DocumentTypeSelector />
 
           {isMOAMode ? (

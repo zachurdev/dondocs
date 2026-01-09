@@ -798,6 +798,21 @@
 }
 \makeatother
 
+% Reference link for body text: "reference (a)" becomes clickable when hyperlinks enabled
+\makeatletter
+\newcommand{\reflink}[1]{%
+    \ifhyperlinks
+        \@ifundefined{ref@url@#1}{%
+            reference~(#1)%
+        }{%
+            \href{\csname ref@url@#1\endcsname}{\textcolor{blue}{reference~(#1)}}%
+        }%
+    \else
+        reference~(#1)%
+    \fi
+}
+\makeatother
+
 % SECNAV M-5216.5 Ch 7, Para 10.c: 4 spaces after "Ref:"
 % Only print if hasrefs flag is set (by flags.tex)
 \newcommand{\printReferences}{%

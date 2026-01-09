@@ -51,25 +51,44 @@ export function LetterheadSection() {
           <AccordionTrigger>Letterhead</AccordionTrigger>
           <AccordionContent>
             <div className="space-y-4 pt-2">
-              {/* Seal Type + Department/Service + Browse Units on same row */}
-              <div className="flex items-end gap-3">
-                <div className="space-y-2 w-32 flex-shrink-0">
-                  <Label>Seal</Label>
-                  <Select
-                    value={formData.sealType || 'dod'}
-                    onValueChange={(v) => setField('sealType', v)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="dod">DoD</SelectItem>
-                      <SelectItem value="dow">DoW</SelectItem>
-                    </SelectContent>
-                  </Select>
+              {/* Seal Type + Department/Service + Browse Units - responsive layout */}
+              <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-0">
+                  <div className="space-y-2 sm:w-28">
+                    <Label>Seal</Label>
+                    <Select
+                      value={formData.sealType || 'dod'}
+                      onValueChange={(v) => setField('sealType', v)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="dod">DoD</SelectItem>
+                        <SelectItem value="dow">DoW</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2 sm:hidden">
+                    <Label>Department</Label>
+                    <Select
+                      value={formData.department || 'usmc'}
+                      onValueChange={(v) => setField('department', v)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="usmc">USMC</SelectItem>
+                        <SelectItem value="navy">Navy</SelectItem>
+                        <SelectItem value="dod">DoD</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
-                <div className="space-y-2 flex-1">
+                <div className="space-y-2 flex-1 hidden sm:block">
                   <Label>Department / Service</Label>
                   <Select
                     value={formData.department || 'usmc'}
@@ -91,7 +110,7 @@ export function LetterheadSection() {
                   variant="outline"
                   size="default"
                   onClick={() => setUnitModalOpen(true)}
-                  className="gap-2 flex-shrink-0"
+                  className="gap-2 w-full sm:w-auto"
                 >
                   <Building2 className="h-4 w-4" />
                   Browse Units
