@@ -133,7 +133,7 @@ WEB_DIR = web-react
 # Start development server (default: http://localhost:5173)
 #-----------------------------------------------------------------------------
 .PHONY: dev
-dev:
+dev: web-install
 	@echo "Starting development server..."
 	cd $(WEB_DIR) && npm run dev
 
@@ -141,7 +141,7 @@ dev:
 # Build web app for production
 #-----------------------------------------------------------------------------
 .PHONY: web-build
-web-build:
+web-build: web-install
 	@echo "Building web application..."
 	cd $(WEB_DIR) && npm run build
 	@echo "Build complete! Output in $(WEB_DIR)/dist/"
@@ -159,14 +159,14 @@ web-install:
 # Run linter
 #-----------------------------------------------------------------------------
 .PHONY: lint
-lint:
+lint: web-install
 	cd $(WEB_DIR) && npm run lint
 
 #-----------------------------------------------------------------------------
 # Preview production build locally
 #-----------------------------------------------------------------------------
 .PHONY: preview
-preview:
+preview: web-build
 	cd $(WEB_DIR) && npm run preview
 
 #-----------------------------------------------------------------------------
