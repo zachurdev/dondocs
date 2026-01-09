@@ -20,9 +20,9 @@ export function DocumentTypeSelector() {
   const isCompliant = documentMode === 'compliant';
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-density-4">
       {/* Mode Toggle */}
-      <div className="flex gap-2">
+      <div className="flex gap-density-2">
         <Button
           variant={isCompliant ? 'default' : 'outline'}
           size="sm"
@@ -44,7 +44,7 @@ export function DocumentTypeSelector() {
       </div>
 
       {/* Mode description */}
-      <div className={`text-xs p-2 rounded-md border ${isCompliant ? 'bg-primary/5 border-primary/20 text-primary' : 'bg-secondary/30 border-border text-muted-foreground'}`}>
+      <div className={`text-density-sm p-density-2 rounded-md border ${isCompliant ? 'bg-primary/5 border-primary/20 text-primary' : 'bg-secondary/30 border-border text-muted-foreground'}`}>
         {isCompliant ? (
           <>Strictly adheres to SECNAV M-5216.5 formatting requirements.</>
         ) : (
@@ -89,7 +89,7 @@ export function DocumentTypeSelector() {
 
       {/* Font settings - only show in custom mode */}
       {!isCompliant && (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-density-4">
           <div className="space-y-2">
             <Label>Font Size</Label>
             <Select

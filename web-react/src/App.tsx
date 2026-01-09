@@ -12,6 +12,7 @@ import { FindReplaceModal } from '@/components/modals/FindReplaceModal';
 import { TemplateLoaderModal } from '@/components/modals/TemplateLoaderModal';
 import { WelcomeModal } from '@/components/modals/WelcomeModal';
 import { PIIWarningModal } from '@/components/modals/PIIWarningModal';
+import { LogViewerModal } from '@/components/modals/LogViewerModal';
 import { useUIStore } from '@/stores/uiStore';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useHistoryStore } from '@/stores/historyStore';
@@ -48,6 +49,7 @@ function getClassificationInfo(classLevel: string | undefined): ClassificationIn
 function App() {
   const {
     theme,
+    density,
     setIsMobile,
     setFindReplaceOpen,
     setPiiWarningOpen,
@@ -76,6 +78,11 @@ function App() {
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
+
+  // Apply density to document
+  useEffect(() => {
+    document.documentElement.dataset.density = density;
+  }, [density]);
 
   // Detect mobile
   useEffect(() => {
@@ -608,6 +615,7 @@ ${texFiles['body.tex'] || '% No body content'}
         onCancel={handleCancelPIIDownload}
         onProceed={handleProceedWithPII}
       />
+      <LogViewerModal />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, type ChangeEvent } from 'react';
-import { Moon, Sun, Download, FileText, RefreshCw, Github, Bug, Save, RotateCcw, Shield, HelpCircle, Info, Layers, FolderOpen, Search, Keyboard, Menu, FileDown, FileUp } from 'lucide-react';
+import { Moon, Sun, Download, FileText, RefreshCw, Github, Bug, Save, RotateCcw, Shield, HelpCircle, Info, Layers, FolderOpen, Search, Keyboard, Menu, FileDown, FileUp, ScrollText, SlidersHorizontal, Minimize2, Maximize2, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -25,6 +25,8 @@ import {
 } from '@/components/ui/popover';
 import { useUIStore } from '@/stores/uiStore';
 import { useDocumentStore } from '@/stores/documentStore';
+import { uint8ArrayToBase64, base64ToUint8Array, arrayBufferToUint8Array } from '@/lib/encoding';
+import { useLogStore } from '@/stores/logStore';
 
 interface HeaderProps {
   onDownloadPdf?: () => void;
@@ -45,7 +47,7 @@ export function Header({
   onRefreshPreview,
   isCompiling,
 }: HeaderProps) {
-  const { theme, toggleTheme, autoSaveStatus, setAboutModalOpen, setNistModalOpen, setBatchModalOpen, setTemplateLoaderOpen, setFindReplaceOpen } = useUIStore();
+  const { theme, toggleTheme, density, setDensity, autoSaveStatus, setAboutModalOpen, setNistModalOpen, setBatchModalOpen, setTemplateLoaderOpen, setFindReplaceOpen } = useUIStore();
   const documentStore = useDocumentStore();
   const { resetForm } = useDocumentStore();
   const [showResetDialog, setShowResetDialog] = useState(false);
@@ -134,7 +136,8 @@ export function Header({
           file: encl.file ? {
             name: encl.file.name,
             size: encl.file.size,
-            data: encl.file.data, // base64 encoded
+            // Convert ArrayBuffer to base64 for JSON serialization
+            data: uint8ArrayToBase64(arrayBufferToUint8Array(encl.file.data)),
           } : null,
         })),
         paragraphs: documentStore.paragraphs,
@@ -209,7 +212,8 @@ export function Header({
             file: encl.file ? {
               name: encl.file.name,
               size: encl.file.size,
-              data: encl.file.data,
+              // Convert base64 back to ArrayBuffer
+              data: base64ToUint8Array(encl.file.data).buffer as ArrayBuffer,
             } : undefined,
           })) || [],
           paragraphs: data.paragraphs?.map((para: { text: string; level?: number; portionMarking?: string }) => ({
@@ -235,7 +239,7 @@ export function Header({
   }, [documentStore]);
 
   return (
-    <header className="border-b border-border bg-card px-2 sm:px-4 py-2 sm:py-3">
+    <header className="border-b border-border bg-card px-density-2 sm:px-density-4 py-density-2 sm:py-density-3">
       {/* Hidden file input for importing drafts */}
       <input
         type="file"
@@ -397,6 +401,17 @@ export function Header({
               <Bug className="h-4 w-4" />
             </Button>
 
+            {/* Log Viewer */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => useLogStore.getState().setOpen(true)}
+              title="View Logs"
+              className="h-8 w-8"
+            >
+              <ScrollText className="h-4 w-4" />
+            </Button>
+
             {/* Keyboard Shortcuts */}
             <Popover>
               <PopoverTrigger asChild>
@@ -447,6 +462,38 @@ export function Header({
             </Button>
           </div>
 
+          {/* Density toggle */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" title="Display density" className="h-8 w-8 sm:h-9 sm:w-9">
+                <SlidersHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setDensity('compact')} className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Minimize2 className="h-4 w-4 mr-2" />
+                  Compact
+                </div>
+                {density === 'compact' && <Check className="h-4 w-4 ml-2" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setDensity('comfortable')} className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <SlidersHorizontal className="h-4 w-4 mr-2" />
+                  Comfortable
+                </div>
+                {density === 'comfortable' && <Check className="h-4 w-4 ml-2" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setDensity('spacious')} className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Maximize2 className="h-4 w-4 mr-2" />
+                  Spacious
+                </div>
+                {density === 'spacious' && <Check className="h-4 w-4 ml-2" />}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           {/* Theme toggle - always visible */}
           <Button variant="ghost" size="icon" onClick={toggleTheme} title="Toggle theme" className="h-8 w-8 sm:h-9 sm:w-9">
             {theme === 'dark' ? (
@@ -494,13 +541,39 @@ export function Header({
                 <Bug className="h-4 w-4 mr-2" />
                 Report a Bug
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => useLogStore.getState().setOpen(true)}>
+                <ScrollText className="h-4 w-4 mr-2" />
+                View Logs
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setDensity('compact')} className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Minimize2 className="h-4 w-4 mr-2" />
+                  Compact
+                </div>
+                {density === 'compact' && <Check className="h-4 w-4" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setDensity('comfortable')} className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <SlidersHorizontal className="h-4 w-4 mr-2" />
+                  Comfortable
+                </div>
+                {density === 'comfortable' && <Check className="h-4 w-4" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setDensity('spacious')} className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Maximize2 className="h-4 w-4 mr-2" />
+                  Spacious
+                </div>
+                {density === 'spacious' && <Check className="h-4 w-4" />}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
 
       <div className="mt-2 text-xs text-muted-foreground bg-secondary/50 px-2 py-1 rounded inline-block hidden sm:inline-block">
-        All data stays local in your browser. Nothing is sent to any server.
+        All data stays in your browser session. Nothing is sent to any server.
       </div>
 
       {/* Reset confirmation dialog */}

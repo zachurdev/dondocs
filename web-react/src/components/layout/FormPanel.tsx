@@ -26,7 +26,7 @@ export function FormPanel() {
 
       <div className="flex-1 min-h-0 overflow-hidden">
         <ScrollArea className="h-full">
-          <div className="p-4 space-y-6">
+          <div className="p-density-4 space-y-density-6">
           <DocumentTypeSelector />
 
           {isMOAMode ? (

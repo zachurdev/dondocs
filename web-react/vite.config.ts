@@ -156,7 +156,6 @@ function texliveMiddleware(): Plugin {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), texliveMiddleware()],
-  // GitHub Pages base path - update if repo name changes
   base: '/libo-secured/',
   server: {
     // Allow ngrok and other tunnel services

@@ -1,11 +1,17 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export type DensityMode = 'compact' | 'comfortable' | 'spacious';
+
 interface UIState {
   // Theme
   theme: 'dark' | 'light';
   toggleTheme: () => void;
   setTheme: (theme: 'dark' | 'light') => void;
+
+  // Density
+  density: DensityMode;
+  setDensity: (density: DensityMode) => void;
 
   // Preview panel
   previewVisible: boolean;
@@ -55,6 +61,10 @@ export const useUIStore = create<UIState>()(
         theme: state.theme === 'dark' ? 'light' : 'dark',
       })),
       setTheme: (theme) => set({ theme }),
+
+      // Density - default comfortable
+      density: 'comfortable',
+      setDensity: (density) => set({ density }),
 
       // Preview - hidden by default
       previewVisible: false,
@@ -110,6 +120,7 @@ export const useUIStore = create<UIState>()(
       name: 'libo_ui',
       partialize: (state) => ({
         theme: state.theme,
+        density: state.density,
         previewVisible: state.previewVisible,
       }),
     }
