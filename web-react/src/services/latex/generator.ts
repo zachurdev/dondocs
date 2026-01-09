@@ -341,7 +341,7 @@ export function generateCopyToTex(store: DocumentStore): string {
 % Count: ${store.copyTos.length} recipients
 %=============================================================================
 
-\\setCopyTo
+\\setHasCopyTo
 ${store.copyTos.map((ct, i) => `\\copytoentry{${i + 1}}{${escapeLatex(ct.text)}}`).join('\n')}
 `;
 }

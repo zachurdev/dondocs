@@ -104,17 +104,17 @@ const DEFAULT_FORM_DATA: Partial<DocumentData> = {
   via: 'Commanding Officer, 6th Marine Regiment',
   subject: 'AFTER ACTION REPORT FOR EXERCISE STEEL KNIGHT 25-1',
   // Signature
-  sigFirst: 'James',
-  sigMiddle: 'R',
-  sigLast: 'MITCHELL',
+  sigFirst: 'John',
+  sigMiddle: 'A',
+  sigLast: 'DOE',
   sigRank: 'Lieutenant Colonel',
   sigTitle: 'Commanding Officer',
   officeCode: 'S-3',
-  byDirection: false,
-  byDirectionAuthority: '',
+  byDirection: true,
+  byDirectionAuthority: 'J. A. DOE',
   // Classification
   classLevel: 'unclassified',
-  pocEmail: 'james.mitchell@usmc.mil',
+  pocEmail: 'john.doe@usmc.mil',
   // Hyperlinks - default to OFF (no hyperlinks)
   includeHyperlinks: false,
 };
@@ -155,7 +155,7 @@ const DEFAULT_PARAGRAPHS: Paragraph[] = [
   { text: 'Equipment Status. Post-exercise equipment accountability and status is documented in enclosure (3). Of note, three High Mobility Multipurpose Wheeled Vehicles required unscheduled maintenance during the exercise but were returned to operational status within 24 hours by organic maintenance assets. Overall equipment readiness remained above 90 percent throughout the exercise.', level: 0 },
   { text: 'Lessons Learned. A comprehensive compilation of lessons learned is provided in enclosure (4). Key takeaways include the importance of realistic pre-exercise scenario development, the value of embedding observer-controllers at the squad level, and the benefit of conducting a thorough after action review at each echelon before consolidating findings.', level: 0 },
   { text: 'Recommendation. Based on the results of Exercise Steel Knight 25-1, 1st Battalion, 6th Marines is assessed as combat ready and prepared for the upcoming deployment. Recommend the battalion be certified for deployment in accordance with reference (d). Additionally, recommend lessons learned from this exercise be incorporated into the training plans for follow-on battalions in the deployment cycle.', level: 0 },
-  { text: 'Point of Contact. Point of contact for this matter is the undersigned or Major T.J. Henderson, Battalion Operations Officer, at (910) 451-2847 or thomas.henderson@usmc.mil.', level: 0 },
+  { text: 'Point of Contact. Point of contact for this matter is the undersigned or Major J.Q. Smith, Battalion Operations Officer, at (910) 451-0001 or jane.smith@usmc.mil.', level: 0 },
 ];
 
 export const useDocumentStore = create<DocumentState>((set, get) => ({
@@ -165,7 +165,11 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
   references: [...DEFAULT_REFERENCES],
   enclosures: [...DEFAULT_ENCLOSURES],
   paragraphs: [...DEFAULT_PARAGRAPHS],
-  copyTos: [{ text: 'G-3/5' }],
+  copyTos: [
+    { text: 'G-3/5' },
+    { text: 'G-4' },
+    { text: 'Regimental S-3' },
+  ],
 
   setDocumentMode: (mode) => set((state) => {
     if (mode === 'compliant') {
@@ -214,7 +218,11 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
     references: [...DEFAULT_REFERENCES],
     enclosures: [...DEFAULT_ENCLOSURES],
     paragraphs: [...DEFAULT_PARAGRAPHS],
-    copyTos: [{ text: 'G-3/5' }],
+    copyTos: [
+      { text: 'G-3/5' },
+      { text: 'G-4' },
+      { text: 'Regimental S-3' },
+    ],
   }),
 
   // References
