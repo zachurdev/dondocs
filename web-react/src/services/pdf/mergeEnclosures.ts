@@ -50,14 +50,31 @@ function updateHyperlinkDestinations(pdfDoc: PDFDocument): void {
   const pages = pdfDoc.getPages();
   let updatedCount = 0;
   let linkCount = 0;
+  let totalAnnots = 0;
+
+  console.log(`[hyperlinks] PDF has ${pages.length} pages`);
 
   // Iterate through all pages to find link annotations
   for (let pageIdx = 0; pageIdx < pages.length; pageIdx++) {
     const page = pages[pageIdx];
+    const annotsRaw = page.node.get(PDFName.of('Annots'));
     const annots = page.node.lookup(PDFName.of('Annots'));
-    if (!annots || !(annots instanceof PDFArray)) continue;
+
+    if (annotsRaw) {
+      console.log(`[hyperlinks] Page ${pageIdx + 1} has Annots (raw): ${annotsRaw.constructor.name}`);
+    }
+
+    if (!annots) {
+      continue;
+    }
+
+    if (!(annots instanceof PDFArray)) {
+      console.log(`[hyperlinks] Page ${pageIdx + 1} Annots is not PDFArray: ${annots.constructor.name}`);
+      continue;
+    }
 
     console.log(`[hyperlinks] Page ${pageIdx + 1} has ${annots.size()} annotations`);
+    totalAnnots += annots.size();
 
     // Check each annotation
     for (let i = 0; i < annots.size(); i++) {
@@ -135,7 +152,7 @@ function updateHyperlinkDestinations(pdfDoc: PDFDocument): void {
     }
   }
 
-  console.log(`[hyperlinks] Found ${linkCount} link annotations, updated ${updatedCount}`);
+  console.log(`[hyperlinks] Total annotations: ${totalAnnots}, link annotations: ${linkCount}, updated: ${updatedCount}`);
 
   // Clear for next use
   enclosurePageMap.clear();
