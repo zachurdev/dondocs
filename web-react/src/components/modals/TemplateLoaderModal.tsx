@@ -239,7 +239,7 @@ const LETTER_TEMPLATES: LetterTemplate[] = [
     paragraphs: [
       { text: 'Recommendation. Per references (a) and (b), [RANK FULL NAME] is recommended for the Navy and Marine Corps Achievement Medal for meritorious [service/achievement] while serving as [BILLET TITLE], [UNIT NAME], from [START DATE] to [END DATE].', level: 0 },
       { text: 'Background. [Provide context about the Marine\'s duties and responsibilities during the award period.]', level: 0 },
-      { text: 'Justification. [Describe specific achievements that warrant recognition. Use quantifiable metrics where possible. Focus on actions that exceeded normal expectations. Examples: led X Marines, trained X personnel, saved $X, improved readiness by X%, etc.]', level: 0 },
+      { text: 'Justification. [Describe specific achievements that warrant recognition. Use quantifiable metrics where possible. Focus on actions that exceeded normal expectations. Examples: led X Marines, trained X personnel, saved X dollars, improved readiness by X percent, etc.]', level: 0 },
       { text: 'Impact. [Explain the positive impact these achievements had on unit readiness, mission accomplishment, or Marine Corps operations.]', level: 0 },
       { text: 'Point of Contact. Point of contact for this matter is the undersigned at (415) 555-1776 / j.doe@usmc.mil.', level: 0 },
     ],
@@ -531,7 +531,7 @@ const LETTER_TEMPLATES: LetterTemplate[] = [
     subject: 'SERVICEMEMBERS\' GROUP LIFE INSURANCE (SGLI) BENEFICIARY UPDATE',
     paragraphs: [
       { text: 'Purpose. Per reference (a), this letter confirms my election to update my SGLI beneficiary designation.', level: 0 },
-      { text: 'Coverage. I currently maintain SGLI coverage in the amount of $[AMOUNT]. I have elected to [maintain/increase/decrease] my coverage to $[AMOUNT].', level: 0 },
+      { text: 'Coverage. I currently maintain SGLI coverage in the amount of [AMOUNT]. I have elected to [maintain/increase/decrease] my coverage to [AMOUNT].', level: 0 },
       { text: 'Beneficiary Designation. Enclosure (1) is my updated SGLV 8286 designating my beneficiaries as indicated therein.', level: 0 },
       { text: 'Acknowledgment. I understand this designation supersedes all previous beneficiary designations and will remain in effect until modified or revoked by me in writing.', level: 0 },
     ],

@@ -126,11 +126,7 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
   references: [],
   enclosures: [],
   paragraphs: [
-    { text: '{{RANK_NAME_1}} is hereby recommended for meritorious promotion to the rank of {{RANK_2}} effective {{DATE}}.', level: 0 },
-    { text: 'This Marine has demonstrated exceptional performance in the following areas:', level: 0 },
-    { text: 'Leadership. {{LAST_NAME_1}} has consistently demonstrated superior leadership abilities as {{BILLET_1}}, mentoring junior Marines and setting the standard for professionalism.', level: 1 },
-    { text: 'Technical Proficiency. Maintains expert-level knowledge of MOS {{MOS_1}} skills and regularly assists in training fellow Marines.', level: 1 },
-    { text: 'This example demonstrates how to use batch variables. Click the **Batch** button in the header to generate multiple documents with different values for each {{NAME_1}}.', level: 0 },
+    { text: '', level: 0 },
   ],
   copyTos: [],
 
