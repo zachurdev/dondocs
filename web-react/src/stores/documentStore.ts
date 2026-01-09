@@ -95,40 +95,77 @@ const DEFAULT_FORM_DATA: Partial<DocumentData> = {
   unitAddress: 'PSC BOX 20123, CAMP LEJEUNE, NC 28542-0123',
   sealType: 'dod',
   // Document identification
-  ssic: '5216',
-  serial: '001',
+  ssic: '3502',
+  serial: '0847',
   date: formatMilitaryDate(new Date()),
   // Addressing
   from: 'Commanding Officer, 1st Battalion, 6th Marines',
-  to: '{{RANK_NAME_1}}',
-  via: '',
-  subject: 'MERITORIOUS PROMOTION OF {{RANK_NAME_1}} TO {{RANK_2}}',
+  to: 'Commanding General, 2d Marine Division',
+  via: 'Commanding Officer, 6th Marine Regiment',
+  subject: 'AFTER ACTION REPORT FOR EXERCISE STEEL KNIGHT 25-1',
   // Signature
-  sigFirst: 'John',
-  sigMiddle: 'M',
-  sigLast: 'DOE',
+  sigFirst: 'James',
+  sigMiddle: 'R',
+  sigLast: 'MITCHELL',
   sigRank: 'Lieutenant Colonel',
   sigTitle: 'Commanding Officer',
-  officeCode: '',
+  officeCode: 'S-3',
   byDirection: false,
   byDirectionAuthority: '',
   // Classification
   classLevel: 'unclassified',
-  pocEmail: 'john.doe@usmc.mil',
+  pocEmail: 'james.mitchell@usmc.mil',
   // Hyperlinks - default to OFF (no hyperlinks)
   includeHyperlinks: false,
 };
+
+// Default references for example document
+const DEFAULT_REFERENCES: Reference[] = [
+  { letter: 'a', title: 'MCO 3502.6A', url: '' },
+  { letter: 'b', title: 'MCRP 3-30B.1 Ground Combat Operations', url: '' },
+  { letter: 'c', title: '2d MarDiv FRAGO 25-0147 dtd 15 Nov 25', url: '' },
+  { letter: 'd', title: 'MCO 3500.27C', url: '' },
+];
+
+// Default enclosures for example document
+const DEFAULT_ENCLOSURES: Enclosure[] = [
+  { title: 'Exercise Timeline and Scheme of Maneuver' },
+  { title: 'Casualty Summary and Medical Evacuation Report' },
+  { title: 'Ammunition Expenditure Report' },
+  { title: 'Lessons Learned Compilation' },
+];
+
+// Default paragraphs for example document (two pages of content)
+const DEFAULT_PARAGRAPHS: Paragraph[] = [
+  { text: 'Purpose. Per reference (a), this letter provides the after action report for Exercise Steel Knight 25-1, conducted from 3-17 December 2025 in the Camp Lejeune Training Areas.', level: 0 },
+  { text: 'Background. Exercise Steel Knight 25-1 was a battalion-level combined arms exercise designed to validate the combat readiness of 1st Battalion, 6th Marines in preparation for the upcoming deployment cycle. The exercise incorporated live-fire ranges, force-on-force training, and simulated combat operations against a near-peer adversary in accordance with reference (b).', level: 0 },
+  { text: 'Execution Summary. The exercise was executed in three distinct phases over the 14-day training period:', level: 0 },
+  { text: 'Phase I (3-6 December): Pre-deployment preparation and equipment staging. All companies completed pre-exercise certifications including weapons qualification, communications checks, and medical readiness verification. The battalion achieved 97 percent personnel readiness and 94 percent equipment operational status.', level: 1 },
+  { text: 'Phase II (7-12 December): Main force-on-force operations. The battalion conducted offensive and defensive operations against the 2d Light Armored Reconnaissance Battalion acting as opposing force. Key events included a battalion attack on a simulated enemy defensive position, a deliberate defense against mechanized assault, and a 48-hour sustained operations period testing unit endurance and logistics support.', level: 1 },
+  { text: 'Phase III (13-17 December): Live-fire combined arms training. Companies rotated through Range G-10 for platoon-level combined arms live-fire exercises, integrating organic weapons systems with supporting arms including 81mm mortars, artillery, and close air support.', level: 1 },
+  { text: 'Assessment. Overall, 1st Battalion, 6th Marines demonstrated a high level of tactical proficiency and combat readiness throughout Exercise Steel Knight 25-1. The following areas were assessed:', level: 0 },
+  { text: 'Tactical Proficiency. The battalion demonstrated excellent small unit tactics and fire team coordination during force-on-force operations. Squad leaders showed marked improvement in their ability to conduct fire and maneuver under simulated combat stress. Company commanders effectively synchronized maneuver elements with supporting fires.', level: 1 },
+  { text: 'Command and Control. Battalion and company command posts maintained effective communications throughout the exercise. The tactical operations center successfully tracked and coordinated all subordinate elements during the 48-hour sustained operations period. Radio discipline was maintained at all levels.', level: 1 },
+  { text: 'Logistics Support. Combat logistics support performed exceptionally well under demanding conditions. The battalion logistics officer coordinated timely resupply of ammunition, fuel, and rations throughout all phases. Medical evacuation procedures were tested and validated with zero simulated casualties exceeding doctrinal evacuation timelines.', level: 1 },
+  { text: 'Fire Support Coordination. Integration of supporting arms was executed in accordance with reference (b). Forward observers demonstrated proficiency in calling for and adjusting indirect fires. No safety violations occurred during live-fire events.', level: 1 },
+  { text: 'Areas for Improvement. The following areas have been identified for continued emphasis and training:', level: 0 },
+  { text: 'Night Operations. While overall night operations proficiency was satisfactory, several squads experienced difficulty maintaining tactical dispersion during limited visibility movement. Recommend increased emphasis on night land navigation and movement techniques during pre-deployment training.', level: 1 },
+  { text: 'Casualty Evacuation. Although no evacuation timeline standards were exceeded, the medical section identified opportunities to improve casualty collection point procedures and communication between aid stations and the battalion aid station.', level: 1 },
+  { text: 'Electronic Warfare Considerations. The battalion experienced simulated electronic attack during Phase II operations that degraded communications capabilities. Units demonstrated inconsistent ability to transition to alternate communication methods. This area requires additional training focus.', level: 1 },
+  { text: 'Equipment Status. Post-exercise equipment accountability and status is documented in enclosure (3). Of note, three High Mobility Multipurpose Wheeled Vehicles required unscheduled maintenance during the exercise but were returned to operational status within 24 hours by organic maintenance assets. Overall equipment readiness remained above 90 percent throughout the exercise.', level: 0 },
+  { text: 'Lessons Learned. A comprehensive compilation of lessons learned is provided in enclosure (4). Key takeaways include the importance of realistic pre-exercise scenario development, the value of embedding observer-controllers at the squad level, and the benefit of conducting a thorough after action review at each echelon before consolidating findings.', level: 0 },
+  { text: 'Recommendation. Based on the results of Exercise Steel Knight 25-1, 1st Battalion, 6th Marines is assessed as combat ready and prepared for the upcoming deployment. Recommend the battalion be certified for deployment in accordance with reference (d). Additionally, recommend lessons learned from this exercise be incorporated into the training plans for follow-on battalions in the deployment cycle.', level: 0 },
+  { text: 'Point of Contact. Point of contact for this matter is the undersigned or Major T.J. Henderson, Battalion Operations Officer, at (910) 451-2847 or thomas.henderson@usmc.mil.', level: 0 },
+];
 
 export const useDocumentStore = create<DocumentState>((set, get) => ({
   documentMode: 'compliant',
   docType: 'naval_letter',
   formData: { ...DEFAULT_FORM_DATA },
-  references: [],
-  enclosures: [],
-  paragraphs: [
-    { text: '', level: 0 },
-  ],
-  copyTos: [],
+  references: [...DEFAULT_REFERENCES],
+  enclosures: [...DEFAULT_ENCLOSURES],
+  paragraphs: [...DEFAULT_PARAGRAPHS],
+  copyTos: [{ text: 'G-3/5' }],
 
   setDocumentMode: (mode) => set((state) => {
     if (mode === 'compliant') {
@@ -174,10 +211,10 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
   resetForm: () => set({
     docType: 'naval_letter',
     formData: { ...DEFAULT_FORM_DATA },
-    references: [],
-    enclosures: [],
-    paragraphs: [{ text: '', level: 0 }],
-    copyTos: [],
+    references: [...DEFAULT_REFERENCES],
+    enclosures: [...DEFAULT_ENCLOSURES],
+    paragraphs: [...DEFAULT_PARAGRAPHS],
+    copyTos: [{ text: 'G-3/5' }],
   }),
 
   // References
