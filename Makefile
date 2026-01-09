@@ -122,6 +122,62 @@ view:
 .PHONY: rebuild
 rebuild: clean pdf
 
+#=============================================================================
+# WEB APPLICATION (React)
+#=============================================================================
+
+# Web directory
+WEB_DIR = web-react
+
+#-----------------------------------------------------------------------------
+# Start development server (default: http://localhost:5173)
+#-----------------------------------------------------------------------------
+.PHONY: dev
+dev:
+	@echo "Starting development server..."
+	cd $(WEB_DIR) && npm run dev
+
+#-----------------------------------------------------------------------------
+# Build web app for production
+#-----------------------------------------------------------------------------
+.PHONY: web-build
+web-build:
+	@echo "Building web application..."
+	cd $(WEB_DIR) && npm run build
+	@echo "Build complete! Output in $(WEB_DIR)/dist/"
+
+#-----------------------------------------------------------------------------
+# Install web dependencies
+#-----------------------------------------------------------------------------
+.PHONY: web-install
+web-install:
+	@echo "Installing web dependencies..."
+	cd $(WEB_DIR) && npm install
+	@echo "Dependencies installed."
+
+#-----------------------------------------------------------------------------
+# Run linter
+#-----------------------------------------------------------------------------
+.PHONY: lint
+lint:
+	cd $(WEB_DIR) && npm run lint
+
+#-----------------------------------------------------------------------------
+# Preview production build locally
+#-----------------------------------------------------------------------------
+.PHONY: preview
+preview:
+	cd $(WEB_DIR) && npm run preview
+
+#-----------------------------------------------------------------------------
+# Clean web build artifacts
+#-----------------------------------------------------------------------------
+.PHONY: web-clean
+web-clean:
+	@echo "Cleaning web build artifacts..."
+	rm -rf $(WEB_DIR)/dist
+	@echo "Web clean complete."
+
 #-----------------------------------------------------------------------------
 # Help
 #-----------------------------------------------------------------------------
@@ -131,7 +187,7 @@ help:
 	@echo ""
 	@echo "Usage: make [target]"
 	@echo ""
-	@echo "Targets:"
+	@echo "LaTeX Targets:"
 	@echo "  install            Install all required LaTeX packages"
 	@echo "  install-signatures Install only AcroTeX (for digital signatures)"
 	@echo "  pdf                Compile PDF (2 passes, correct page numbers)"
@@ -142,5 +198,14 @@ help:
 	@echo "  clean              Remove auxiliary files (keep PDF)"
 	@echo "  distclean          Remove all generated files including PDF"
 	@echo "  rebuild            Clean and rebuild"
+	@echo ""
+	@echo "Web Targets:"
+	@echo "  dev                Start dev server (http://localhost:5173)"
+	@echo "  web-build          Build for production"
+	@echo "  web-install        Install npm dependencies"
+	@echo "  lint               Run ESLint"
+	@echo "  preview            Preview production build"
+	@echo "  web-clean          Remove web build artifacts"
+	@echo ""
 	@echo "  help               Show this help message"
 

@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { Moon, Sun, Download, FileText, RefreshCw, Github, Bug, Save, RotateCcw, Shield, HelpCircle, Info, Layers, FolderOpen, Search, Keyboard, Menu } from 'lucide-react';
+import { useState, useCallback, useRef, type ChangeEvent } from 'react';
+import { Moon, Sun, Download, FileText, RefreshCw, Github, Bug, Save, RotateCcw, Shield, HelpCircle, Info, Layers, FolderOpen, Search, Keyboard, Menu, FileDown, FileUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -50,6 +50,7 @@ export function Header({
   const { resetForm } = useDocumentStore();
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSaveProgress = useCallback(() => {
     try {
@@ -114,8 +115,135 @@ export function Header({
     setShowResetDialog(false);
   }, [resetForm]);
 
+  // Export entire document state to a JSON file
+  const handleExportDraft = useCallback(() => {
+    try {
+      const dataToExport = {
+        version: '1.0',
+        exportedAt: new Date().toISOString(),
+        documentMode: documentStore.documentMode,
+        docType: documentStore.docType,
+        formData: documentStore.formData,
+        references: documentStore.references,
+        // Include enclosure file data as base64 for full restoration
+        enclosures: documentStore.enclosures.map(encl => ({
+          title: encl.title,
+          pageStyle: encl.pageStyle,
+          hasCoverPage: encl.hasCoverPage,
+          coverPageDescription: encl.coverPageDescription,
+          file: encl.file ? {
+            name: encl.file.name,
+            size: encl.file.size,
+            data: encl.file.data, // base64 encoded
+          } : null,
+        })),
+        paragraphs: documentStore.paragraphs,
+        copyTos: documentStore.copyTos,
+      };
+
+      const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const date = new Date().toISOString().split('T')[0];
+      a.download = `libo-draft-${date}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setSaveStatus('Exported!');
+      setTimeout(() => setSaveStatus(null), 2000);
+    } catch (err) {
+      console.error('Failed to export draft:', err);
+      setSaveStatus('Export failed');
+      setTimeout(() => setSaveStatus(null), 2000);
+    }
+  }, [documentStore]);
+
+  // Import document state from a JSON file
+  const handleImportDraft = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string;
+        const data = JSON.parse(content);
+
+        // Validate it's a libo draft file
+        if (!data.version || !data.docType) {
+          throw new Error('Invalid draft file format');
+        }
+
+        // Apply document mode
+        if (data.documentMode) {
+          documentStore.setDocumentMode?.(data.documentMode);
+        }
+
+        // Apply document type
+        if (data.docType) {
+          documentStore.setDocType(data.docType);
+        }
+
+        // Apply form data
+        if (data.formData) {
+          documentStore.setFormData(data.formData);
+        }
+
+        // Use loadTemplate for bulk loading (handles references, enclosures, paragraphs, copyTos)
+        documentStore.loadTemplate({
+          references: data.references || [],
+          enclosures: data.enclosures?.map((encl: {
+            title: string;
+            pageStyle?: string;
+            hasCoverPage?: boolean;
+            coverPageDescription?: string;
+            file?: { name: string; size: number; data: string } | null;
+          }) => ({
+            title: encl.title,
+            pageStyle: encl.pageStyle,
+            hasCoverPage: encl.hasCoverPage,
+            coverPageDescription: encl.coverPageDescription,
+            file: encl.file ? {
+              name: encl.file.name,
+              size: encl.file.size,
+              data: encl.file.data,
+            } : undefined,
+          })) || [],
+          paragraphs: data.paragraphs?.map((para: { text: string; level?: number; portionMarking?: string }) => ({
+            text: para.text,
+            level: para.level || 0,
+            portionMarking: para.portionMarking,
+          })) || [],
+          copyTos: data.copyTos || [],
+        });
+
+        setSaveStatus('Imported!');
+        setTimeout(() => setSaveStatus(null), 2000);
+      } catch (err) {
+        console.error('Failed to import draft:', err);
+        setSaveStatus('Import failed');
+        setTimeout(() => setSaveStatus(null), 2000);
+      }
+    };
+
+    reader.readAsText(file);
+    // Reset the input so the same file can be selected again
+    event.target.value = '';
+  }, [documentStore]);
+
   return (
     <header className="border-b border-border bg-card px-2 sm:px-4 py-2 sm:py-3">
+      {/* Hidden file input for importing drafts */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleImportDraft}
+        accept=".json"
+        className="hidden"
+      />
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 sm:gap-4 min-w-0">
           <h1 className="text-base sm:text-xl font-bold text-foreground whitespace-nowrap">libo-secured</h1>
@@ -169,6 +297,15 @@ export function Header({
               <DropdownMenuItem onClick={handleLoadProgress}>
                 <Download className="h-4 w-4 mr-2" />
                 Load Saved
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleExportDraft}>
+                <FileDown className="h-4 w-4 mr-2" />
+                Export Draft to File
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
+                <FileUp className="h-4 w-4 mr-2" />
+                Import Draft from File
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setShowResetDialog(true)} className="text-destructive">
