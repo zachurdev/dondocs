@@ -138,14 +138,14 @@ export function AddressingSection({ config }: AddressingSectionProps) {
 
             {/* From / To */}
             {config.fromTo && (
-              <>
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="from">From</Label>
                   <Input
                     id="from"
                     value={formData.from || ''}
                     onChange={(e) => setField('from', e.target.value)}
-                    placeholder="Commanding Officer, 1st Battalion, 6th Marines"
+                    placeholder="Commanding Officer, 1st Bn, 6th Marines"
                   />
                 </div>
                 <div className="space-y-2">
@@ -157,7 +157,7 @@ export function AddressingSection({ config }: AddressingSectionProps) {
                     placeholder="Commanding General, 2d Marine Division"
                   />
                 </div>
-              </>
+              </div>
             )}
 
             {/* Via */}

@@ -51,34 +51,51 @@ export function LetterheadSection() {
           <AccordionTrigger>Letterhead</AccordionTrigger>
           <AccordionContent>
             <div className="space-y-4 pt-2">
-              <div className="flex justify-end">
+              {/* Seal Type + Department/Service + Browse Units on same row */}
+              <div className="flex items-end gap-3">
+                <div className="space-y-2 w-32 flex-shrink-0">
+                  <Label>Seal</Label>
+                  <Select
+                    value={formData.sealType || 'dod'}
+                    onValueChange={(v) => setField('sealType', v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="dod">DoD</SelectItem>
+                      <SelectItem value="dow">DoW</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2 flex-1">
+                  <Label>Department / Service</Label>
+                  <Select
+                    value={formData.department || 'usmc'}
+                    onValueChange={(v) => setField('department', v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="usmc">United States Marine Corps</SelectItem>
+                      <SelectItem value="navy">Department of the Navy</SelectItem>
+                      <SelectItem value="dod">Department of Defense</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <Button
                   type="button"
                   variant="outline"
-                  size="sm"
+                  size="default"
                   onClick={() => setUnitModalOpen(true)}
-                  className="gap-2"
+                  className="gap-2 flex-shrink-0"
                 >
                   <Building2 className="h-4 w-4" />
                   Browse Units
                 </Button>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Department / Service</Label>
-                <Select
-                  value={formData.department || 'usmc'}
-                  onValueChange={(v) => setField('department', v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="usmc">United States Marine Corps</SelectItem>
-                    <SelectItem value="navy">Department of the Navy</SelectItem>
-                    <SelectItem value="dod">Department of Defense</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
               <div className="space-y-2">
@@ -91,43 +108,27 @@ export function LetterheadSection() {
                 />
               </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="unitLine2">Unit Name (Line 2, if needed)</Label>
-              <Input
-                id="unitLine2"
-                value={formData.unitLine2 || ''}
-                onChange={(e) => setField('unitLine2', e.target.value)}
-                placeholder="Only for very long unit names"
-              />
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="unitLine2">Unit Name (Line 2, if needed)</Label>
+                <Input
+                  id="unitLine2"
+                  value={formData.unitLine2 || ''}
+                  onChange={(e) => setField('unitLine2', e.target.value)}
+                  placeholder="Only for very long unit names"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="unitAddress">Address</Label>
-              <Input
-                id="unitAddress"
-                value={formData.unitAddress || ''}
-                onChange={(e) => setField('unitAddress', e.target.value)}
-                placeholder="e.g., 3000 MARINE CORPS PENTAGON, WASHINGTON DC 20350"
-              />
+              <div className="space-y-2">
+                <Label htmlFor="unitAddress">Address</Label>
+                <Input
+                  id="unitAddress"
+                  value={formData.unitAddress || ''}
+                  onChange={(e) => setField('unitAddress', e.target.value)}
+                  placeholder="e.g., 3000 MARINE CORPS PENTAGON, WASHINGTON DC 20350"
+                />
+              </div>
             </div>
-
-            <div className="space-y-2">
-              <Label>Seal Type</Label>
-              <Select
-                value={formData.sealType || 'dod'}
-                onValueChange={(v) => setField('sealType', v)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="dod">Department of Defense</SelectItem>
-                  <SelectItem value="dow">Department of War</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </AccordionContent>
+          </AccordionContent>
       </AccordionItem>
     </Accordion>
     </>
