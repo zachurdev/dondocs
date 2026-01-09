@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, type ChangeEvent } from 'react';
-import { Moon, Sun, Download, FileText, RefreshCw, Github, Bug, Save, RotateCcw, Shield, HelpCircle, Info, Layers, FolderOpen, Search, Keyboard, Menu, FileDown, FileUp, ScrollText, SlidersHorizontal, Minimize2, Maximize2, Check, Palette, Anchor, Medal, Wrench, Settings } from 'lucide-react';
+import { Moon, Sun, Download, FileText, RefreshCw, Github, Bug, Save, RotateCcw, Shield, HelpCircle, Info, Layers, FolderOpen, Search, Keyboard, Menu, FileDown, FileUp, ScrollText, SlidersHorizontal, Minimize2, Maximize2, Check, Palette, Anchor, Medal, Wrench, Settings, Undo2, Redo2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useUIStore } from '@/stores/uiStore';
 import { useDocumentStore } from '@/stores/documentStore';
+import { useHistoryStore } from '@/stores/historyStore';
 import { uint8ArrayToBase64, base64ToUint8Array, arrayBufferToUint8Array } from '@/lib/encoding';
 import { useLogStore } from '@/stores/logStore';
 
@@ -44,7 +45,8 @@ export function Header({
 }: HeaderProps) {
   const { theme, toggleTheme, colorScheme, setColorScheme, density, setDensity, autoSaveStatus, setAboutModalOpen, setNistModalOpen, setBatchModalOpen, setTemplateLoaderOpen, setFindReplaceOpen } = useUIStore();
   const documentStore = useDocumentStore();
-  const { resetForm } = useDocumentStore();
+  const { resetForm, applySnapshot } = useDocumentStore();
+  const { undo, redo, canUndo, canRedo } = useHistoryStore();
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -111,6 +113,20 @@ export function Header({
     localStorage.removeItem(STORAGE_KEY);
     setShowResetDialog(false);
   }, [resetForm]);
+
+  const handleUndo = useCallback(() => {
+    const snapshot = undo();
+    if (snapshot) {
+      applySnapshot(snapshot);
+    }
+  }, [undo, applySnapshot]);
+
+  const handleRedo = useCallback(() => {
+    const snapshot = redo();
+    if (snapshot) {
+      applySnapshot(snapshot);
+    }
+  }, [redo, applySnapshot]);
 
   // Export entire document state to a JSON file
   const handleExportDraft = useCallback(() => {
@@ -271,6 +287,28 @@ export function Header({
               {saveStatus || autoSaveStatus}
             </span>
           )}
+
+          {/* Undo/Redo buttons */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleUndo}
+            disabled={!canUndo()}
+            title="Undo (Ctrl+Z)"
+            className="h-8 w-8 sm:h-9 sm:w-9"
+          >
+            <Undo2 className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleRedo}
+            disabled={!canRedo()}
+            title="Redo (Ctrl+Y)"
+            className="h-8 w-8 sm:h-9 sm:w-9"
+          >
+            <Redo2 className="h-4 w-4" />
+          </Button>
 
           {/* Always visible: Refresh */}
           <Button

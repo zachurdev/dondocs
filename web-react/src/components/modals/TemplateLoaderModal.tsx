@@ -806,6 +806,18 @@ export function TemplateLoaderModal() {
       });
     }
 
+    // Clear existing enclosures
+    const currentEnclCount = store.enclosures.length;
+    for (let i = currentEnclCount - 1; i >= 0; i--) {
+      store.removeEnclosure(i);
+    }
+
+    // Clear existing copy-tos
+    const currentCopyToCount = store.copyTos.length;
+    for (let i = currentCopyToCount - 1; i >= 0; i--) {
+      store.removeCopyTo(i);
+    }
+
     // Close modal and reset state
     setTemplateLoaderOpen(false);
     setSelectedTemplate(null);
