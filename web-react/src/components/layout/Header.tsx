@@ -250,7 +250,12 @@ export function Header({
   }, [documentStore]);
 
   return (
-    <header className="border-b border-border bg-card px-density-2 sm:px-density-4 py-density-2 sm:py-density-3">
+    <header className="border-b border-border bg-card">
+      {/* Beta release banner */}
+      <div className="bg-amber-500/90 text-amber-950 text-xs font-medium py-1 text-center">
+        BETA RELEASE - Features may change. Report issues on GitHub.
+      </div>
+      <div className="px-density-2 sm:px-density-4 py-density-2 sm:py-density-3">
       {/* Hidden file input for importing drafts */}
       <input
         type="file"
@@ -588,6 +593,7 @@ export function Header({
 
       <div className="mt-2 text-xs text-muted-foreground bg-secondary/50 px-2 py-1 rounded inline-block hidden sm:inline-block">
         All data stays in your browser session. Nothing is sent to any server.
+      </div>
       </div>
 
       {/* Reset confirmation dialog */}

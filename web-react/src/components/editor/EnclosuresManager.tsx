@@ -170,7 +170,7 @@ function SortableEnclosure({
               onCheckedChange={(checked) => onUpdateCoverPage(checked === true)}
             />
             <Label htmlFor={`cover-${index}`} className="text-xs text-muted-foreground cursor-pointer">
-              {enclosure.file ? 'Add cover page before PDF' : 'Add placeholder page in document'}
+              {enclosure.file ? 'Add cover page before PDF' : 'Add placeholder / cover page'}
             </Label>
           </div>
           {enclosure.hasCoverPage && (
@@ -202,6 +202,8 @@ export function EnclosuresManager() {
     documentMode,
     docType,
     enclosures,
+    formData,
+    setField,
     addEnclosure,
     updateEnclosure,
     removeEnclosure,
@@ -304,6 +306,26 @@ export function EnclosuresManager() {
                 </div>
               </div>
             )}
+
+            {/* Hyperlinks toggle - only show when there are enclosures */}
+            {enclosures.length > 0 && (
+              <div className="mb-3 pb-3 border-b border-border space-y-2">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="includeEnclosureHyperlinks"
+                    checked={formData.includeHyperlinks || false}
+                    onCheckedChange={(checked) => setField('includeHyperlinks', !!checked)}
+                  />
+                  <Label htmlFor="includeEnclosureHyperlinks" className="text-sm font-normal cursor-pointer">
+                    Include hyperlinks in PDF
+                  </Label>
+                </div>
+                <p className="text-xs text-muted-foreground pl-6">
+                  When enabled, clicking "Encl (1)" in the letter jumps directly to that enclosure's pages. Great for lengthy annexes or SOPs.
+                </p>
+              </div>
+            )}
+
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}

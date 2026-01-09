@@ -187,7 +187,7 @@ export function ReferencesManager() {
                   </Label>
                 </div>
                 <p className="text-xs text-muted-foreground pl-6">
-                  When enabled, references with URLs become clickable hyperlinks in the generated PDF.
+                  When enabled, references with URLs become clickable hyperlinks in the PDF. Example: Link "MCO 1500.52" directly to marines.mil/directives.
                 </p>
               </div>
             )}
