@@ -31,7 +31,7 @@ export function NISTComplianceModal() {
             </section>
 
             <section className="space-y-3">
-              <h4 className="font-semibold">How libo-secured Complies</h4>
+              <h4 className="font-semibold">How This Application Complies</h4>
 
               <div className="space-y-3">
                 <div className="flex items-start gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">

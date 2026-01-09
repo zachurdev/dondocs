@@ -244,20 +244,24 @@ export function Header({
         className="hidden"
       />
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-          <h1 className="text-base sm:text-xl font-bold text-foreground whitespace-nowrap">libo-secured</h1>
-          <p className="text-sm text-muted-foreground hidden lg:block">
-            "Libo isn't secured until the paperwork is done."
-          </p>
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="flex items-center gap-2">
+            <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+            <div className="flex flex-col">
+              <h1 className="text-sm sm:text-lg font-bold text-foreground whitespace-nowrap leading-tight">
+                Naval Correspondence
+              </h1>
+              <span className="text-xs text-muted-foreground hidden sm:block leading-tight">Generator</span>
+            </div>
+          </div>
           {/* NIST 800-171 Compliance Badge */}
           <button
             onClick={() => setNistModalOpen(true)}
-            className="hidden lg:flex items-center gap-1.5 px-2 py-1 rounded-md bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400 text-xs cursor-pointer hover:bg-green-500/20 transition-colors"
+            className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded-md bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400 text-xs cursor-pointer hover:bg-green-500/20 transition-colors"
             title="Click to learn about NIST 800-171 compliance"
           >
             <Shield className="h-3 w-3" />
             <span>NIST 800-171</span>
-            <HelpCircle className="h-3 w-3 opacity-60" />
           </button>
         </div>
 
@@ -376,7 +380,7 @@ export function Header({
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setAboutModalOpen(true)}>
                 <Info className="h-4 w-4 mr-2" />
-                About libo-secured
+                About
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => window.open(GITHUB_REPO_URL, '_blank')}>

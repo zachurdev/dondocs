@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Rocket, FileText, Shield, Zap, Users } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { FileText, Shield, Zap, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -54,6 +54,9 @@ export function WelcomeModal() {
   const [open, setOpen] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [currentTip, setCurrentTip] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const resumeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem(WELCOME_STORAGE_KEY);
@@ -69,14 +72,72 @@ export function WelcomeModal() {
     setOpen(false);
   };
 
-  // Rotate tips
+  // Navigate to previous tip
+  const goToPrev = useCallback(() => {
+    setCurrentTip((prev) => (prev - 1 + TIPS.length) % TIPS.length);
+    setIsPaused(true);
+    // Clear any existing resume timeout
+    if (resumeTimeoutRef.current) {
+      clearTimeout(resumeTimeoutRef.current);
+    }
+    // Resume auto-scroll after 4 seconds of inactivity
+    resumeTimeoutRef.current = setTimeout(() => {
+      setIsPaused(false);
+    }, 4000);
+  }, []);
+
+  // Navigate to next tip
+  const goToNext = useCallback(() => {
+    setCurrentTip((prev) => (prev + 1) % TIPS.length);
+    setIsPaused(true);
+    // Clear any existing resume timeout
+    if (resumeTimeoutRef.current) {
+      clearTimeout(resumeTimeoutRef.current);
+    }
+    // Resume auto-scroll after 4 seconds of inactivity
+    resumeTimeoutRef.current = setTimeout(() => {
+      setIsPaused(false);
+    }, 4000);
+  }, []);
+
+  // Click on indicator dot
+  const goToTip = useCallback((index: number) => {
+    setCurrentTip(index);
+    setIsPaused(true);
+    if (resumeTimeoutRef.current) {
+      clearTimeout(resumeTimeoutRef.current);
+    }
+    resumeTimeoutRef.current = setTimeout(() => {
+      setIsPaused(false);
+    }, 4000);
+  }, []);
+
+  // Auto-rotate tips when not paused
   useEffect(() => {
-    if (!open) return;
-    const interval = setInterval(() => {
+    if (!open || isPaused) {
+      if (autoScrollIntervalRef.current) {
+        clearInterval(autoScrollIntervalRef.current);
+        autoScrollIntervalRef.current = null;
+      }
+      return;
+    }
+    autoScrollIntervalRef.current = setInterval(() => {
       setCurrentTip((prev) => (prev + 1) % TIPS.length);
     }, 5000);
-    return () => clearInterval(interval);
-  }, [open]);
+    return () => {
+      if (autoScrollIntervalRef.current) {
+        clearInterval(autoScrollIntervalRef.current);
+      }
+    };
+  }, [open, isPaused]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
+      if (autoScrollIntervalRef.current) clearInterval(autoScrollIntervalRef.current);
+    };
+  }, []);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -84,13 +145,13 @@ export function WelcomeModal() {
         {/* Header with gradient */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-8 text-white">
           <div className="flex items-center gap-3 mb-2">
-            <Rocket className="h-8 w-8" />
+            <FileText className="h-8 w-8" />
             <DialogTitle className="text-2xl font-bold text-white">
-              Welcome to libo-secured
+              Naval Correspondence Generator
             </DialogTitle>
           </div>
           <p className="text-white/90 text-sm">
-            The professional naval correspondence generator for Marines, by Marines.
+            Professional document generation for Marines, by Marines. SECNAV M-5216.5 compliant.
           </p>
         </div>
 
@@ -111,17 +172,40 @@ export function WelcomeModal() {
             ))}
           </div>
 
-          {/* Rotating tip */}
+          {/* Rotating tip with navigation */}
           <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
-            <p className="text-xs text-primary font-medium mb-1">Pro Tip</p>
-            <p className="text-sm transition-opacity duration-300">{TIPS[currentTip]}</p>
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-xs text-primary font-medium">Pro Tip</p>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={goToPrev}
+                  className="p-1 rounded hover:bg-primary/20 text-primary transition-colors"
+                  title="Previous tip"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <span className="text-xs text-muted-foreground min-w-[3ch] text-center">
+                  {currentTip + 1}/{TIPS.length}
+                </span>
+                <button
+                  onClick={goToNext}
+                  className="p-1 rounded hover:bg-primary/20 text-primary transition-colors"
+                  title="Next tip"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+            <p className="text-sm transition-opacity duration-300 min-h-[2.5rem]">{TIPS[currentTip]}</p>
             <div className="flex gap-1 mt-2">
               {TIPS.map((_, idx) => (
-                <div
+                <button
                   key={idx}
-                  className={`h-1 w-4 rounded-full transition-colors ${
-                    idx === currentTip ? 'bg-primary' : 'bg-primary/30'
+                  onClick={() => goToTip(idx)}
+                  className={`h-1.5 w-4 rounded-full transition-colors ${
+                    idx === currentTip ? 'bg-primary' : 'bg-primary/30 hover:bg-primary/50'
                   }`}
+                  title={`Tip ${idx + 1}`}
                 />
               ))}
             </div>

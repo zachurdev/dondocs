@@ -19,14 +19,15 @@ export function AboutModal() {
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
-            <span className="text-xl font-bold">libo-secured</span>
+            <FileText className="h-6 w-6 text-primary" />
+            <span className="text-xl font-bold">Naval Correspondence Generator</span>
             <Badge variant="secondary">v{VERSION}</Badge>
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-5">
           <p className="text-muted-foreground italic border-l-2 border-primary pl-3">
-            "Libo isn't secured until the paperwork is done."
+            Professional document generation for Marines, by Marines.
           </p>
 
           <div className="space-y-2">
