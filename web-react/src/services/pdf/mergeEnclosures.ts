@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts, PDFPage, PDFName, PDFArray, PDFDict, PDFNumber } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts, PDFPage, PDFName, PDFArray, PDFDict, PDFNumber, PDFString } from 'pdf-lib';
 
 export interface EnclosureData {
   number: number;
@@ -20,66 +20,61 @@ const PAGE_HEIGHT = 792;
 const MARGIN = 72; // 1 inch margins
 
 /**
- * Adds a named destination to a page for hyperlink navigation.
- * This creates an anchor that can be targeted by \hyperlink{name} in LaTeX.
+ * Collects all named destinations to add during merging.
+ * We batch them up and add them all at once at the end to avoid
+ * issues with the PDF structure.
+ */
+const pendingDestinations: Map<string, PDFPage> = new Map();
+
+/**
+ * Queues a named destination to be added to the PDF.
+ * Call finalizeNamedDestinations() after all pages are added.
  */
 function addNamedDestination(
-  pdfDoc: PDFDocument,
+  _pdfDoc: PDFDocument,
   page: PDFPage,
   name: string
 ): void {
-  // Get the PDF's catalog (root object)
+  pendingDestinations.set(name, page);
+}
+
+/**
+ * Adds all queued named destinations to the PDF.
+ * This should be called once after all enclosure pages are added.
+ *
+ * Named destinations allow \hyperlink{name} in LaTeX to jump to specific pages.
+ * We use the /Dests dictionary in the catalog (simpler than name trees).
+ */
+function finalizeNamedDestinations(pdfDoc: PDFDocument): void {
+  if (pendingDestinations.size === 0) return;
+
   const catalog = pdfDoc.catalog;
 
-  // Get or create the Names dictionary
-  let namesDict = catalog.lookup(PDFName.of('Names'));
-  if (!namesDict) {
-    namesDict = pdfDoc.context.obj({});
-    catalog.set(PDFName.of('Names'), namesDict);
-  }
-
-  // Ensure namesDict is a PDFDict
-  if (!(namesDict instanceof PDFDict)) {
-    namesDict = pdfDoc.context.obj({});
-    catalog.set(PDFName.of('Names'), namesDict);
-  }
-
-  // Get or create the Dests dictionary within Names
-  let destsDict = (namesDict as PDFDict).lookup(PDFName.of('Dests'));
-  if (!destsDict) {
+  // Use /Dests dictionary directly in catalog (simpler, more compatible)
+  // This is the "old style" named destinations that hyperref understands
+  let destsDict = catalog.lookup(PDFName.of('Dests'));
+  if (!destsDict || !(destsDict instanceof PDFDict)) {
     destsDict = pdfDoc.context.obj({});
-    (namesDict as PDFDict).set(PDFName.of('Dests'), destsDict);
+    catalog.set(PDFName.of('Dests'), destsDict);
   }
 
-  // Ensure destsDict is a PDFDict
-  if (!(destsDict instanceof PDFDict)) {
-    destsDict = pdfDoc.context.obj({});
-    (namesDict as PDFDict).set(PDFName.of('Dests'), destsDict);
+  // Add each destination
+  for (const [name, page] of pendingDestinations) {
+    // Create destination array: [pageRef /XYZ left top zoom]
+    const destArray = pdfDoc.context.obj([
+      page.ref,
+      PDFName.of('XYZ'),
+      PDFNumber.of(0),
+      PDFNumber.of(PAGE_HEIGHT),
+      PDFNumber.of(0), // 0 = inherit zoom
+    ]);
+
+    // Add to Dests dict with the name as key
+    (destsDict as PDFDict).set(PDFName.of(name), destArray);
   }
 
-  // Get or create the Names array within Dests (name tree leaf)
-  let namesArray = (destsDict as PDFDict).lookup(PDFName.of('Names'));
-  if (!namesArray || !(namesArray instanceof PDFArray)) {
-    namesArray = pdfDoc.context.obj([]);
-    (destsDict as PDFDict).set(PDFName.of('Names'), namesArray);
-  }
-
-  // Create the destination array: [page /XYZ left top zoom]
-  // XYZ means position the page at coordinates (left, top) with given zoom
-  // null values mean "keep current value"
-  const pageRef = page.ref;
-  const destArray = pdfDoc.context.obj([
-    pageRef,
-    PDFName.of('XYZ'),
-    PDFNumber.of(0),
-    PDFNumber.of(PAGE_HEIGHT),
-    PDFNumber.of(0), // 0 = inherit current zoom
-  ]);
-
-  // Add the name-destination pair to the Names array
-  // Format: [name1, dest1, name2, dest2, ...]
-  (namesArray as PDFArray).push(pdfDoc.context.obj(name));
-  (namesArray as PDFArray).push(destArray);
+  // Clear for next use
+  pendingDestinations.clear();
 }
 
 /**
@@ -123,6 +118,11 @@ export async function mergeEnclosures(
         addPlaceholderPage(mainPdf, enclosure, helveticaBold, helvetica, true, classification, includeHyperlinks);
       }
     }
+  }
+
+  // Finalize all named destinations for hyperlinks
+  if (includeHyperlinks) {
+    finalizeNamedDestinations(mainPdf);
   }
 
   return mainPdf.save();
