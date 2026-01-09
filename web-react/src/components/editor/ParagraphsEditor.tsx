@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { RichTextToolbar, applyFormat } from './RichTextToolbar';
-import { InsertVariableButton } from '@/components/ui/insert-variable-button';
+import { useVariableAutocomplete, VariableAutocompletePopup } from '@/components/ui/variable-autocomplete';
 import { useDocumentStore } from '@/stores/documentStore';
 import type { Paragraph, PortionMarking } from '@/types/document';
 import { DOC_TYPE_CONFIG } from '@/types/document';
@@ -118,6 +118,13 @@ function SortableParagraph({
     isDragging,
   } = useSortable({ id: `para-${index}` });
 
+  // Variable autocomplete
+  const autocomplete = useVariableAutocomplete({
+    inputRef: textareaRef,
+    value: paragraph.text,
+    onChange: onUpdate,
+  });
+
   const wordCount = useMemo(() => countWords(paragraph.text), [paragraph.text]);
 
   const style = {
@@ -133,6 +140,14 @@ function SortableParagraph({
   }, [onUpdate]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Let autocomplete handle keys when open
+    if (autocomplete.isOpen) {
+      autocomplete.handleKeyDown(e);
+      if (['ArrowUp', 'ArrowDown', 'Enter', 'Tab', 'Escape'].includes(e.key)) {
+        return;
+      }
+    }
+
     if (e.key === 'Tab' && !disableIndent) {
       e.preventDefault();
       if (e.shiftKey) {
@@ -173,19 +188,27 @@ function SortableParagraph({
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <RichTextToolbar onFormat={handleFormat} />
-            <InsertVariableButton
-              onInsert={(v) => onUpdate(paragraph.text + v)}
-              size="sm"
-            />
+            <span className="text-xs text-muted-foreground ml-auto">
+              Type <code className="bg-muted px-1 rounded">{'{{'}</code> for variables
+            </span>
           </div>
           <Textarea
             ref={textareaRef}
             value={paragraph.text}
             onChange={(e) => onUpdate(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Enter paragraph content..."
+            placeholder="Enter paragraph content... (type {{ for variables)"
             rows={3}
             className="resize-none"
+          />
+          <VariableAutocompletePopup
+            isOpen={autocomplete.isOpen}
+            position={autocomplete.triggerPosition}
+            filteredItems={autocomplete.filteredItems}
+            selectedIndex={autocomplete.selectedIndex}
+            searchQuery={autocomplete.searchQuery}
+            onSelect={autocomplete.insertVariable}
+            onHover={autocomplete.setSelectedIndex}
           />
 
           {/* Actions */}

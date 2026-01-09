@@ -12,7 +12,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { InsertVariableButton } from '@/components/ui/insert-variable-button';
+import { InputWithVariables } from '@/components/ui/variable-autocomplete';
 import { useDocumentStore } from '@/stores/documentStore';
 import { SSICLookupModal } from '@/components/modals/SSICLookupModal';
 import type { DocTypeConfig } from '@/types/document';
@@ -142,33 +142,21 @@ export function AddressingSection({ config }: AddressingSectionProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="from">From</Label>
-                  <div className="flex gap-1">
-                    <Input
-                      id="from"
-                      value={formData.from || ''}
-                      onChange={(e) => setField('from', e.target.value)}
-                      placeholder="Commanding Officer, 1st Bn, 6th Marines"
-                      className="flex-1"
-                    />
-                    <InsertVariableButton
-                      onInsert={(v) => setField('from', (formData.from || '') + v)}
-                    />
-                  </div>
+                  <InputWithVariables
+                    id="from"
+                    value={formData.from || ''}
+                    onValueChange={(v) => setField('from', v)}
+                    placeholder="Commanding Officer... (type {{ for variables)"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="to">To</Label>
-                  <div className="flex gap-1">
-                    <Input
-                      id="to"
-                      value={formData.to || ''}
-                      onChange={(e) => setField('to', e.target.value)}
-                      placeholder="Commanding General, 2d Marine Division"
-                      className="flex-1"
-                    />
-                    <InsertVariableButton
-                      onInsert={(v) => setField('to', (formData.to || '') + v)}
-                    />
-                  </div>
+                  <InputWithVariables
+                    id="to"
+                    value={formData.to || ''}
+                    onValueChange={(v) => setField('to', v)}
+                    placeholder="Commanding General... (type {{ for variables)"
+                  />
                 </div>
               </div>
             )}
@@ -219,18 +207,13 @@ export function AddressingSection({ config }: AddressingSectionProps) {
             {/* Subject */}
             <div className="space-y-2">
               <Label htmlFor="subject">Subject</Label>
-              <div className="flex gap-1">
-                <Input
-                  id="subject"
-                  value={formData.subject || ''}
-                  onChange={(e) => setField('subject', e.target.value)}
-                  placeholder="SUBJECT LINE IN ALL CAPS"
-                  className="uppercase flex-1"
-                />
-                <InsertVariableButton
-                  onInsert={(v) => setField('subject', (formData.subject || '') + v)}
-                />
-              </div>
+              <InputWithVariables
+                id="subject"
+                value={formData.subject || ''}
+                onValueChange={(v) => setField('subject', v)}
+                placeholder="SUBJECT LINE... (type {{ for variables)"
+                className="uppercase"
+              />
             </div>
           </div>
         </AccordionContent>
