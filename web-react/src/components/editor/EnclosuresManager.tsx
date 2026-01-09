@@ -114,6 +114,7 @@ function SortableEnclosure({
             placeholder="Enclosure title..."
           />
 
+          {/* PDF attachment section */}
           {enclosure.file ? (
             <div className="space-y-2">
               <div className="flex items-center gap-2 p-2 bg-secondary/30 rounded text-sm">
@@ -147,25 +148,6 @@ function SortableEnclosure({
                   </SelectContent>
                 </Select>
               </div>
-              {/* Cover page option */}
-              <div className="flex items-center gap-2 pt-1">
-                <Checkbox
-                  id={`cover-${index}`}
-                  checked={enclosure.hasCoverPage || false}
-                  onCheckedChange={(checked) => onUpdateCoverPage(checked === true)}
-                />
-                <Label htmlFor={`cover-${index}`} className="text-xs text-muted-foreground cursor-pointer">
-                  Add cover page
-                </Label>
-              </div>
-              {enclosure.hasCoverPage && (
-                <Textarea
-                  placeholder="Optional description for cover page..."
-                  value={enclosure.coverPageDescription || ''}
-                  onChange={(e) => onUpdateCoverDescription(e.target.value)}
-                  className="text-xs min-h-[60px]"
-                />
-              )}
             </div>
           ) : (
             <label className="flex items-center gap-2 p-2 border border-dashed border-border rounded cursor-pointer hover:bg-secondary/30 transition-colors">
@@ -178,6 +160,26 @@ function SortableEnclosure({
                 className="hidden"
               />
             </label>
+          )}
+
+          {/* Cover/placeholder page option - always visible */}
+          <div className="flex items-center gap-2 pt-1">
+            <Checkbox
+              id={`cover-${index}`}
+              checked={enclosure.hasCoverPage || false}
+              onCheckedChange={(checked) => onUpdateCoverPage(checked === true)}
+            />
+            <Label htmlFor={`cover-${index}`} className="text-xs text-muted-foreground cursor-pointer">
+              {enclosure.file ? 'Add cover page before PDF' : 'Add placeholder page in document'}
+            </Label>
+          </div>
+          {enclosure.hasCoverPage && (
+            <Textarea
+              placeholder="Optional description for page..."
+              value={enclosure.coverPageDescription || ''}
+              onChange={(e) => onUpdateCoverDescription(e.target.value)}
+              className="text-xs min-h-[60px]"
+            />
           )}
         </div>
 

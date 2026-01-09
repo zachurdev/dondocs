@@ -105,7 +105,7 @@ export async function mergeEnclosures(
   // Process each enclosure in order
   for (const enclosure of enclosures) {
     try {
-      // Add optional cover page before the enclosure content
+      // Add optional cover/placeholder page before the enclosure content
       if (enclosure.hasCoverPage) {
         addCoverPage(mainPdf, enclosure, helveticaBold, helvetica, classification, includeHyperlinks);
       }
@@ -113,15 +113,15 @@ export async function mergeEnclosures(
       if (enclosure.data) {
         // PDF enclosure - load and add pages
         await addPdfEnclosure(mainPdf, enclosure, helveticaBold, helvetica, classification, includeHyperlinks);
-      } else if (!enclosure.hasCoverPage) {
-        // Text-only enclosure without cover page - create placeholder page
-        // (If there's a cover page, it already serves as the placeholder)
-        addPlaceholderPage(mainPdf, enclosure, helveticaBold, helvetica, false, classification, includeHyperlinks);
       }
+      // Note: Text-only enclosures without hasCoverPage just appear in the enclosure list
+      // No placeholder page is created unless explicitly requested via hasCoverPage
     } catch (err) {
       console.error(`Failed to add enclosure ${enclosure.number}:`, err);
-      // Create a placeholder page on error
-      addPlaceholderPage(mainPdf, enclosure, helveticaBold, helvetica, true, classification, includeHyperlinks);
+      // Create an error placeholder page only if there was supposed to be PDF content
+      if (enclosure.data) {
+        addPlaceholderPage(mainPdf, enclosure, helveticaBold, helvetica, true, classification, includeHyperlinks);
+      }
     }
   }
 

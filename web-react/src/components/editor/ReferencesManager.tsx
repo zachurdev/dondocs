@@ -183,11 +183,11 @@ export function ReferencesManager() {
                     onCheckedChange={(checked) => setField('includeHyperlinks', !!checked)}
                   />
                   <Label htmlFor="includeHyperlinks" className="text-sm font-normal cursor-pointer">
-                    Include hyperlinks to references and enclosures in PDF
+                    Include hyperlinks in PDF
                   </Label>
                 </div>
                 <p className="text-xs text-muted-foreground pl-6">
-                  When enabled, the URL field below each reference becomes a clickable hyperlink in the generated PDF.
+                  When enabled, references with URLs become clickable hyperlinks in the generated PDF.
                 </p>
               </div>
             )}
