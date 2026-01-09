@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts, PDFPage, PDFName, PDFDict, PDFNumber } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts, PDFPage, PDFName, PDFDict, PDFArray, PDFNumber, PDFString, PDFRef } from 'pdf-lib';
 
 export interface EnclosureData {
   number: number;
@@ -19,74 +19,135 @@ const PAGE_WIDTH = 612;
 const PAGE_HEIGHT = 792;
 const MARGIN = 72; // 1 inch margins
 
-/**
- * Collects all named destinations to add during merging.
- * We batch them up and add them all at once at the end to avoid
- * issues with the PDF structure.
- */
-const pendingDestinations: Map<string, PDFPage> = new Map();
+// Track which page each enclosure starts on (enclosure number -> page ref)
+const enclosurePageMap: Map<number, PDFPage> = new Map();
 
 /**
- * Queues a named destination to be added to the PDF.
- * Call finalizeNamedDestinations() after all pages are added.
+ * Records that an enclosure starts on a given page.
  */
-function addNamedDestination(
-  _pdfDoc: PDFDocument,
-  page: PDFPage,
-  name: string
-): void {
-  pendingDestinations.set(name, page);
+function recordEnclosurePage(enclosureNumber: number, page: PDFPage): void {
+  // Only record the first page for each enclosure
+  if (!enclosurePageMap.has(enclosureNumber)) {
+    enclosurePageMap.set(enclosureNumber, page);
+    console.log(`[hyperlinks] Recorded enclosure ${enclosureNumber} -> page`);
+  }
 }
 
 /**
- * Adds all queued named destinations to the PDF.
- * This should be called once after all enclosure pages are added.
- *
- * Named destinations allow \hyperlink{name} in LaTeX to jump to specific pages.
- * We use the /Dests dictionary in the catalog (simpler than name trees).
+ * Updates all hyperlink annotations in the PDF to point to the correct enclosure pages.
+ * This finds link annotations created by LaTeX's \hyperlink{enclosureN} and updates
+ * their destinations to point to the actual enclosure pages we added.
  */
-function finalizeNamedDestinations(pdfDoc: PDFDocument): void {
-  if (pendingDestinations.size === 0) {
-    console.log('[hyperlinks] No destinations to add');
+function updateHyperlinkDestinations(pdfDoc: PDFDocument): void {
+  if (enclosurePageMap.size === 0) {
+    console.log('[hyperlinks] No enclosure pages recorded');
     return;
   }
 
-  console.log('[hyperlinks] Adding', pendingDestinations.size, 'named destinations');
+  console.log('[hyperlinks] Updating hyperlink destinations for', enclosurePageMap.size, 'enclosures');
 
-  const catalog = pdfDoc.catalog;
+  const pages = pdfDoc.getPages();
+  let updatedCount = 0;
 
-  // Use /Dests dictionary directly in catalog (simpler, more compatible)
-  // This is the "old style" named destinations that hyperref understands
-  let destsDict = catalog.lookup(PDFName.of('Dests'));
-  if (!destsDict || !(destsDict instanceof PDFDict)) {
-    console.log('[hyperlinks] Creating new /Dests dictionary');
-    destsDict = pdfDoc.context.obj({});
-    catalog.set(PDFName.of('Dests'), destsDict);
-  } else {
-    console.log('[hyperlinks] Found existing /Dests dictionary');
+  // Iterate through all pages to find link annotations
+  for (const page of pages) {
+    const annots = page.node.lookup(PDFName.of('Annots'));
+    if (!annots || !(annots instanceof PDFArray)) continue;
+
+    // Check each annotation
+    for (let i = 0; i < annots.size(); i++) {
+      const annotRef = annots.get(i);
+      if (!(annotRef instanceof PDFRef)) continue;
+
+      const annot = pdfDoc.context.lookup(annotRef);
+      if (!(annot instanceof PDFDict)) continue;
+
+      // Check if it's a link annotation
+      const subtype = annot.get(PDFName.of('Subtype'));
+      if (!subtype || subtype.toString() !== '/Link') continue;
+
+      // Check for /A (action) with /GoTo and /D (destination name)
+      const action = annot.get(PDFName.of('A'));
+      if (action instanceof PDFDict) {
+        const actionType = action.get(PDFName.of('S'));
+        if (actionType && actionType.toString() === '/GoTo') {
+          const dest = action.get(PDFName.of('D'));
+          if (dest) {
+            const destName = extractDestinationName(dest);
+            if (destName && destName.startsWith('enclosure')) {
+              const encNum = parseInt(destName.replace('enclosure', ''), 10);
+              const targetPage = enclosurePageMap.get(encNum);
+              if (targetPage) {
+                // Update the action to point directly to the page
+                const newDest = pdfDoc.context.obj([
+                  targetPage.ref,
+                  PDFName.of('XYZ'),
+                  PDFNumber.of(0),
+                  PDFNumber.of(PAGE_HEIGHT),
+                  PDFNumber.of(0),
+                ]);
+                action.set(PDFName.of('D'), newDest);
+                updatedCount++;
+                console.log(`[hyperlinks] Updated link to ${destName}`);
+              }
+            }
+          }
+        }
+      }
+
+      // Also check for direct /Dest on the annotation
+      const directDest = annot.get(PDFName.of('Dest'));
+      if (directDest) {
+        const destName = extractDestinationName(directDest);
+        if (destName && destName.startsWith('enclosure')) {
+          const encNum = parseInt(destName.replace('enclosure', ''), 10);
+          const targetPage = enclosurePageMap.get(encNum);
+          if (targetPage) {
+            // Update the destination to point directly to the page
+            const newDest = pdfDoc.context.obj([
+              targetPage.ref,
+              PDFName.of('XYZ'),
+              PDFNumber.of(0),
+              PDFNumber.of(PAGE_HEIGHT),
+              PDFNumber.of(0),
+            ]);
+            annot.set(PDFName.of('Dest'), newDest);
+            updatedCount++;
+            console.log(`[hyperlinks] Updated direct dest to ${destName}`);
+          }
+        }
+      }
+    }
   }
 
-  // Add each destination
-  for (const [name, page] of pendingDestinations) {
-    console.log('[hyperlinks] Adding destination:', name, '-> page ref:', page.ref.toString());
-
-    // Create destination array: [pageRef /XYZ left top zoom]
-    const destArray = pdfDoc.context.obj([
-      page.ref,
-      PDFName.of('XYZ'),
-      PDFNumber.of(0),
-      PDFNumber.of(PAGE_HEIGHT),
-      PDFNumber.of(0), // 0 = inherit zoom
-    ]);
-
-    // Add to Dests dict with the name as key
-    (destsDict as PDFDict).set(PDFName.of(name), destArray);
-  }
-
-  console.log('[hyperlinks] Destinations added successfully');
+  console.log(`[hyperlinks] Updated ${updatedCount} hyperlink annotations`);
 
   // Clear for next use
-  pendingDestinations.clear();
+  enclosurePageMap.clear();
+}
+
+/**
+ * Extracts the destination name from various PDF destination formats.
+ */
+function extractDestinationName(dest: unknown): string | null {
+  if (dest instanceof PDFString) {
+    return dest.decodeText();
+  }
+  if (dest instanceof PDFName) {
+    return dest.decodeText();
+  }
+  if (typeof dest === 'object' && dest !== null && 'toString' in dest) {
+    const str = dest.toString();
+    // Handle formats like (enclosure1) or /enclosure1
+    if (str.startsWith('(') && str.endsWith(')')) {
+      return str.slice(1, -1);
+    }
+    if (str.startsWith('/')) {
+      return str.slice(1);
+    }
+    return str;
+  }
+  return null;
 }
 
 /**
@@ -98,9 +159,9 @@ export async function mergeEnclosures(
   mainPdfBytes: Uint8Array,
   enclosures: EnclosureData[],
   classification?: ClassificationInfo,
-  includeHyperlinks = false
+  _includeHyperlinks = false
 ): Promise<Uint8Array> {
-  console.log('[mergeEnclosures] Called with', enclosures.length, 'enclosures, includeHyperlinks:', includeHyperlinks);
+  console.log('[mergeEnclosures] Called with', enclosures.length, 'enclosures');
 
   if (enclosures.length === 0) {
     return mainPdfBytes;
@@ -116,12 +177,12 @@ export async function mergeEnclosures(
     try {
       // Add optional cover/placeholder page before the enclosure content
       if (enclosure.hasCoverPage) {
-        addCoverPage(mainPdf, enclosure, helveticaBold, helvetica, classification, includeHyperlinks);
+        addCoverPage(mainPdf, enclosure, helveticaBold, helvetica, classification);
       }
 
       if (enclosure.data) {
         // PDF enclosure - load and add pages
-        await addPdfEnclosure(mainPdf, enclosure, helveticaBold, helvetica, classification, includeHyperlinks);
+        await addPdfEnclosure(mainPdf, enclosure, helveticaBold, helvetica, classification);
       }
       // Note: Text-only enclosures without hasCoverPage just appear in the enclosure list
       // No placeholder page is created unless explicitly requested via hasCoverPage
@@ -129,15 +190,13 @@ export async function mergeEnclosures(
       console.error(`Failed to add enclosure ${enclosure.number}:`, err);
       // Create an error placeholder page only if there was supposed to be PDF content
       if (enclosure.data) {
-        addPlaceholderPage(mainPdf, enclosure, helveticaBold, helvetica, true, classification, includeHyperlinks);
+        addPlaceholderPage(mainPdf, enclosure, helveticaBold, helvetica, true, classification);
       }
     }
   }
 
-  // Finalize all named destinations for hyperlinks
-  if (includeHyperlinks) {
-    finalizeNamedDestinations(mainPdf);
-  }
+  // Update hyperlink destinations to point to the enclosure pages we just added
+  updateHyperlinkDestinations(mainPdf);
 
   return mainPdf.save();
 }
@@ -150,8 +209,7 @@ async function addPdfEnclosure(
   enclosure: EnclosureData,
   helveticaBold: Awaited<ReturnType<typeof mainPdf.embedFont>>,
   _helvetica: Awaited<ReturnType<typeof mainPdf.embedFont>>,
-  classification?: ClassificationInfo,
-  includeHyperlinks = false
+  classification?: ClassificationInfo
 ): Promise<void> {
   if (!enclosure.data) return;
 
@@ -167,10 +225,10 @@ async function addPdfEnclosure(
     // Create a new page in the main document
     const page = mainPdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
 
-    // Add named destination on first page for hyperlink navigation (only if hyperlinks enabled)
-    // (Skip if there's a cover page - the cover page has the destination)
-    if (includeHyperlinks && i === 0 && !enclosure.hasCoverPage) {
-      addNamedDestination(mainPdf, page, `enclosure${enclosure.number}`);
+    // Record first page for hyperlink navigation
+    // (Skip if there's a cover page - the cover page is the target)
+    if (i === 0 && !enclosure.hasCoverPage) {
+      recordEnclosurePage(enclosure.number, page);
     }
 
     // Add classification marking at top (before content)
@@ -295,15 +353,12 @@ function addPlaceholderPage(
   helveticaBold: Awaited<ReturnType<typeof mainPdf.embedFont>>,
   helvetica: Awaited<ReturnType<typeof mainPdf.embedFont>>,
   isError = false,
-  classification?: ClassificationInfo,
-  includeHyperlinks = false
+  classification?: ClassificationInfo
 ): void {
   const page = mainPdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
 
-  // Add named destination for hyperlink navigation (only if hyperlinks enabled)
-  if (includeHyperlinks) {
-    addNamedDestination(mainPdf, page, `enclosure${enclosure.number}`);
-  }
+  // Record page for hyperlink navigation
+  recordEnclosurePage(enclosure.number, page);
 
   // Add classification marking at top
   if (classification?.marking) {
@@ -355,15 +410,12 @@ function addCoverPage(
   enclosure: EnclosureData,
   helveticaBold: Awaited<ReturnType<typeof mainPdf.embedFont>>,
   helvetica: Awaited<ReturnType<typeof mainPdf.embedFont>>,
-  classification?: ClassificationInfo,
-  includeHyperlinks = false
+  classification?: ClassificationInfo
 ): void {
   const page = mainPdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
 
-  // Add named destination for hyperlink navigation (cover page is the target, only if hyperlinks enabled)
-  if (includeHyperlinks) {
-    addNamedDestination(mainPdf, page, `enclosure${enclosure.number}`);
-  }
+  // Record cover page as the hyperlink target for this enclosure
+  recordEnclosurePage(enclosure.number, page);
 
   // Add classification marking at top
   if (classification?.marking) {
