@@ -222,8 +222,17 @@ function App() {
 
   // Track pending retry for download after engine reset
   const pendingDownloadRetryRef = useRef(false);
+  // Track if download is in progress to prevent double downloads
+  const downloadInProgressRef = useRef(false);
 
   const handleDownloadPdfInternal = useCallback(async () => {
+    // Prevent multiple simultaneous downloads
+    if (downloadInProgressRef.current) {
+      console.log('Download already in progress, skipping');
+      return;
+    }
+    downloadInProgressRef.current = true;
+
     setIsCompiling(true);
     setCompileError(null);
     try {
@@ -279,6 +288,7 @@ function App() {
       setCompileError(`PDF download failed: ${errorMessage}`);
     } finally {
       setIsCompiling(false);
+      downloadInProgressRef.current = false;
     }
   }, [compile, documentStore]);
 
@@ -384,6 +394,9 @@ function App() {
       setCompileError('PDF engine not ready. Please wait for initialization.');
       return;
     }
+
+    // Cancel any pending automatic retry - user is manually triggering
+    pendingDownloadRetryRef.current = false;
 
     // Check for PII before downloading
     const piiResult = detectPII(documentStore);

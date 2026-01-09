@@ -1,4 +1,5 @@
-import { PDFDocument, rgb, StandardFonts, PDFPage, PDFName, PDFArray, PDFNumber, PDFRef } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts, PDFPage, PDFName, PDFArray, PDFNumber, PDFRef, PDFRawStream } from 'pdf-lib';
+import pako from 'pako';
 
 export interface EnclosureData {
   number: number;
@@ -53,6 +54,41 @@ function recordEnclosurePage(enclosureNumber: number, pageIndex: number): void {
  * Since SwiftLaTeX doesn't create PDF link annotations for \hyperlink commands,
  * we need to find where the text is rendered and create annotations ourselves.
  */
+/**
+ * Decompresses a content stream if it's FlateDecode compressed.
+ * Returns the decompressed bytes or the original if not compressed.
+ */
+function decompressContentStream(stream: PDFRawStream): Uint8Array {
+  const rawBytes = stream.getContents();
+  const dict = stream.dict;
+
+  // Check for Filter entry
+  const filter = dict.get(PDFName.of('Filter'));
+  if (!filter) {
+    // No compression
+    return rawBytes;
+  }
+
+  const filterName = filter.toString();
+  console.log(`[hyperlinks] Stream filter: ${filterName}`);
+
+  if (filterName === '/FlateDecode') {
+    try {
+      // Use pako to decompress
+      const decompressed = pako.inflate(rawBytes);
+      console.log(`[hyperlinks] Decompressed ${rawBytes.length} -> ${decompressed.length} bytes`);
+      return decompressed;
+    } catch (err) {
+      console.error('[hyperlinks] Decompression failed:', err);
+      return rawBytes;
+    }
+  }
+
+  // Unsupported filter, return raw
+  console.log(`[hyperlinks] Unsupported filter: ${filterName}`);
+  return rawBytes;
+}
+
 function findEnclosureReferences(pdfDoc: PDFDocument, mainPageCount: number): TextPosition[] {
   const positions: TextPosition[] = [];
   const pages = pdfDoc.getPages();
@@ -73,32 +109,26 @@ function findEnclosureReferences(pdfDoc: PDFDocument, mainPageCount: number): Te
         continue;
       }
 
-      // Get the raw content stream bytes
+      // Get the decompressed content stream bytes
       let contentBytes: Uint8Array | undefined;
 
       // Resolve the reference to get the actual stream
       const resolvedContents = page.node.lookup(PDFName.of('Contents'));
       console.log(`[hyperlinks] Page ${pageIdx + 1} resolved Contents type: ${resolvedContents?.constructor?.name || 'undefined'}`);
 
-      if (resolvedContents instanceof PDFRef) {
-        const stream = pdfDoc.context.lookup(resolvedContents);
-        console.log(`[hyperlinks] Page ${pageIdx + 1} stream type: ${stream?.constructor?.name}`);
-        if (stream && 'getContents' in stream) {
-          contentBytes = (stream as { getContents(): Uint8Array }).getContents();
-        }
-      } else if (resolvedContents && 'getContents' in resolvedContents) {
-        // Direct stream object
-        contentBytes = (resolvedContents as { getContents(): Uint8Array }).getContents();
+      if (resolvedContents instanceof PDFRawStream) {
+        // Direct stream - decompress if needed
+        contentBytes = decompressContentStream(resolvedContents);
       } else if (resolvedContents instanceof PDFArray) {
-        // Multiple content streams - concatenate them
+        // Multiple content streams - decompress and concatenate them
         console.log(`[hyperlinks] Page ${pageIdx + 1} has ${resolvedContents.size()} content streams`);
         const allBytes: number[] = [];
         for (let i = 0; i < resolvedContents.size(); i++) {
           const ref = resolvedContents.get(i);
           if (ref instanceof PDFRef) {
             const stream = pdfDoc.context.lookup(ref);
-            if (stream && 'getContents' in stream) {
-              const bytes = (stream as { getContents(): Uint8Array }).getContents();
+            if (stream instanceof PDFRawStream) {
+              const bytes = decompressContentStream(stream);
               allBytes.push(...bytes);
             }
           }
@@ -113,7 +143,7 @@ function findEnclosureReferences(pdfDoc: PDFDocument, mainPageCount: number): Te
         continue;
       }
 
-      console.log(`[hyperlinks] Page ${pageIdx + 1} content stream size: ${contentBytes.length} bytes`);
+      console.log(`[hyperlinks] Page ${pageIdx + 1} content stream size: ${contentBytes.length} bytes (decompressed)`);
 
       // Parse the content stream to find text positions
       const pagePositions = parseContentStreamForEnclosures(contentBytes, pageIdx);
