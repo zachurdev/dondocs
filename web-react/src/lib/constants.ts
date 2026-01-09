@@ -231,28 +231,34 @@ export const APP_INFO = {
  * Common placeholders for S-1/Admin use cases
  */
 export const BATCH_PLACEHOLDERS = [
-  // Primary Person (Subject of document)
-  { name: 'NAME', label: 'Full Name', category: 'Subject', example: 'John A. Smith' },
-  { name: 'LAST_NAME', label: 'Last Name', category: 'Subject', example: 'Smith' },
-  { name: 'FIRST_NAME', label: 'First Name', category: 'Subject', example: 'John' },
-  { name: 'MI', label: 'Middle Initial', category: 'Subject', example: 'A.' },
-  { name: 'RANK', label: 'Rank', category: 'Subject', example: 'Cpl' },
-  { name: 'RANK_NAME', label: 'Rank + Name', category: 'Subject', example: 'Cpl Smith' },
-  { name: 'EDIPI', label: 'EDIPI/DoD ID', category: 'Subject', example: '1234567890' },
-  { name: 'MOS', label: 'MOS', category: 'Subject', example: '0311' },
-  { name: 'BILLET', label: 'Billet/Position', category: 'Subject', example: 'Team Leader' },
+  // 1st Person (Primary subject of document)
+  { name: 'NAME_1', label: 'Full Name (1st)', category: '1st Person', example: 'John A. Smith' },
+  { name: 'LAST_NAME_1', label: 'Last Name (1st)', category: '1st Person', example: 'Smith' },
+  { name: 'FIRST_NAME_1', label: 'First Name (1st)', category: '1st Person', example: 'John' },
+  { name: 'MI_1', label: 'Middle Initial (1st)', category: '1st Person', example: 'A.' },
+  { name: 'RANK_1', label: 'Rank (1st)', category: '1st Person', example: 'Cpl' },
+  { name: 'RANK_NAME_1', label: 'Rank + Name (1st)', category: '1st Person', example: 'Cpl Smith' },
+  { name: 'EDIPI_1', label: 'EDIPI/DoD ID (1st)', category: '1st Person', example: '1234567890' },
+  { name: 'MOS_1', label: 'MOS (1st)', category: '1st Person', example: '0311' },
+  { name: 'BILLET_1', label: 'Billet/Position (1st)', category: '1st Person', example: 'Team Leader' },
 
-  // Second Person (Witness, Reporting Senior, etc.)
-  { name: 'NAME_2', label: 'Name (2nd Person)', category: '2nd Person', example: 'Jane B. Doe' },
-  { name: 'RANK_2', label: 'Rank (2nd Person)', category: '2nd Person', example: 'SSgt' },
+  // 2nd Person (Witness, Reporting Senior, etc.)
+  { name: 'NAME_2', label: 'Full Name (2nd)', category: '2nd Person', example: 'Jane B. Doe' },
+  { name: 'LAST_NAME_2', label: 'Last Name (2nd)', category: '2nd Person', example: 'Doe' },
+  { name: 'FIRST_NAME_2', label: 'First Name (2nd)', category: '2nd Person', example: 'Jane' },
+  { name: 'MI_2', label: 'Middle Initial (2nd)', category: '2nd Person', example: 'B.' },
+  { name: 'RANK_2', label: 'Rank (2nd)', category: '2nd Person', example: 'SSgt' },
   { name: 'RANK_NAME_2', label: 'Rank + Name (2nd)', category: '2nd Person', example: 'SSgt Doe' },
-  { name: 'BILLET_2', label: 'Billet (2nd Person)', category: '2nd Person', example: 'Squad Leader' },
+  { name: 'BILLET_2', label: 'Billet/Position (2nd)', category: '2nd Person', example: 'Squad Leader' },
 
-  // Third Person (Reviewer, Commander, etc.)
-  { name: 'NAME_3', label: 'Name (3rd Person)', category: '3rd Person', example: 'Michael C. Jones' },
-  { name: 'RANK_3', label: 'Rank (3rd Person)', category: '3rd Person', example: 'Capt' },
+  // 3rd Person (Reviewer, Commander, etc.)
+  { name: 'NAME_3', label: 'Full Name (3rd)', category: '3rd Person', example: 'Michael C. Jones' },
+  { name: 'LAST_NAME_3', label: 'Last Name (3rd)', category: '3rd Person', example: 'Jones' },
+  { name: 'FIRST_NAME_3', label: 'First Name (3rd)', category: '3rd Person', example: 'Michael' },
+  { name: 'MI_3', label: 'Middle Initial (3rd)', category: '3rd Person', example: 'C.' },
+  { name: 'RANK_3', label: 'Rank (3rd)', category: '3rd Person', example: 'Capt' },
   { name: 'RANK_NAME_3', label: 'Rank + Name (3rd)', category: '3rd Person', example: 'Capt Jones' },
-  { name: 'BILLET_3', label: 'Billet (3rd Person)', category: '3rd Person', example: 'Company Commander' },
+  { name: 'BILLET_3', label: 'Billet/Position (3rd)', category: '3rd Person', example: 'Company Commander' },
 
   // Dates & Times
   { name: 'DATE', label: 'Document Date', category: 'Dates', example: '15 Jan 25' },

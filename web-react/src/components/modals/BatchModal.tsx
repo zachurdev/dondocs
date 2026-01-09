@@ -438,19 +438,19 @@ export function BatchModal({ compile, isEngineReady, waitForReady }: BatchModalP
                         <table className="w-full text-sm">
                           <thead className="bg-muted/50">
                             <tr>
-                              <th className="p-2 text-left font-medium w-10">#</th>
+                              <th className="px-2 py-2 text-left font-medium w-8">#</th>
                               {detectedPlaceholders.map((placeholder) => (
-                                <th key={placeholder} className="p-2 text-left font-medium min-w-[150px]">
+                                <th key={placeholder} className="px-2 py-2 text-left font-medium min-w-[120px]">
                                   {placeholder}
                                 </th>
                               ))}
-                              <th className="p-2 text-left font-medium w-20"></th>
+                              <th className="px-1 py-2 text-left font-medium w-16"></th>
                             </tr>
                           </thead>
                           <tbody>
                             {rows.map((row, idx) => (
                               <tr key={row.id} className={`border-t ${row.status === 'error' ? 'bg-destructive/10' : row.status === 'success' ? 'bg-green-500/10' : ''}`}>
-                                <td className="p-2 text-muted-foreground">
+                                <td className="px-2 py-2 text-muted-foreground">
                                   <div className="flex items-center gap-1">
                                     {row.status === 'success' && <CheckCircle className="h-4 w-4 text-green-500" />}
                                     {row.status === 'error' && <XCircle className="h-4 w-4 text-destructive" />}
@@ -459,7 +459,7 @@ export function BatchModal({ compile, isEngineReady, waitForReady }: BatchModalP
                                   </div>
                                 </td>
                                 {detectedPlaceholders.map((placeholder) => (
-                                  <td key={placeholder} className="p-2">
+                                  <td key={placeholder} className="px-2 py-2">
                                     <Input
                                       value={row.values[placeholder] || ''}
                                       onChange={(e) =>
@@ -471,12 +471,12 @@ export function BatchModal({ compile, isEngineReady, waitForReady }: BatchModalP
                                     />
                                   </td>
                                 ))}
-                                <td className="p-2">
-                                  <div className="flex items-center gap-1">
+                                <td className="px-1 py-2">
+                                  <div className="flex items-center gap-0.5">
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      className="h-8 w-8"
+                                      className="h-7 w-7"
                                       onClick={() => handlePreview(row)}
                                       disabled={!isEngineReady || isGenerating || previewingRow === row.id}
                                       title="Preview document"
@@ -490,7 +490,7 @@ export function BatchModal({ compile, isEngineReady, waitForReady }: BatchModalP
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      className="h-8 w-8 text-destructive"
+                                      className="h-7 w-7 text-destructive"
                                       onClick={() => removeRow(row.id)}
                                       disabled={rows.length === 1 || isGenerating}
                                     >

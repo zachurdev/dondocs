@@ -11,10 +11,10 @@ interface VariableAutocompleteProps {
 }
 
 // Group placeholders with common items first
-const COMMON_VARIABLES = ['NAME', 'RANK', 'RANK_NAME', 'DATE', 'UNIT'];
+const COMMON_VARIABLES = ['NAME_1', 'RANK_1', 'RANK_NAME_1', 'DATE', 'UNIT'];
 
 const categoryIcons: Record<string, string> = {
-  'Subject': '👤',
+  '1st Person': '👤',
   '2nd Person': '👥',
   '3rd Person': '👥',
   'Dates': '📅',

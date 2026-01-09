@@ -342,6 +342,18 @@ export function Header({
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Batch Generation button - desktop only */}
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 px-2 sm:px-3 hidden md:flex"
+            onClick={() => setBatchModalOpen(true)}
+            title="Generate multiple documents with variables"
+          >
+            <Layers className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Batch</span>
+          </Button>
+
           {/* Tools dropdown - desktop only */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -354,10 +366,6 @@ export function Header({
               <DropdownMenuItem onClick={() => setTemplateLoaderOpen(true)}>
                 <FolderOpen className="h-4 w-4 mr-2" />
                 Templates
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setBatchModalOpen(true)}>
-                <Layers className="h-4 w-4 mr-2" />
-                Batch Generation
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setFindReplaceOpen(true)}>
                 <Search className="h-4 w-4 mr-2" />
