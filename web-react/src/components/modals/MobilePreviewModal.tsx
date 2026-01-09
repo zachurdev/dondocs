@@ -1,6 +1,7 @@
-import { X, Loader2, AlertCircle } from 'lucide-react';
+import { X, Loader2, AlertCircle, ScrollText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUIStore } from '@/stores/uiStore';
+import { useLogStore } from '@/stores/logStore';
 
 interface MobilePreviewModalProps {
   pdfUrl: string | null;
@@ -10,9 +11,15 @@ interface MobilePreviewModalProps {
 
 export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreviewModalProps) {
   const { mobilePreviewOpen, setMobilePreviewOpen } = useUIStore();
+  const { setOpen: setLogViewerOpen, setEnabled: setLogEnabled } = useLogStore();
 
   // Filter out engine reset message - it's not a user-facing error
   const displayError = error === 'ENGINE_RESET_NEEDED' ? null : error;
+
+  const handleOpenLogs = () => {
+    setLogEnabled(true); // Enable logging when opening
+    setLogViewerOpen(true);
+  };
 
   if (!mobilePreviewOpen) return null;
 
@@ -29,13 +36,23 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
             </div>
           )}
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setMobilePreviewOpen(false)}
-        >
-          <X className="h-5 w-5" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleOpenLogs}
+            title="View Logs"
+          >
+            <ScrollText className="h-5 w-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMobilePreviewOpen(false)}
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
       </div>
 
       {/* Content */}
@@ -63,9 +80,18 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
         {/* Error state - only show if no PDF */}
         {displayError && !pdfUrl && (
           <div className="absolute inset-0 flex items-center justify-center p-4">
-            <div className="flex flex-col items-center gap-2 text-center">
+            <div className="flex flex-col items-center gap-3 text-center max-w-sm">
               <AlertCircle className="h-8 w-8 text-destructive" />
               <p className="text-sm text-destructive">{displayError}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleOpenLogs}
+                className="mt-2"
+              >
+                <ScrollText className="h-4 w-4 mr-2" />
+                View Logs
+              </Button>
             </div>
           </div>
         )}
