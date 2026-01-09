@@ -33,7 +33,7 @@ export function useStatusMessage(options: UseStatusMessageOptions = {}) {
   const { duration = TIMING.STATUS_MESSAGE_DURATION, clearPrevious = true } = options;
 
   const [message, setMessage] = useState<StatusMessage | null>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutRef = useRef<number | null>(null);
 
   // Clear any existing timeout
   const clearTimeout = useCallback(() => {

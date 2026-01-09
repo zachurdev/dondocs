@@ -36,7 +36,7 @@ import { useUIStore } from '@/stores/uiStore';
 import { useProfileStore } from '@/stores/profileStore';
 import { useDocumentStore } from '@/stores/documentStore';
 import type { Profile, SignatureImage } from '@/types/document';
-import { formatUnitAddress, type UnitInfo } from '@/data/unitDirectory';
+import type { UnitInfo } from '@/data/unitDirectory';
 import { ALL_SERVICE_RANKS, formatRank } from '@/data/ranks';
 
 // Convert ArrayBuffer to base64

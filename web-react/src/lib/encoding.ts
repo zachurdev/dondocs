@@ -65,7 +65,7 @@ export async function blobToUint8Array(blob: Blob): Promise<Uint8Array> {
  * Convert Uint8Array to Blob
  */
 export function uint8ArrayToBlob(bytes: Uint8Array, mimeType: string = 'application/octet-stream'): Blob {
-  return new Blob([bytes], { type: mimeType });
+  return new Blob([bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)], { type: mimeType });
 }
 
 /**
@@ -175,7 +175,7 @@ export function triggerDownload(
   filename: string,
   mimeType: string = 'application/octet-stream'
 ): void {
-  const blob = data instanceof Blob ? data : new Blob([data], { type: mimeType });
+  const blob = data instanceof Blob ? data : new Blob([data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength)], { type: mimeType });
   const url = URL.createObjectURL(blob);
 
   const link = document.createElement('a');

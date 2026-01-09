@@ -17,7 +17,7 @@ import { useDocumentStore } from '@/stores/documentStore';
 import { useHistoryStore } from '@/stores/historyStore';
 import { useProfileStore } from '@/stores/profileStore';
 import { useLatexEngine } from '@/hooks/useLatexEngine';
-import { generateAllLatexFiles } from '@/services/latex/generator';
+import { generateAllLatexFiles, type GeneratedFiles } from '@/services/latex/generator';
 import { generateDocx } from '@/services/docx/generator';
 import { mergeEnclosures } from '@/services/pdf/mergeEnclosures';
 import type { ClassificationInfo } from '@/services/pdf/mergeEnclosures';
@@ -70,12 +70,7 @@ function App() {
 
   // PII detection state
   const [piiDetectionResult, setPiiDetectionResult] = useState<PIIDetectionResult | null>(null);
-  const pendingDownloadRef = useRef<{
-    texFiles: Record<string, string>;
-    enclosures: Array<{ data: Uint8Array; pageStyle: string; description: string; textOnly?: boolean }>;
-    includeHyperlinks: boolean;
-    signatureImage: Uint8Array | null;
-  } | null>(null);
+  const pendingDownloadRef = useRef<GeneratedFiles | null>(null);
 
   // Apply theme to document
   useEffect(() => {

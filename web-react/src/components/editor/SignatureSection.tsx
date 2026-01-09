@@ -59,9 +59,8 @@ interface SignatureSectionProps {
 }
 
 export function SignatureSection({ config }: SignatureSectionProps) {
-  const { documentMode, formData, setField } = useDocumentStore();
+  const { formData, setField } = useDocumentStore();
   const isDualSignature = config.signature === 'dual';
-  const isCompliantMode = documentMode === 'compliant';
   const hasDualDigitalSignature = isDualSignature && formData.signatureType === 'digital';
   const [useCustomRank, setUseCustomRank] = useState(false);
   const [isDragging, setIsDragging] = useState(false);

@@ -1,8 +1,4 @@
-import { PDFDocument, PDFName, PDFDict, PDFArray, PDFString, PDFNumber, PDFRef } from 'pdf-lib';
-
-// Standard page dimensions (US Letter)
-const PAGE_WIDTH = 612;  // 8.5 inches
-const PAGE_HEIGHT = 792; // 11 inches
+import { PDFDocument, PDFName, PDFDict, PDFArray, PDFString, PDFNumber } from 'pdf-lib';
 
 // Signature field marker name (must match LaTeX \hypertarget name)
 const SIGNATURE_MARKER_NAME = 'DIGSIG_FIELD_MARKER';
@@ -126,9 +122,8 @@ function findSignatureMarker(pdfDoc: PDFDocument): { pageIndex: number; x: numbe
               const left = leftObj instanceof PDFNumber ? leftObj.asNumber() : FALLBACK_POSITION.x;
               const top = topObj instanceof PDFNumber ? topObj.asNumber() : FALLBACK_POSITION.y;
 
-              // top is from page top in PDF coordinates, convert to bottom-origin
-              const pageHeight = pages[pageIndex].getHeight();
-              const y = top; // hyperref XYZ uses top coordinate directly
+              // hyperref XYZ uses top coordinate directly
+              const y = top;
 
               console.log(`Found signature marker at page ${pageIndex + 1}, x=${left}, y=${y}`);
               return { pageIndex, x: left, y };

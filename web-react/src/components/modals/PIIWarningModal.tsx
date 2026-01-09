@@ -104,7 +104,6 @@ export function PIIWarningModal({ detectionResult, onCancel, onProceed }: PIIWar
   };
 
   const totalHighSeverity = summary.ssn + summary.edipi;
-  const totalMediumSeverity = summary.dob + summary.medicalKeywords;
 
   return (
     <Dialog open={piiWarningOpen} onOpenChange={(open) => {
