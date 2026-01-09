@@ -944,8 +944,18 @@
                     % Check if this is JSPDF marker (JS will append actual PDF)
                     % Using \pdfstrcmp for reliable string comparison (returns 0 if equal)
                     \ifnum\pdfstrcmp{\currentfile}{JSPDF}=0
-                        % JSPDF marker: JavaScript will append this PDF
-                        % Do NOT create placeholder - JS handles it
+                        % JSPDF marker: Create placeholder page with hypertarget
+                        % JavaScript will REPLACE this page with actual PDF content
+                        \newpage
+                        \hypertarget{enclosure\currentenclnum}{}%
+                        \thispagestyle{enclosurefirstpage}%
+                        \vspace*{2in}%
+                        \begin{center}
+                            \fontsize{16pt}{20pt}\selectfont
+                            \textbf{\currentencltitle}\\[1in]
+                            \fontsize{12pt}{16pt}\selectfont
+                            \textit{(Loading enclosure...)}
+                        \end{center}
                     \else
                         % Include PDF with proper SECNAV enclosure marking
                         % (Note: SwiftLaTeX doesn't support \includepdf)
