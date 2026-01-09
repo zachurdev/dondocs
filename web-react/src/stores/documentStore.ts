@@ -127,31 +127,24 @@ const DEFAULT_REFERENCES: Reference[] = [
   { letter: 'd', title: 'MCO 3500.27C', url: '' },
 ];
 
-// Default enclosures for example document
-const DEFAULT_ENCLOSURES: Enclosure[] = [
-  { title: 'Exercise Timeline and Scheme of Maneuver' },
-  { title: 'Casualty Summary and Medical Evacuation Report' },
-  { title: 'Ammunition Expenditure Report' },
-  { title: 'Lessons Learned Compilation' },
-];
+// Default enclosures for example document (empty - user adds as needed)
+const DEFAULT_ENCLOSURES: Enclosure[] = [];
 
 // Default paragraphs for example document (two pages of content)
 const DEFAULT_PARAGRAPHS: Paragraph[] = [
-  { text: 'Purpose. Per reference (a), this letter provides the after action report for Exercise Steel Knight 25-1, conducted from 3-17 December 2025 in the Camp Lejeune Training Areas.', level: 0 },
-  { text: 'Background. Exercise Steel Knight 25-1 was a battalion-level combined arms exercise designed to validate the combat readiness of 1st Battalion, 6th Marines in preparation for the upcoming deployment cycle. The exercise incorporated live-fire ranges, force-on-force training, and simulated combat operations against a near-peer adversary in accordance with reference (b).', level: 0 },
-  { text: 'Execution Summary. The exercise was executed in three distinct phases over the 14-day training period:', level: 0 },
-  { text: 'Phase I (3-6 December): Pre-deployment preparation and equipment staging. All companies completed pre-exercise certifications including weapons qualification, communications checks, and medical readiness verification.', level: 1 },
-  { text: 'Phase II (7-12 December): Main force-on-force operations against the 2d Light Armored Reconnaissance Battalion. Key events included a battalion attack, deliberate defense, and 48-hour sustained operations period.', level: 1 },
-  { text: 'Phase III (13-17 December): Live-fire combined arms training at Range G-10, integrating organic weapons with 81mm mortars, artillery, and close air support.', level: 1 },
-  { text: 'Assessment. Overall, 1st Battalion, 6th Marines demonstrated a high level of tactical proficiency and combat readiness. The following areas were assessed:', level: 0 },
-  { text: 'Tactical Proficiency. The battalion demonstrated excellent small unit tactics and fire team coordination. Squad leaders showed marked improvement in fire and maneuver under simulated combat stress.', level: 1 },
-  { text: 'Command and Control. Battalion and company command posts maintained effective communications throughout. The tactical operations center successfully tracked all subordinate elements during sustained operations.', level: 1 },
-  { text: 'Logistics Support. Combat logistics support performed exceptionally well. Medical evacuation procedures were validated with zero simulated casualties exceeding doctrinal timelines.', level: 1 },
-  { text: 'Areas for Improvement. The following areas require continued emphasis:', level: 0 },
-  { text: 'Night Operations. Several squads experienced difficulty maintaining tactical dispersion during limited visibility movement. Recommend increased emphasis on night land navigation.', level: 1 },
-  { text: 'Electronic Warfare. Units demonstrated inconsistent ability to transition to alternate communication methods during simulated electronic attack.', level: 1 },
-  { text: 'Recommendation. Based on the results of Exercise Steel Knight 25-1, 1st Battalion, 6th Marines is assessed as combat ready. Recommend the battalion be certified for deployment per reference (d).', level: 0 },
-  { text: 'Point of Contact. Point of contact is the undersigned or Major J.Q. Smith, S-3, at (910) 451-0001 or jane.smith@usmc.mil.', level: 0 },
+  { text: 'Purpose. Per reference (a), this letter provides the after action report for Exercise Steel Knight 25-1, conducted 3-17 December 2025 at Camp Lejeune.', level: 0 },
+  { text: 'Background. Exercise Steel Knight 25-1 was a battalion-level combined arms exercise to validate combat readiness of 1st Battalion, 6th Marines per reference (b).', level: 0 },
+  { text: 'Execution Summary. The exercise was executed in three phases:', level: 0 },
+  { text: 'Phase I (3-6 Dec): Pre-deployment preparation. All companies completed certifications including weapons qualification and communications checks.', level: 1 },
+  { text: 'Phase II (7-12 Dec): Force-on-force operations against 2d LAR Battalion. Key events included battalion attack, deliberate defense, and 48-hour sustained ops.', level: 1 },
+  { text: 'Phase III (13-17 Dec): Live-fire combined arms training at Range G-10 with mortars, artillery, and close air support.', level: 1 },
+  { text: 'Assessment. 1st Battalion, 6th Marines demonstrated high tactical proficiency and combat readiness:', level: 0 },
+  { text: 'Tactical Proficiency. Excellent small unit tactics and fire team coordination. Squad leaders showed marked improvement under combat stress.', level: 1 },
+  { text: 'Command and Control. Effective communications maintained throughout. TOC successfully tracked all elements during sustained operations.', level: 1 },
+  { text: 'Areas for Improvement:', level: 0 },
+  { text: 'Night Operations. Several squads had difficulty maintaining dispersion during limited visibility. Recommend emphasis on night land navigation.', level: 1 },
+  { text: 'Recommendation. 1st Battalion, 6th Marines is assessed combat ready. Recommend certification for deployment per reference (d).', level: 0 },
+  { text: 'Point of Contact. POC is the undersigned or Major J.Q. Smith, S-3, at (910) 451-0001.', level: 0 },
 ];
 
 export const useDocumentStore = create<DocumentState>((set, get) => ({
