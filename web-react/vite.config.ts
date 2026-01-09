@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 import fs from 'fs'
 import type { Plugin } from 'vite'
@@ -155,7 +156,59 @@ function texliveMiddleware(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(), texliveMiddleware()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    texliveMiddleware(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'lib/**/*'],
+      manifest: {
+        name: 'Naval Correspondence Generator',
+        short_name: 'NavCorr',
+        description: 'Generate SECNAV M-5216.5 compliant Naval correspondence with batch processing',
+        theme_color: '#1a365d',
+        background_color: '#ffffff',
+        display: 'standalone',
+        orientation: 'portrait',
+        scope: '/libo-secured/',
+        start_url: '/libo-secured/',
+        icons: [
+          {
+            src: 'icon.svg',
+            sizes: 'any',
+            type: 'image/svg+xml',
+            purpose: 'any',
+          },
+          {
+            src: 'icon.svg',
+            sizes: '512x512',
+            type: 'image/svg+xml',
+            purpose: 'maskable',
+          },
+        ],
+      },
+      workbox: {
+        // Increase limit for large JS bundles (SwiftLaTeX is ~9MB)
+        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+        // Cache TeX Live files for offline use
+        runtimeCaching: [
+          {
+            urlPattern: /\/lib\/texlive\/.*/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'texlive-cache',
+              expiration: {
+                maxEntries: 500,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+              },
+            },
+          },
+        ],
+      },
+    }),
+  ],
   base: '/libo-secured/',
   server: {
     // Allow ngrok and other tunnel services
