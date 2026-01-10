@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
+// Note: Text/Annotation layer CSS removed - layers disabled for iOS stability
+// Reference: https://github.com/wojtekmaj/react-pdf/issues/1655
 import { X, Loader2, AlertCircle, ScrollText, Download, ChevronLeft, ChevronRight, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUIStore } from '@/stores/uiStore';
@@ -68,20 +68,29 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
   const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
   const goToNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, numPages));
 
-  // Universal download handler
+  // Universal download handler - optimized for iOS
+  // Reference: https://web.dev/patterns/files/share-files
   const handleDownload = async () => {
     if (!pdfUrl) return;
 
     try {
       const response = await fetch(pdfUrl);
       const blob = await response.blob();
+      const file = new File([blob], 'correspondence.pdf', { type: 'application/pdf' });
 
-      // Try Web Share API first (works on iPhone Safari)
+      // Try Web Share API first
+      // IMPORTANT: On iOS Safari, only include 'files' in share object (no title/text)
+      // Reference: https://github.com/mdn/content/issues/32019
       if (navigator.share && navigator.canShare) {
-        const file = new File([blob], 'correspondence.pdf', { type: 'application/pdf' });
         if (navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], title: 'Naval Correspondence' });
-          return;
+          try {
+            await navigator.share({ files: [file] }); // Only files, no other properties
+            return;
+          } catch (shareErr) {
+            // User cancelled or share failed, continue to fallback
+            if ((shareErr as Error).name === 'AbortError') return;
+            console.log('Share API failed, using fallback:', shareErr);
+          }
         }
       }
 
@@ -89,11 +98,12 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
       if (deviceInfo.isIPad && deviceInfo.isSafari) {
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank');
-        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
         return;
       }
 
       // Chrome iOS: use data URL workaround
+      // Reference: https://github.com/eligrey/FileSaver.js/pull/612
       if (deviceInfo.isIPad && !deviceInfo.isSafari) {
         const reader = new FileReader();
         reader.onload = () => {
@@ -106,7 +116,7 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
       // Default fallback: open blob URL
       const url = URL.createObjectURL(blob);
       window.open(url, '_blank');
-      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
     } catch (err) {
       console.error('Download failed:', err);
       window.open(pdfUrl, '_blank');
@@ -221,6 +231,8 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
                   pageNumber={currentPage}
                   width={Math.min(window.innerWidth - 16, 450)}
                   className="shadow-lg"
+                  renderTextLayer={false} // Disable text layer on mobile to prevent iOS crashes
+                  renderAnnotationLayer={false} // Disable annotations for performance
                   loading={
                     <div className="flex items-center justify-center py-12">
                       <Loader2 className="h-6 w-6 animate-spin text-primary" />
