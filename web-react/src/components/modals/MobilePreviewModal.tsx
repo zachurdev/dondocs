@@ -121,10 +121,11 @@ interface MobilePreviewModalProps {
 
 // iPad PDF Viewer Component using react-pdf-viewer with full features
 // This provides: zoom controls (+/-), page thumbnails sidebar, page navigation
-function IPadPdfViewer({ pdfUrl, onClose, onDownload }: {
+function IPadPdfViewer({ pdfUrl, onClose, onDownload, isPhone }: {
   pdfUrl: string;
   onClose: () => void;
   onDownload: () => void;
+  isPhone?: boolean;
 }) {
   // Inject custom styles on mount
   useEffect(() => {
@@ -239,7 +240,7 @@ function IPadPdfViewer({ pdfUrl, onClose, onDownload }: {
             <Viewer
               fileUrl={pdfUrl}
               plugins={[defaultLayoutPluginInstance]}
-              defaultScale={1}
+              defaultScale={isPhone ? 0.5 : 1}
             />
           </div>
         </Worker>
@@ -338,12 +339,14 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
   // For iOS (iPhone/iPad) with PDF loaded, use full-screen viewer with integrated toolbar
   // react-pdf crashes on iOS due to canvas memory limits, so we use react-pdf-viewer instead
   if (deviceInfo.isIOS && pdfUrl && !isCompiling && !displayError) {
+    const isPhone = !deviceInfo.isIPad; // iPhone/iPod = phone, iPad = tablet
     return (
       <div className="fixed inset-0 z-50 bg-background flex flex-col">
         <IPadPdfViewer
           pdfUrl={pdfUrl}
           onClose={() => setMobilePreviewOpen(false)}
           onDownload={handleDownload}
+          isPhone={isPhone}
         />
       </div>
     );
