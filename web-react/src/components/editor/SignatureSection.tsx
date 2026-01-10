@@ -22,7 +22,7 @@ import { Upload, X, FileImage, PenLine, Shield, Type, Search } from 'lucide-reac
 import { useDocumentStore } from '@/stores/documentStore';
 import type { DocTypeConfig, SignatureImage, SignatureType } from '@/types/document';
 import { ALL_SERVICE_RANKS, formatRank } from '@/data/ranks';
-import { getOfficeCode } from '@/data/officeCodes';
+import { getOfficeCode, OFFICE_CODES } from '@/data/officeCodes';
 import { OfficeCodeLookupModal } from '@/components/modals/OfficeCodeLookupModal';
 
 // Convert ArrayBuffer to base64
@@ -55,6 +55,12 @@ function isStandardMilitaryRank(rank: string): boolean {
   return false;
 }
 
+// Check if an office code is a standard one from the database
+function isStandardOfficeCode(code: string): boolean {
+  if (!code) return true; // Empty is considered standard (will show lookup)
+  return OFFICE_CODES.some(c => c.code === code);
+}
+
 interface SignatureSectionProps {
   config: DocTypeConfig;
 }
@@ -64,6 +70,7 @@ export function SignatureSection({ config }: SignatureSectionProps) {
   const isDualSignature = config.signature === 'dual';
   const hasDualDigitalSignature = isDualSignature && formData.signatureType === 'digital';
   const [useCustomRank, setUseCustomRank] = useState(false);
+  const [useCustomOfficeCode, setUseCustomOfficeCode] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [officeCodeModalOpen, setOfficeCodeModalOpen] = useState(false);
 
@@ -71,6 +78,11 @@ export function SignatureSection({ config }: SignatureSectionProps) {
   useEffect(() => {
     setUseCustomRank(!isStandardMilitaryRank(formData.sigRank || ''));
   }, [formData.sigRank]);
+
+  // Initialize useCustomOfficeCode based on current officeCode value
+  useEffect(() => {
+    setUseCustomOfficeCode(!isStandardOfficeCode(formData.officeCode || ''));
+  }, [formData.officeCode]);
 
   // Generate preview URL from base64 signature
   const signaturePreviewUrl = useMemo(() => {
@@ -272,55 +284,94 @@ export function SignatureSection({ config }: SignatureSectionProps) {
               </div>
             </div>
 
-            {/* Office Code + POC Email on same row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="officeCode">Office Code</Label>
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
+            {/* Office Code + POC Email */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant={!useCustomOfficeCode ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => {
+                    if (useCustomOfficeCode) {
+                      setUseCustomOfficeCode(false);
+                      setField('officeCode', '');
+                    }
+                  }}
+                >
+                  Standard
+                </Button>
+                <Button
+                  type="button"
+                  variant={useCustomOfficeCode ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => {
+                    if (!useCustomOfficeCode) {
+                      setUseCustomOfficeCode(true);
+                      setField('officeCode', '');
+                    }
+                  }}
+                >
+                  Custom
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="officeCode">Office Code</Label>
+                  {useCustomOfficeCode ? (
                     <Input
                       id="officeCode"
-                      value={officeCodeDisplay}
-                      readOnly
-                      placeholder="Optional - click search..."
-                      className="pr-8 cursor-pointer"
-                      onClick={() => setOfficeCodeModalOpen(true)}
+                      value={formData.officeCode || ''}
+                      onChange={(e) => setField('officeCode', e.target.value)}
+                      placeholder="e.g., G-3, S-1, ADMIN"
                     />
-                    {formData.officeCode && (
+                  ) : (
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Input
+                          id="officeCode"
+                          value={officeCodeDisplay}
+                          readOnly
+                          placeholder="Optional - click search..."
+                          className="pr-8 cursor-pointer"
+                          onClick={() => setOfficeCodeModalOpen(true)}
+                        />
+                        {formData.officeCode && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setField('officeCode', '');
+                            }}
+                            title="Clear office code"
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        )}
+                      </div>
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="icon"
-                        className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setField('officeCode', '');
-                        }}
-                        title="Clear office code"
+                        onClick={() => setOfficeCodeModalOpen(true)}
+                        title="Search office codes"
                       >
-                        <X className="h-3 w-3" />
+                        <Search className="h-4 w-4" />
                       </Button>
-                    )}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setOfficeCodeModalOpen(true)}
-                    title="Search office codes"
-                  >
-                    <Search className="h-4 w-4" />
-                  </Button>
+                    </div>
+                  )}
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="pocEmail">POC Email</Label>
-                <Input
-                  id="pocEmail"
+                <div className="space-y-2">
+                  <Label htmlFor="pocEmail">POC Email</Label>
+                  <Input
+                    id="pocEmail"
                   type="email"
                   value={formData.pocEmail || ''}
                   onChange={(e) => setField('pocEmail', e.target.value)}
                   placeholder="john.doe@usmc.mil"
                 />
               </div>
+            </div>
             </div>
 
             {/* By Direction */}
