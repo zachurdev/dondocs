@@ -26,20 +26,21 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
   const [pdfError, setPdfError] = useState<string | null>(null);
 
   // Detect device/browser for download method and rendering approach
+  // iPad always uses native iframe - react-pdf crashes due to iOS canvas memory limits (384MB)
+  // Reference: https://github.com/wojtekmaj/react-pdf/issues/1601
   const [deviceInfo, setDeviceInfo] = useState<{
     isIPad: boolean;
     isSafari: boolean;
-    useIframeFallback: boolean;
-  }>({ isIPad: false, isSafari: false, useIframeFallback: false });
+  }>({ isIPad: false, isSafari: false });
 
   useEffect(() => {
     const isIPad = /iPad/i.test(navigator.userAgent) ||
       (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
     const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome|CriOS/i.test(navigator.userAgent);
-    setDeviceInfo({ isIPad, isSafari, useIframeFallback: false });
+    setDeviceInfo({ isIPad, isSafari });
 
     if (isIPad) {
-      console.log('[MobilePreview] iPad detected - using reduced quality react-pdf (350px width)');
+      console.log('[MobilePreview] iPad detected - using native PDF viewer (react-pdf crashes on iPad)');
     }
   }, []);
 
@@ -49,8 +50,6 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
       setPdfLoading(true);
       setPdfError(null);
       setCurrentPage(1);
-      // Reset fallback flag to try react-pdf first
-      setDeviceInfo(prev => ({ ...prev, useIframeFallback: false }));
     }
   }, [mobilePreviewOpen, pdfUrl]);
 
@@ -73,16 +72,7 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
     console.error('PDF load error:', err);
     setPdfLoading(false);
     setPdfError('Failed to load PDF preview');
-
-    // On iPad, automatically switch to iframe fallback if react-pdf fails
-    if (deviceInfo.isIPad) {
-      console.log('[MobilePreview] react-pdf failed on iPad, switching to iframe fallback');
-      setTimeout(() => {
-        setDeviceInfo(prev => ({ ...prev, useIframeFallback: true }));
-        setPdfError(null);
-      }, 1500);
-    }
-  }, [deviceInfo.isIPad]);
+  }, []);
 
   const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
   const goToNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, numPages));
@@ -211,81 +201,33 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
           </div>
         )}
 
-        {/* iPad - use react-pdf with heavily reduced quality to prevent memory crashes */}
-        {/* iOS Safari has 384MB canvas limit, and 2x device ratio doubles memory usage */}
+        {/* iPad - always use native iframe viewer (react-pdf crashes due to iOS memory limits) */}
         {/* Reference: https://github.com/wojtekmaj/react-pdf/issues/1601 */}
-        {pdfUrl && !isCompiling && deviceInfo.isIPad && !deviceInfo.useIframeFallback && (
-          <div className="flex flex-col items-center p-4 min-h-full">
-            {pdfLoading && !pdfError && (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
-            )}
-            {pdfError ? (
-              <div className="flex flex-col items-center justify-center py-12 gap-4">
-                <AlertCircle className="h-12 w-12 text-destructive/70" />
-                <p className="text-sm text-muted-foreground">{pdfError}</p>
-                <p className="text-xs text-muted-foreground">Switching to native viewer...</p>
-              </div>
-            ) : (
-              <Document
-                file={pdfUrl}
-                onLoadSuccess={onDocumentLoadSuccess}
-                onLoadError={onDocumentLoadError}
-                loading={null}
-                className="flex flex-col items-center"
-                error={
-                  <div className="flex flex-col items-center justify-center py-12 gap-4">
-                    <AlertCircle className="h-12 w-12 text-destructive/70" />
-                    <p className="text-sm text-muted-foreground">Failed to render PDF</p>
-                  </div>
-                }
-              >
-                {/* Key: Use small width (350px) to minimize canvas memory on iPad */}
-                {/* At 2x device ratio: 350×450 becomes 700×900 = 630k pixels × 4 bytes = 2.5MB per page */}
-                <Page
-                  key={`ipad-page-${currentPage}`}
-                  pageNumber={currentPage}
-                  width={350}
-                  className="shadow-lg bg-white"
-                  renderTextLayer={false}
-                  renderAnnotationLayer={false}
-                  loading={
-                    <div className="flex items-center justify-center py-12">
-                      <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                    </div>
-                  }
-                  error={
-                    <div className="flex items-center justify-center py-12">
-                      <p className="text-sm text-muted-foreground">Error rendering page</p>
-                    </div>
-                  }
-                />
-              </Document>
-            )}
-          </div>
-        )}
-
-        {/* iPad iframe fallback - used when react-pdf crashes */}
-        {pdfUrl && !isCompiling && deviceInfo.isIPad && deviceInfo.useIframeFallback && (
+        {pdfUrl && !isCompiling && deviceInfo.isIPad && (
           <div className="flex flex-col h-full">
-            <div className="flex-1 overflow-auto bg-muted/50 p-4">
-              <div
-                className="mx-auto bg-white shadow-lg rounded-sm overflow-hidden"
-                style={{ width: '100%', maxWidth: '600px' }}
-              >
-                <iframe
-                  src={pdfUrl}
-                  className="w-full border-0"
-                  style={{ height: 'calc(100vh - 180px)', minHeight: '500px' }}
-                  title="PDF Preview"
-                />
-              </div>
+            {/* Native PDF viewer via iframe - most reliable on iPad */}
+            <div className="flex-1 bg-muted/30">
+              <iframe
+                src={pdfUrl}
+                className="w-full h-full border-0"
+                title="PDF Preview"
+              />
             </div>
-            <div className="shrink-0 px-4 py-3 border-t border-border bg-card text-center">
-              <p className="text-xs text-muted-foreground">
-                Using native viewer • Pinch to zoom • Use share (↑) to save
-              </p>
+            {/* Footer with instructions */}
+            <div className="shrink-0 px-4 py-3 border-t border-border bg-card">
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-muted-foreground">
+                  Scroll pages • Pinch to zoom • Tap share (↑) to save
+                </p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => window.open(pdfUrl, '_blank')}
+                >
+                  <FileText className="h-4 w-4 mr-1.5" />
+                  Full Screen
+                </Button>
+              </div>
             </div>
           </div>
         )}
@@ -359,8 +301,8 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
         )}
       </div>
 
-      {/* Page Navigation Footer - for iPhone and iPad (when not using iframe fallback) */}
-      {pdfUrl && !isCompiling && numPages > 0 && !pdfError && !deviceInfo.useIframeFallback && (
+      {/* Page Navigation Footer - for iPhone only (iPad uses native viewer) */}
+      {pdfUrl && !isCompiling && numPages > 0 && !pdfError && !deviceInfo.isIPad && (
         <div className="flex items-center justify-between px-4 py-2 border-t border-border bg-card shrink-0">
           <Button
             variant="outline"
