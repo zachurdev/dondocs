@@ -183,22 +183,6 @@ function IPadPdfViewer({ pdfUrl, onClose, onDownload, isPhone }: {
               <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginLeft: 'auto' }}>
                 <ShowSearchPopover />
                 <EnterFullScreen />
-                <button
-                  onClick={onClose}
-                  className="rpv-core__minimal-button"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                  title="Close"
-                >
-                  <X className="h-4 w-4" />
-                </button>
               </div>
             </div>
           );
