@@ -26,14 +26,20 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [shareStatus, setShareStatus] = useState<string | null>(null);
   const [useFallback, setUseFallback] = useState<boolean>(false);
+  const [isIPadSafari, setIsIPadSafari] = useState<boolean>(false);
 
   // Detect if we should use fallback mode (iPad has issues with react-pdf)
   useEffect(() => {
     const isIPad = /iPad/i.test(navigator.userAgent) ||
       (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
+
+    // Safari doesn't have 'Chrome' in UA, Chrome on iOS does
+    const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome|CriOS/i.test(navigator.userAgent);
+
     if (isIPad) {
-      console.log('[MobilePreview] iPad detected, using fallback mode');
+      console.log('[MobilePreview] iPad detected, Safari:', isSafari);
       setUseFallback(true);
+      setIsIPadSafari(isSafari);
     }
   }, []);
 
@@ -213,7 +219,7 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
               <Button
                 className="w-full h-12 text-base"
                 onClick={() => {
-                  // Open PDF in new tab - user can view and use Safari's share
+                  // Open PDF in new tab
                   const link = document.createElement('a');
                   link.href = pdfUrl;
                   link.target = '_blank';
@@ -226,9 +232,16 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
                 Open PDF
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground text-center mt-2">
-              Tap "Open PDF", then use Safari's share button to save
-            </p>
+            {isIPadSafari ? (
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                Tap "Open PDF", then use the share button (↑) to save
+              </p>
+            ) : (
+              <div className="text-xs text-muted-foreground text-center mt-3 space-y-1">
+                <p className="font-medium text-foreground">Chrome on iPad doesn't support PDF save</p>
+                <p>Please use Safari for the best experience</p>
+              </div>
+            )}
           </div>
         )}
 
