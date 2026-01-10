@@ -308,11 +308,12 @@ function App() {
       // iOS Safari: use pre-opened window to show instructions page
       if (isIOS && isSafari && safariWindow) {
         const pdfBlobUrl = URL.createObjectURL(blob);
-          const htmlContent = `
+        // Create the instructions page as a blob URL to avoid document.write() cross-origin issues
+        const htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Save PDF</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -361,13 +362,13 @@ function App() {
         <span class="step-text">Select <strong>"Save to Files"</strong> or <strong>"Save PDF"</strong></span>
       </div>
     </div>
-    <button onclick="location.href='${pdfBlobUrl}'">View PDF</button>
+    <button onclick="window.location.replace('${pdfBlobUrl}')">View PDF</button>
   </div>
 </body>
 </html>`;
-        safariWindow.document.open();
-        safariWindow.document.write(htmlContent);
-        safariWindow.document.close();
+        const htmlBlob = new Blob([htmlContent], { type: 'text/html' });
+        const htmlBlobUrl = URL.createObjectURL(htmlBlob);
+        safariWindow.location.href = htmlBlobUrl;
         return true;
       }
 
@@ -510,11 +511,12 @@ function App() {
       // iOS Safari: use pre-opened window to show instructions page
       if (isIOS && isSafari && safariWindow) {
         const pdfBlobUrl = URL.createObjectURL(blob);
-          const htmlContent = `
+        // Create the instructions page as a blob URL to avoid document.write() cross-origin issues
+        const htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Save PDF</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -563,13 +565,13 @@ function App() {
         <span class="step-text">Select <strong>"Save to Files"</strong> or <strong>"Save PDF"</strong></span>
       </div>
     </div>
-    <button onclick="location.href='${pdfBlobUrl}'">View PDF</button>
+    <button onclick="window.location.replace('${pdfBlobUrl}')">View PDF</button>
   </div>
 </body>
 </html>`;
-        safariWindow.document.open();
-        safariWindow.document.write(htmlContent);
-        safariWindow.document.close();
+        const htmlBlob = new Blob([htmlContent], { type: 'text/html' });
+        const htmlBlobUrl = URL.createObjectURL(htmlBlob);
+        safariWindow.location.href = htmlBlobUrl;
         return true;
       }
 
