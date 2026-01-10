@@ -304,11 +304,11 @@ function App() {
         }
       }
 
-      // iOS: write redirect page to pre-opened window (location.href doesn't work reliably)
+      // iOS: use meta refresh to redirect pre-opened window (avoids JS context issues)
       if (isIOS && iosWindow) {
         const pdfBlobUrl = URL.createObjectURL(blob);
         iosWindow.document.open();
-        iosWindow.document.write(`<!DOCTYPE html><html><head><script>window.location.replace("${pdfBlobUrl}");</script></head><body></body></html>`);
+        iosWindow.document.write(`<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=${pdfBlobUrl}"></head><body></body></html>`);
         iosWindow.document.close();
         return true;
       }
@@ -436,11 +436,11 @@ function App() {
         }
       }
 
-      // iOS: write redirect page to pre-opened window (location.href doesn't work reliably)
+      // iOS: use meta refresh to redirect pre-opened window (avoids JS context issues)
       if (isIOS && iosWindow) {
         const pdfBlobUrl = URL.createObjectURL(blob);
         iosWindow.document.open();
-        iosWindow.document.write(`<!DOCTYPE html><html><head><script>window.location.replace("${pdfBlobUrl}");</script></head><body></body></html>`);
+        iosWindow.document.write(`<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=${pdfBlobUrl}"></head><body></body></html>`);
         iosWindow.document.close();
         return true;
       }
