@@ -348,71 +348,65 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
         }
       }
 
-      // iOS Safari: create HTML wrapper with PDF embed and instruction overlay
+      // iOS Safari: show instructions page, then navigate to PDF on button click
       if (isIOS && deviceInfo.isSafari && newWindow) {
         const pdfBlobUrl = URL.createObjectURL(blob);
 
-        // Write HTML page with embedded PDF and dismissible instruction overlay
+        // Write HTML instructions page - button navigates to the PDF
         const htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>PDF Preview</title>
+  <title>Save PDF</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; overflow: hidden; background: #1a1a1a; }
-    .pdf-container { width: 100%; height: 100%; }
-    .pdf-container embed { width: 100%; height: 100%; }
-    .overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 1000; padding: 20px;
+    html, body {
+      height: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
     }
-    .overlay.hidden { display: none; }
     .card {
-      background: #fff; border-radius: 16px; padding: 24px;
-      max-width: 320px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      background: #fff; border-radius: 20px; padding: 32px 24px;
+      max-width: 340px; width: 100%; text-align: center;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.4);
     }
-    .icon { font-size: 48px; margin-bottom: 16px; }
-    h2 { font-size: 18px; margin-bottom: 12px; color: #1a1a1a; }
-    p { font-size: 14px; color: #666; line-height: 1.5; margin-bottom: 20px; }
-    .steps { text-align: left; margin-bottom: 20px; }
-    .step { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .icon { font-size: 56px; margin-bottom: 20px; }
+    h1 { font-size: 22px; margin-bottom: 8px; color: #1a1a1a; font-weight: 700; }
+    .subtitle { font-size: 14px; color: #666; margin-bottom: 24px; }
+    .steps { text-align: left; margin-bottom: 28px; }
+    .step { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
     .step-num {
-      width: 24px; height: 24px; background: #007AFF; color: white;
+      width: 28px; height: 28px; background: #007AFF; color: white;
       border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 600; flex-shrink: 0;
+      font-size: 14px; font-weight: 600; flex-shrink: 0;
     }
-    .step-text { font-size: 14px; color: #333; }
+    .step-text { font-size: 15px; color: #333; line-height: 1.4; padding-top: 3px; }
+    .step-text strong { color: #007AFF; }
     button {
-      width: 100%; padding: 14px; background: #007AFF; color: white;
-      border: none; border-radius: 10px; font-size: 16px; font-weight: 600;
-      cursor: pointer;
+      width: 100%; padding: 16px; background: #007AFF; color: white;
+      border: none; border-radius: 12px; font-size: 17px; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
     }
     button:active { background: #0056b3; }
   </style>
 </head>
 <body>
-  <div class="pdf-container">
-    <embed src="${pdfBlobUrl}" type="application/pdf" />
-  </div>
-  <div class="overlay" id="overlay">
-    <div class="card">
-      <div class="icon">📄</div>
-      <h2>Save This PDF</h2>
-      <div class="steps">
-        <div class="step">
-          <span class="step-num">1</span>
-          <span class="step-text">Tap the <strong>Share</strong> button (↑) in Safari's toolbar</span>
-        </div>
-        <div class="step">
-          <span class="step-num">2</span>
-          <span class="step-text">Select <strong>"Save to Files"</strong> or <strong>"Save PDF"</strong></span>
-        </div>
+  <div class="card">
+    <div class="icon">📄</div>
+    <h1>Ready to Save</h1>
+    <p class="subtitle">After viewing the PDF, save it using these steps:</p>
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">1</span>
+        <span class="step-text">Tap the <strong>Share button</strong> (↑) in Safari's toolbar</span>
       </div>
-      <button onclick="document.getElementById('overlay').classList.add('hidden')">Got it</button>
+      <div class="step">
+        <span class="step-num">2</span>
+        <span class="step-text">Select <strong>"Save to Files"</strong> or <strong>"Save PDF"</strong></span>
+      </div>
     </div>
+    <button onclick="window.location.href='${pdfBlobUrl}'">View PDF</button>
   </div>
 </body>
 </html>`;
