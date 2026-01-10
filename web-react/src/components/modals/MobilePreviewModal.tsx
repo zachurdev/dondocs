@@ -307,6 +307,9 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
   const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
   const goToNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, numPages));
 
+  // Check if device is iOS (iPhone or iPad)
+  const isIOS = deviceInfo.isIPad || /iPhone|iPod/i.test(navigator.userAgent);
+
   // Universal download handler - optimized for iOS
   // Reference: https://web.dev/patterns/files/share-files
   const handleDownload = async () => {
@@ -317,7 +320,7 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
       const blob = await response.blob();
       const file = new File([blob], 'correspondence.pdf', { type: 'application/pdf' });
 
-      // Try Web Share API first
+      // Try Web Share API first (best for iOS - shows native share sheet)
       // IMPORTANT: On iOS Safari, only include 'files' in share object (no title/text)
       // Reference: https://github.com/mdn/content/issues/32019
       if (navigator.share && navigator.canShare) {
@@ -333,17 +336,21 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
         }
       }
 
-      // iPad Safari: open blob URL (user uses share button)
-      if (deviceInfo.isIPad && deviceInfo.isSafari) {
+      // iOS Safari: open blob URL in new tab (user taps share button there)
+      if (isIOS && deviceInfo.isSafari) {
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank');
         setTimeout(() => URL.revokeObjectURL(url), 10000);
+        // Show instruction alert for Safari users
+        setTimeout(() => {
+          alert('PDF opened in new tab.\n\nTo save: Tap the Share button (↑) then "Save to Files" or "Save PDF"');
+        }, 500);
         return;
       }
 
-      // Chrome iOS: use data URL workaround
+      // iOS Chrome: use data URL workaround
       // Reference: https://github.com/eligrey/FileSaver.js/pull/612
-      if (deviceInfo.isIPad && !deviceInfo.isSafari) {
+      if (isIOS && !deviceInfo.isSafari) {
         const reader = new FileReader();
         reader.onload = () => {
           window.open(reader.result as string, '_blank');
