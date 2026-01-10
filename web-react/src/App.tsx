@@ -247,7 +247,6 @@ function App() {
     const isIPad = /iPad/i.test(navigator.userAgent) ||
       (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
     const isIOS = /iPhone|iPod/i.test(navigator.userAgent) || isIPad;
-    const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome|CriOS/i.test(navigator.userAgent);
 
     // For iOS: open window FIRST (synchronously) to avoid popup blocker
     let iosWindow: Window | null = null;
@@ -380,7 +379,6 @@ function App() {
     const isIPad = /iPad/i.test(navigator.userAgent) ||
       (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
     const isIOS = /iPhone|iPod/i.test(navigator.userAgent) || isIPad;
-    const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome|CriOS/i.test(navigator.userAgent);
 
     // For iOS: open window FIRST (synchronously) to avoid popup blocker
     let iosWindow: Window | null = null;
