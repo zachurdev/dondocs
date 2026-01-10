@@ -348,15 +348,78 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
         }
       }
 
-      // iOS Safari: update the pre-opened window with blob URL
+      // iOS Safari: create HTML wrapper with PDF embed and instruction overlay
       if (isIOS && deviceInfo.isSafari && newWindow) {
-        const url = URL.createObjectURL(blob);
-        newWindow.location.href = url;
-        setTimeout(() => URL.revokeObjectURL(url), 10000);
-        // Show instruction alert for Safari users
-        setTimeout(() => {
-          alert('PDF opened in new tab.\n\nTo save: Tap the Share button (↑) then "Save to Files" or "Save PDF"');
-        }, 500);
+        const pdfBlobUrl = URL.createObjectURL(blob);
+
+        // Write HTML page with embedded PDF and dismissible instruction overlay
+        const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>PDF Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; background: #1a1a1a; }
+    .pdf-container { width: 100%; height: 100%; }
+    .pdf-container embed { width: 100%; height: 100%; }
+    .overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; padding: 20px;
+    }
+    .overlay.hidden { display: none; }
+    .card {
+      background: #fff; border-radius: 16px; padding: 24px;
+      max-width: 320px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .icon { font-size: 48px; margin-bottom: 16px; }
+    h2 { font-size: 18px; margin-bottom: 12px; color: #1a1a1a; }
+    p { font-size: 14px; color: #666; line-height: 1.5; margin-bottom: 20px; }
+    .steps { text-align: left; margin-bottom: 20px; }
+    .step { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .step-num {
+      width: 24px; height: 24px; background: #007AFF; color: white;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600; flex-shrink: 0;
+    }
+    .step-text { font-size: 14px; color: #333; }
+    button {
+      width: 100%; padding: 14px; background: #007AFF; color: white;
+      border: none; border-radius: 10px; font-size: 16px; font-weight: 600;
+      cursor: pointer;
+    }
+    button:active { background: #0056b3; }
+  </style>
+</head>
+<body>
+  <div class="pdf-container">
+    <embed src="${pdfBlobUrl}" type="application/pdf" />
+  </div>
+  <div class="overlay" id="overlay">
+    <div class="card">
+      <div class="icon">📄</div>
+      <h2>Save This PDF</h2>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <span class="step-text">Tap the <strong>Share</strong> button (↑) in Safari's toolbar</span>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <span class="step-text">Select <strong>"Save to Files"</strong> or <strong>"Save PDF"</strong></span>
+        </div>
+      </div>
+      <button onclick="document.getElementById('overlay').classList.add('hidden')">Got it</button>
+    </div>
+  </div>
+</body>
+</html>`;
+
+        newWindow.document.open();
+        newWindow.document.write(htmlContent);
+        newWindow.document.close();
         return;
       }
 
