@@ -120,10 +120,9 @@ interface MobilePreviewModalProps {
 
 // iPad PDF Viewer Component using react-pdf-viewer with full features
 // This provides: zoom controls (+/-), page thumbnails sidebar, page navigation
-function IPadPdfViewer({ pdfUrl, onClose, onDownload }: {
+function IPadPdfViewer({ pdfUrl, onClose }: {
   pdfUrl: string;
   onClose: () => void;
-  onDownload: () => void;
 }) {
   // Inject custom styles on mount
   useEffect(() => {
@@ -181,22 +180,6 @@ function IPadPdfViewer({ pdfUrl, onClose, onDownload }: {
               <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginLeft: 'auto' }}>
                 <ShowSearchPopover />
                 <EnterFullScreen />
-                <button
-                  onClick={onDownload}
-                  className="rpv-core__minimal-button"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                  title="Download PDF"
-                >
-                  <Download className="h-4 w-4" />
-                </button>
                 <button
                   onClick={onClose}
                   className="rpv-core__minimal-button"
@@ -360,7 +343,6 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
         <IPadPdfViewer
           pdfUrl={pdfUrl}
           onClose={() => setMobilePreviewOpen(false)}
-          onDownload={handleDownload}
         />
       </div>
     );
