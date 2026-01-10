@@ -1,4 +1,4 @@
-import { X, Loader2, AlertCircle, ScrollText } from 'lucide-react';
+import { X, Loader2, AlertCircle, ScrollText, Download, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUIStore } from '@/stores/uiStore';
 import { useLogStore } from '@/stores/logStore';
@@ -7,9 +7,10 @@ interface MobilePreviewModalProps {
   pdfUrl: string | null;
   isCompiling: boolean;
   error: string | null;
+  onDownloadPdf?: () => void;
 }
 
-export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreviewModalProps) {
+export function MobilePreviewModal({ pdfUrl, isCompiling, error, onDownloadPdf }: MobilePreviewModalProps) {
   const { mobilePreviewOpen, setMobilePreviewOpen } = useUIStore();
   const { setOpen: setLogViewerOpen, setEnabled: setLogEnabled } = useLogStore();
 
@@ -19,6 +20,12 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
   const handleOpenLogs = () => {
     setLogEnabled(true); // Enable logging when opening
     setLogViewerOpen(true);
+  };
+
+  const handleOpenInNewTab = () => {
+    if (pdfUrl) {
+      window.open(pdfUrl, '_blank');
+    }
   };
 
   if (!mobilePreviewOpen) return null;
@@ -37,6 +44,28 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
           )}
         </div>
         <div className="flex items-center gap-1">
+          {pdfUrl && (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleOpenInNewTab}
+                title="Open in New Tab (for multi-page viewing)"
+              >
+                <ExternalLink className="h-5 w-5" />
+              </Button>
+              {onDownloadPdf && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onDownloadPdf}
+                  title="Download PDF"
+                >
+                  <Download className="h-5 w-5" />
+                </Button>
+              )}
+            </>
+          )}
           <Button
             variant="ghost"
             size="icon"
@@ -65,6 +94,15 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
               className="absolute inset-0 w-full h-full border-0"
               title="PDF Preview"
             />
+            {/* Tip for multi-page viewing */}
+            {!isCompiling && (
+              <div className="absolute bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t border-border px-4 py-2">
+                <p className="text-xs text-muted-foreground text-center">
+                  <ExternalLink className="h-3 w-3 inline mr-1" />
+                  Tap the open icon above to view all pages in your browser
+                </p>
+              </div>
+            )}
             {/* Loading overlay on top of existing PDF */}
             {isCompiling && (
               <div className="absolute inset-0 bg-background/60 backdrop-blur-sm flex items-center justify-center">

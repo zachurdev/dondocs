@@ -677,6 +677,7 @@ ${texFiles['body.tex'] || '% No body content'}
         pdfUrl={pdfUrl}
         isCompiling={isCompiling || !isReady}
         error={compileError || engineError}
+        onDownloadPdf={handleDownloadPdf}
       />
       <AboutModal />
       <NISTComplianceModal />
