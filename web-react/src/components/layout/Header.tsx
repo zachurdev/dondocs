@@ -275,14 +275,14 @@ export function Header({
               <span className="text-xs text-muted-foreground hidden sm:block leading-tight">Generator</span>
             </div>
           </div>
-          {/* NIST 800-171 Compliance Badge */}
+          {/* NIST 800-171 Compliance Badge - icon on mobile, full badge on desktop */}
           <button
             onClick={() => setNistModalOpen(true)}
-            className="hidden md:flex items-center gap-1.5 px-2 py-1 rounded-md bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400 text-xs cursor-pointer hover:bg-green-500/20 transition-colors"
+            className="flex items-center justify-center gap-1.5 p-1.5 md:px-2 md:py-1 rounded-md bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400 text-xs cursor-pointer hover:bg-green-500/20 transition-colors"
             title="Click to learn about NIST 800-171 compliance"
           >
-            <Shield className="h-3 w-3" />
-            <span>NIST 800-171</span>
+            <Shield className="h-4 w-4 md:h-3 md:w-3" />
+            <span className="hidden md:inline">NIST 800-171</span>
           </button>
         </div>
 
