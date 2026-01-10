@@ -25,6 +25,7 @@ import type { ClassificationInfo } from '@/services/pdf/mergeEnclosures';
 import { addSignatureField, addDualSignatureFields } from '@/services/pdf/addSignatureField';
 import { DOC_TYPE_CONFIG } from '@/types/document';
 import { detectPII, type PIIDetectionResult } from '@/services/pii/detector';
+import { downloadPdfBlob, preOpenWindowForIOS } from '@/utils/downloadPdf';
 
 // Helper to get classification marking for enclosures
 function getClassificationInfo(classLevel: string | undefined): ClassificationInfo | undefined {
@@ -242,18 +243,7 @@ function App() {
   const downloadInProgressRef = useRef(false);
 
   // Core download function - can be called for retry
-  const executeDownload = useCallback(async (): Promise<boolean> => {
-    // Detect iOS Safari FIRST - need to open window before any async operations
-    const isIPad = /iPad/i.test(navigator.userAgent) ||
-      (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
-    const isIOS = /iPhone|iPod/i.test(navigator.userAgent) || isIPad;
-
-    // For iOS: open window FIRST (synchronously) to avoid popup blocker
-    let iosWindow: Window | null = null;
-    if (isIOS) {
-      iosWindow = window.open('about:blank', '_blank');
-    }
-
+  const executeDownload = useCallback(async (preOpenedWindow?: Window | null): Promise<boolean> => {
     const { texFiles, enclosures, includeHyperlinks, signatureImage, referenceUrls } = generateAllLatexFiles(documentStore);
 
     // Build files object including signature image if present
@@ -283,44 +273,7 @@ function App() {
       }
 
       const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
-
-      // Try Web Share API first (works best on iOS)
-      if (isIOS && navigator.share && navigator.canShare) {
-        const file = new File([blob], 'correspondence.pdf', { type: 'application/pdf' });
-        if (navigator.canShare({ files: [file] })) {
-          try {
-            await navigator.share({ files: [file] });
-            // Close the pre-opened iOS window if share succeeded
-            if (iosWindow) iosWindow.close();
-            return true;
-          } catch (shareErr) {
-            if ((shareErr as Error).name === 'AbortError') {
-              // User cancelled - close the pre-opened window
-              if (iosWindow) iosWindow.close();
-              return true;
-            }
-            console.log('Share API failed, using fallback:', shareErr);
-          }
-        }
-      }
-
-      // iOS: use meta refresh to redirect pre-opened window (avoids JS context issues)
-      if (isIOS && iosWindow) {
-        const pdfBlobUrl = URL.createObjectURL(blob);
-        iosWindow.document.open();
-        iosWindow.document.write(`<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=${pdfBlobUrl}"></head><body></body></html>`);
-        iosWindow.document.close();
-        return true;
-      }
-
-      // Desktop: standard download
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'correspondence.pdf';
-      a.click();
-      URL.revokeObjectURL(url);
-      return true;
+      return await downloadPdfBlob(blob, 'correspondence.pdf', preOpenedWindow);
     }
     return false;
   }, [compile, documentStore]);
@@ -333,11 +286,15 @@ function App() {
     }
     downloadInProgressRef.current = true;
 
+    // Pre-open window for iOS BEFORE any async work (must be synchronous from user gesture)
+    const preOpenedWindow = preOpenWindowForIOS();
+
     setIsCompiling(true);
     setCompileError(null);
     try {
-      const success = await executeDownload();
+      const success = await executeDownload(preOpenedWindow);
       if (!success) {
+        if (preOpenedWindow) preOpenedWindow.close();
         setCompileError('PDF generation failed - no output produced');
       }
     } catch (err) {
@@ -352,20 +309,24 @@ function App() {
           const ready = await waitForReady(10000); // 10 second timeout
           if (ready) {
             console.log('Engine ready, retrying download...');
-            const success = await executeDownload();
+            const success = await executeDownload(preOpenedWindow);
             if (!success) {
+              if (preOpenedWindow) preOpenedWindow.close();
               setCompileError('PDF generation failed after retry - no output produced');
             }
           } else {
+            if (preOpenedWindow) preOpenedWindow.close();
             setCompileError('Engine failed to recover. Please try again.');
           }
         } catch (retryErr) {
           console.error('Retry failed:', retryErr);
+          if (preOpenedWindow) preOpenedWindow.close();
           setCompileError('PDF download failed after retry. Please try again.');
         }
         return;
       }
 
+      if (preOpenedWindow) preOpenedWindow.close();
       setCompileError(`PDF download failed: ${errorMessage}`);
     } finally {
       setIsCompiling(false);
@@ -374,19 +335,8 @@ function App() {
   }, [executeDownload, waitForReady]);
 
   // Core PII download function - can be called for retry
-  const executePIIDownload = useCallback(async (): Promise<boolean> => {
+  const executePIIDownload = useCallback(async (preOpenedWindow?: Window | null): Promise<boolean> => {
     if (!pendingDownloadRef.current) return false;
-
-    // Detect iOS Safari FIRST - need to open window before any async operations
-    const isIPad = /iPad/i.test(navigator.userAgent) ||
-      (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
-    const isIOS = /iPhone|iPod/i.test(navigator.userAgent) || isIPad;
-
-    // For iOS: open window FIRST (synchronously) to avoid popup blocker
-    let iosWindow: Window | null = null;
-    if (isIOS) {
-      iosWindow = window.open('about:blank', '_blank');
-    }
 
     const { texFiles, enclosures, includeHyperlinks, signatureImage, referenceUrls } = pendingDownloadRef.current;
 
@@ -415,44 +365,7 @@ function App() {
       }
 
       const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
-
-      // Try Web Share API first (works best on iOS)
-      if (isIOS && navigator.share && navigator.canShare) {
-        const file = new File([blob], 'correspondence.pdf', { type: 'application/pdf' });
-        if (navigator.canShare({ files: [file] })) {
-          try {
-            await navigator.share({ files: [file] });
-            // Close the pre-opened iOS window if share succeeded
-            if (iosWindow) iosWindow.close();
-            return true;
-          } catch (shareErr) {
-            if ((shareErr as Error).name === 'AbortError') {
-              // User cancelled - close the pre-opened window
-              if (iosWindow) iosWindow.close();
-              return true;
-            }
-            console.log('Share API failed, using fallback:', shareErr);
-          }
-        }
-      }
-
-      // iOS: use meta refresh to redirect pre-opened window (avoids JS context issues)
-      if (isIOS && iosWindow) {
-        const pdfBlobUrl = URL.createObjectURL(blob);
-        iosWindow.document.open();
-        iosWindow.document.write(`<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=${pdfBlobUrl}"></head><body></body></html>`);
-        iosWindow.document.close();
-        return true;
-      }
-
-      // Desktop: standard download
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'correspondence.pdf';
-      a.click();
-      URL.revokeObjectURL(url);
-      return true;
+      return await downloadPdfBlob(blob, 'correspondence.pdf', preOpenedWindow);
     }
     return false;
   }, [compile, documentStore]);
@@ -468,12 +381,16 @@ function App() {
     }
     downloadInProgressRef.current = true;
 
+    // Pre-open window for iOS BEFORE any async work (must be synchronous from user gesture)
+    const preOpenedWindow = preOpenWindowForIOS();
+
     setIsCompiling(true);
     setCompileError(null);
 
     try {
-      const success = await executePIIDownload();
+      const success = await executePIIDownload(preOpenedWindow);
       if (!success) {
+        if (preOpenedWindow) preOpenedWindow.close();
         setCompileError('PDF generation failed - no output produced');
       }
     } catch (err) {
@@ -487,20 +404,24 @@ function App() {
           const ready = await waitForReady(10000);
           if (ready) {
             console.log('Engine ready, retrying PII download...');
-            const success = await executePIIDownload();
+            const success = await executePIIDownload(preOpenedWindow);
             if (!success) {
+              if (preOpenedWindow) preOpenedWindow.close();
               setCompileError('PDF generation failed after retry - no output produced');
             }
           } else {
+            if (preOpenedWindow) preOpenedWindow.close();
             setCompileError('Engine failed to recover. Please try again.');
           }
         } catch (retryErr) {
           console.error('PII download retry failed:', retryErr);
+          if (preOpenedWindow) preOpenedWindow.close();
           setCompileError('PDF download failed after retry. Please try again.');
         }
         return;
       }
 
+      if (preOpenedWindow) preOpenedWindow.close();
       setCompileError(`PDF download failed: ${errorMessage}`);
     } finally {
       setIsCompiling(false);

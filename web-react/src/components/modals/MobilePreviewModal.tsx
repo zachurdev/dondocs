@@ -6,6 +6,7 @@ import { X, Loader2, AlertCircle, ScrollText, Download, ChevronLeft, ChevronRigh
 import { Button } from '@/components/ui/button';
 import { useUIStore } from '@/stores/uiStore';
 import { useLogStore } from '@/stores/logStore';
+import { downloadPdfBlob, preOpenWindowForIOS, getDeviceInfo } from '@/utils/downloadPdf';
 
 // iPad: Use react-pdf-viewer with full features (zoom, thumbnails, navigation)
 // This library has better memory management than react-pdf on iOS
@@ -315,128 +316,18 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
   const handleDownload = async () => {
     if (!pdfUrl) return;
 
-    // For iOS Safari: open window FIRST (synchronously) to avoid popup blocker
-    // Safari blocks window.open() after async operations
-    let newWindow: Window | null = null;
-    if (isIOS && deviceInfo.isSafari) {
-      newWindow = window.open('about:blank', '_blank');
-    }
+    // Pre-open window for iOS BEFORE any async work
+    const preOpenedWindow = preOpenWindowForIOS();
 
     try {
       const response = await fetch(pdfUrl);
       const blob = await response.blob();
-      const file = new File([blob], 'correspondence.pdf', { type: 'application/pdf' });
-
-      // Try Web Share API first (best for iOS - shows native share sheet)
-      // IMPORTANT: On iOS Safari, only include 'files' in share object (no title/text)
-      // Reference: https://github.com/mdn/content/issues/32019
-      if (navigator.share && navigator.canShare) {
-        if (navigator.canShare({ files: [file] })) {
-          try {
-            await navigator.share({ files: [file] }); // Only files, no other properties
-            // Close the pre-opened window if share succeeded
-            if (newWindow) newWindow.close();
-            return;
-          } catch (shareErr) {
-            // User cancelled or share failed, continue to fallback
-            if ((shareErr as Error).name === 'AbortError') {
-              if (newWindow) newWindow.close();
-              return;
-            }
-            console.log('Share API failed, using fallback:', shareErr);
-          }
-        }
-      }
-
-      // iOS Safari: show instructions page, then navigate to PDF on button click
-      if (isIOS && deviceInfo.isSafari && newWindow) {
-        const pdfBlobUrl = URL.createObjectURL(blob);
-
-        // Write HTML instructions page - button navigates to the PDF
-        const htmlContent = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Save PDF</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      height: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      display: flex; align-items: center; justify-content: center; padding: 20px;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-    .card {
-      background: #fff; border-radius: 20px; padding: 32px 24px;
-      max-width: 340px; width: 100%; text-align: center;
-      box-shadow: 0 25px 80px rgba(0,0,0,0.4);
-    }
-    .icon { font-size: 56px; margin-bottom: 20px; }
-    h1 { font-size: 22px; margin-bottom: 8px; color: #1a1a1a; font-weight: 700; }
-    .subtitle { font-size: 14px; color: #666; margin-bottom: 24px; }
-    .steps { text-align: left; margin-bottom: 28px; }
-    .step { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
-    .step-num {
-      width: 28px; height: 28px; background: #007AFF; color: white;
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 600; flex-shrink: 0;
-    }
-    .step-text { font-size: 15px; color: #333; line-height: 1.4; padding-top: 3px; }
-    .step-text strong { color: #007AFF; }
-    button {
-      width: 100%; padding: 16px; background: #007AFF; color: white;
-      border: none; border-radius: 12px; font-size: 17px; font-weight: 600;
-      cursor: pointer; transition: background 0.2s;
-    }
-    button:active { background: #0056b3; }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <div class="icon">📄</div>
-    <h1>Ready to Save</h1>
-    <p class="subtitle">After viewing the PDF, save it using these steps:</p>
-    <div class="steps">
-      <div class="step">
-        <span class="step-num">1</span>
-        <span class="step-text">Tap the <strong>Share button</strong> (↑) in Safari's toolbar</span>
-      </div>
-      <div class="step">
-        <span class="step-num">2</span>
-        <span class="step-text">Select <strong>"Save to Files"</strong> or <strong>"Save PDF"</strong></span>
-      </div>
-    </div>
-    <button onclick="window.location.href='${pdfBlobUrl}'">View PDF</button>
-  </div>
-</body>
-</html>`;
-
-        newWindow.document.open();
-        newWindow.document.write(htmlContent);
-        newWindow.document.close();
-        return;
-      }
-
-      // iOS Chrome: use data URL workaround
-      // Reference: https://github.com/eligrey/FileSaver.js/pull/612
-      if (isIOS && !deviceInfo.isSafari) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          window.open(reader.result as string, '_blank');
-        };
-        reader.readAsDataURL(blob);
-        return;
-      }
-
-      // Default fallback: open blob URL
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      setTimeout(() => URL.revokeObjectURL(url), 10000);
+      await downloadPdfBlob(blob, 'correspondence.pdf', preOpenedWindow);
     } catch (err) {
       console.error('Download failed:', err);
       // Use pre-opened window if available, otherwise try to open new one
-      if (newWindow) {
-        newWindow.location.href = pdfUrl;
+      if (preOpenedWindow) {
+        preOpenedWindow.location.href = pdfUrl;
       } else {
         window.open(pdfUrl, '_blank');
       }
