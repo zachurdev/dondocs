@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts, PDFPage, PDFName, PDFArray, PDFNumber, PDFRef, PDFRawStream } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts, PDFPage, PDFName, PDFArray, PDFNumber, PDFRef, PDFRawStream, PDFDict, PDFString } from 'pdf-lib';
 import pako from 'pako';
 
 export interface EnclosureData {
@@ -481,6 +481,91 @@ function createLinkAnnotations(pdfDoc: PDFDocument, positions: TextPosition[]): 
 }
 
 /**
+ * Creates named destinations in the PDF's Names/Dests dictionary.
+ * This allows LaTeX \hyperlink{enclosureN} commands to find their targets.
+ *
+ * The LaTeX template uses:
+ * - \hyperlink{enclosure1}{...} to create links
+ * - \hypertarget{enclosure1}{} to create targets
+ *
+ * Since SwiftLaTeX can't run \includepdf, the enclosure pages are added
+ * by JavaScript. We need to manually create the named destinations that
+ * the \hyperlink commands expect to find.
+ */
+function createNamedDestinations(pdfDoc: PDFDocument): void {
+  if (enclosurePageMap.size === 0) {
+    console.log('[hyperlinks] No enclosures to create destinations for');
+    return;
+  }
+
+  const pages = pdfDoc.getPages();
+  const context = pdfDoc.context;
+
+  // Build the names array: [name1, dest1, name2, dest2, ...]
+  // Names must be sorted lexicographically for PDF spec compliance
+  const sortedEntries = Array.from(enclosurePageMap.entries())
+    .sort((a, b) => a[0] - b[0]); // Sort by enclosure number
+
+  const namesArray: (PDFString | PDFArray)[] = [];
+
+  for (const [encNum, pageIndex] of sortedEntries) {
+    if (pageIndex >= pages.length) {
+      console.log(`[hyperlinks] Skipping enclosure${encNum}: page index ${pageIndex} out of bounds`);
+      continue;
+    }
+
+    const targetPage = pages[pageIndex];
+    const destName = `enclosure${encNum}`;
+
+    // Create the destination array: [pageRef, /XYZ, left, top, zoom]
+    // XYZ destination: go to page at position (left, top) with zoom
+    // Using 0, PAGE_HEIGHT, 0 means: top of page, no zoom change
+    const destArray = context.obj([
+      targetPage.ref,
+      PDFName.of('XYZ'),
+      PDFNumber.of(0),
+      PDFNumber.of(PAGE_HEIGHT),
+      PDFNumber.of(0)  // null zoom = keep current
+    ]);
+
+    namesArray.push(PDFString.of(destName));
+    namesArray.push(destArray as PDFArray);
+
+    console.log(`[hyperlinks] Created named destination '${destName}' -> page ${pageIndex + 1}`);
+  }
+
+  if (namesArray.length === 0) {
+    console.log('[hyperlinks] No valid destinations to create');
+    return;
+  }
+
+  // Create the Dests name tree
+  // A simple name tree has: { Names: [...] }
+  const destsDict = context.obj({
+    Names: context.obj(namesArray)
+  });
+
+  // Get or create the Names dictionary in the catalog
+  const catalog = pdfDoc.catalog;
+  let namesDict = catalog.lookup(PDFName.of('Names'));
+
+  if (namesDict instanceof PDFDict) {
+    // Names dictionary exists - add or replace Dests entry
+    namesDict.set(PDFName.of('Dests'), destsDict);
+    console.log('[hyperlinks] Added Dests to existing Names dictionary');
+  } else {
+    // Create new Names dictionary with Dests
+    const newNamesDict = context.obj({
+      Dests: destsDict
+    });
+    catalog.set(PDFName.of('Names'), newNamesDict);
+    console.log('[hyperlinks] Created new Names dictionary with Dests');
+  }
+
+  console.log(`[hyperlinks] Created ${sortedEntries.length} named destinations`);
+}
+
+/**
  * Merges enclosure pages into the main document.
  * Handles both PDF enclosures and text-only placeholder pages.
  * Maintains correct enclosure ordering.
@@ -532,9 +617,16 @@ export async function mergeEnclosures(
     }
   }
 
-  // Create hyperlink annotations if enabled
+  // Create named destinations for hyperlinks if enabled
+  // The LaTeX template uses \hyperlink{enclosureN} which looks for named destinations
+  // We create these destinations pointing to the first page of each enclosure
   if (includeHyperlinks && enclosurePageMap.size > 0) {
-    console.log('[mergeEnclosures] Creating hyperlink annotations...');
+    console.log('[mergeEnclosures] Creating named destinations for hyperlinks...');
+    createNamedDestinations(mainPdf);
+
+    // Also create link annotations as a fallback for viewers that don't support named destinations
+    // (This finds blue digit text and creates clickable regions)
+    console.log('[mergeEnclosures] Creating link annotations as fallback...');
     const positions = findEnclosureReferences(mainPdf, mainPageCount);
     createLinkAnnotations(mainPdf, positions);
   }
