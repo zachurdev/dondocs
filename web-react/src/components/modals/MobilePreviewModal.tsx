@@ -257,21 +257,23 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
   const [pdfError, setPdfError] = useState<string | null>(null);
 
   // Detect device/browser for download method and rendering approach
-  // iPad always uses native iframe - react-pdf crashes due to iOS canvas memory limits (384MB)
+  // iOS uses react-pdf-viewer - react-pdf crashes due to iOS canvas memory limits (384MB)
   // Reference: https://github.com/wojtekmaj/react-pdf/issues/1601
   const [deviceInfo, setDeviceInfo] = useState<{
+    isIOS: boolean;
     isIPad: boolean;
     isSafari: boolean;
-  }>({ isIPad: false, isSafari: false });
+  }>({ isIOS: false, isIPad: false, isSafari: false });
 
   useEffect(() => {
     const isIPad = /iPad/i.test(navigator.userAgent) ||
       (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
+    const isIOS = /iPhone|iPod/i.test(navigator.userAgent) || isIPad;
     const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome|CriOS/i.test(navigator.userAgent);
-    setDeviceInfo({ isIPad, isSafari });
+    setDeviceInfo({ isIOS, isIPad, isSafari });
 
-    if (isIPad) {
-      console.log('[MobilePreview] iPad detected - using native PDF viewer (react-pdf crashes on iPad)');
+    if (isIOS) {
+      console.log('[MobilePreview] iOS detected - using react-pdf-viewer (react-pdf crashes on iOS)');
     }
   }, []);
 
@@ -333,8 +335,9 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
 
   if (!mobilePreviewOpen) return null;
 
-  // For iPad with PDF loaded, use full-screen viewer with integrated toolbar
-  if (deviceInfo.isIPad && pdfUrl && !isCompiling && !displayError) {
+  // For iOS (iPhone/iPad) with PDF loaded, use full-screen viewer with integrated toolbar
+  // react-pdf crashes on iOS due to canvas memory limits, so we use react-pdf-viewer instead
+  if (deviceInfo.isIOS && pdfUrl && !isCompiling && !displayError) {
     return (
       <div className="fixed inset-0 z-50 bg-background flex flex-col">
         <IPadPdfViewer
