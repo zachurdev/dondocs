@@ -6,7 +6,7 @@ import { X, Loader2, AlertCircle, ScrollText, Download, ChevronLeft, ChevronRigh
 import { Button } from '@/components/ui/button';
 import { useUIStore } from '@/stores/uiStore';
 import { useLogStore } from '@/stores/logStore';
-import { downloadPdfBlob, preOpenWindowForIOS, getDeviceInfo } from '@/utils/downloadPdf';
+import { downloadPdfBlob, preOpenWindowForIOS } from '@/utils/downloadPdf';
 
 // iPad: Use react-pdf-viewer with full features (zoom, thumbnails, navigation)
 // This library has better memory management than react-pdf on iOS
@@ -307,9 +307,6 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
 
   const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
   const goToNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, numPages));
-
-  // Check if device is iOS (iPhone or iPad)
-  const isIOS = deviceInfo.isIPad || /iPhone|iPod/i.test(navigator.userAgent);
 
   // Universal download handler - optimized for iOS
   // Reference: https://web.dev/patterns/files/share-files
