@@ -218,14 +218,33 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
             <div className="w-full max-w-xs space-y-3">
               <Button
                 className="w-full h-12 text-base"
-                onClick={() => {
-                  // Open PDF in new tab
-                  const link = document.createElement('a');
-                  link.href = pdfUrl;
-                  link.target = '_blank';
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
+                onClick={async () => {
+                  if (isIPadSafari) {
+                    // Safari: just open the blob URL
+                    const link = document.createElement('a');
+                    link.href = pdfUrl;
+                    link.target = '_blank';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  } else {
+                    // Chrome iOS workaround: convert to data URL via FileReader
+                    try {
+                      const response = await fetch(pdfUrl);
+                      const blob = await response.blob();
+                      const reader = new FileReader();
+                      reader.onload = () => {
+                        // Open data URL in new window
+                        const dataUrl = reader.result as string;
+                        window.open(dataUrl, '_blank');
+                      };
+                      reader.readAsDataURL(blob);
+                    } catch (err) {
+                      console.error('Failed to open PDF:', err);
+                      // Fallback to regular open
+                      window.open(pdfUrl, '_blank');
+                    }
+                  }
                 }}
               >
                 <FileText className="h-5 w-5 mr-2" />
@@ -237,10 +256,9 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
                 Tap "Open PDF", then use the share button (↑) to save
               </p>
             ) : (
-              <div className="text-xs text-muted-foreground text-center mt-3 space-y-1">
-                <p className="font-medium text-foreground">Chrome on iPad doesn't support PDF save</p>
-                <p>Please use Safari for the best experience</p>
-              </div>
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                Tap "Open PDF", then long-press the PDF to save
+              </p>
             )}
           </div>
         )}
