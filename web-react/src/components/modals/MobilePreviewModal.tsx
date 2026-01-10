@@ -1,4 +1,5 @@
-import { X, Loader2, AlertCircle, ScrollText, Download, ExternalLink, FileText, CheckCircle2 } from 'lucide-react';
+import { useState } from 'react';
+import { X, Loader2, AlertCircle, ScrollText, Share, ExternalLink, FileText, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUIStore } from '@/stores/uiStore';
 import { useLogStore } from '@/stores/logStore';
@@ -10,9 +11,10 @@ interface MobilePreviewModalProps {
   onDownloadPdf?: () => void;
 }
 
-export function MobilePreviewModal({ pdfUrl, isCompiling, error, onDownloadPdf }: MobilePreviewModalProps) {
+export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreviewModalProps) {
   const { mobilePreviewOpen, setMobilePreviewOpen } = useUIStore();
   const { setOpen: setLogViewerOpen, setEnabled: setLogEnabled } = useLogStore();
+  const [shareStatus, setShareStatus] = useState<string | null>(null);
 
   // Filter out engine reset message - it's not a user-facing error
   const displayError = error === 'ENGINE_RESET_NEEDED' ? null : error;
@@ -25,6 +27,41 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error, onDownloadPdf }
   const handleOpenInBrowser = () => {
     if (pdfUrl) {
       window.open(pdfUrl, '_blank');
+    }
+  };
+
+  // Use native share API for iOS/mobile - this triggers the share sheet
+  // where users can "Save to Files", AirDrop, etc.
+  const handleSavePdf = async () => {
+    if (!pdfUrl) return;
+
+    try {
+      // Fetch the blob from the URL
+      const response = await fetch(pdfUrl);
+      const blob = await response.blob();
+      const file = new File([blob], 'correspondence.pdf', { type: 'application/pdf' });
+
+      // Check if Web Share API with files is supported
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Naval Correspondence',
+        });
+        setShareStatus('Shared!');
+        setTimeout(() => setShareStatus(null), 2000);
+      } else {
+        // Fallback: open in new tab where user can use browser's share/save
+        window.open(pdfUrl, '_blank');
+        setShareStatus('Opened - use share button to save');
+        setTimeout(() => setShareStatus(null), 3000);
+      }
+    } catch (err) {
+      // User cancelled share or error occurred
+      if ((err as Error).name !== 'AbortError') {
+        console.error('Share failed:', err);
+        // Fallback to opening in browser
+        window.open(pdfUrl, '_blank');
+      }
     }
   };
 
@@ -87,28 +124,29 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error, onDownloadPdf }
               <div className="text-center">
                 <p className="font-medium text-lg">PDF Ready</p>
                 <p className="text-sm text-muted-foreground mt-1">Your document has been generated</p>
+                {shareStatus && (
+                  <p className="text-xs text-primary mt-2">{shareStatus}</p>
+                )}
               </div>
 
               {/* Action Buttons */}
               <div className="w-full space-y-3">
                 <Button
                   className="w-full h-12 text-base"
+                  onClick={handleSavePdf}
+                >
+                  <Share className="h-5 w-5 mr-2" />
+                  Save PDF
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="w-full h-12 text-base"
                   onClick={handleOpenInBrowser}
                 >
                   <ExternalLink className="h-5 w-5 mr-2" />
                   Open in Browser
                 </Button>
-
-                {onDownloadPdf && (
-                  <Button
-                    variant="outline"
-                    className="w-full h-12 text-base"
-                    onClick={onDownloadPdf}
-                  >
-                    <Download className="h-5 w-5 mr-2" />
-                    Download PDF
-                  </Button>
-                )}
               </div>
             </div>
           )}
