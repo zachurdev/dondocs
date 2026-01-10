@@ -119,15 +119,24 @@ export async function downloadPdfBlob(
     return true;
   }
 
-  // iOS Chrome: open PDF directly, Chrome shows native download UI
+  // iOS Chrome: use data URL approach (blob URLs have cross-window issues)
+  // Chrome shows native "Download or Save to Drive" UI
   if (isIOS && !isSafari) {
-    const pdfBlobUrl = URL.createObjectURL(blob);
-    if (preOpenedWindow) {
-      preOpenedWindow.location.href = pdfBlobUrl;
-    } else {
-      window.open(pdfBlobUrl, '_blank');
-    }
-    return true;
+    // Close pre-opened window, we'll open fresh with data URL
+    if (preOpenedWindow) preOpenedWindow.close();
+
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        window.open(reader.result as string, '_blank');
+        resolve(true);
+      };
+      reader.onerror = () => {
+        console.error('Failed to read PDF as data URL');
+        resolve(false);
+      };
+      reader.readAsDataURL(blob);
+    });
   }
 
   // Desktop: standard download
