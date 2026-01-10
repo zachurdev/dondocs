@@ -87,20 +87,23 @@ export async function downloadPdfBlob(
     });
   }
 
-  // iOS Safari: try anchor download first (works for DOCX/LaTeX), fall back to instructions page
+  // iOS Safari: use octet-stream MIME type to force download instead of display
+  // Safari displays PDFs inline but downloads octet-stream as files
   if (isIOS && isSafari) {
-    // Close pre-opened window - try anchor download first
+    // Close pre-opened window - not needed for anchor download
     if (preOpenedWindow) preOpenedWindow.close();
 
-    // Try standard anchor download (like DOCX/LaTeX)
-    const pdfBlobUrl = URL.createObjectURL(blob);
+    // Re-create blob with octet-stream MIME type to force download
+    const downloadBlob = new Blob([blob], { type: 'application/octet-stream' });
+    const downloadUrl = URL.createObjectURL(downloadBlob);
+
     const a = document.createElement('a');
-    a.href = pdfBlobUrl;
+    a.href = downloadUrl;
     a.download = filename;
     a.click();
 
     // Don't revoke immediately - give Safari time to process
-    setTimeout(() => URL.revokeObjectURL(pdfBlobUrl), 10000);
+    setTimeout(() => URL.revokeObjectURL(downloadUrl), 10000);
     return true;
   }
 
