@@ -1,8 +1,14 @@
-import { useState } from 'react';
-import { X, Loader2, AlertCircle, ScrollText, Share, ExternalLink, FileText, CheckCircle2 } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+import { X, Loader2, AlertCircle, ScrollText, Share, ChevronLeft, ChevronRight, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUIStore } from '@/stores/uiStore';
 import { useLogStore } from '@/stores/logStore';
+
+// Configure pdf.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface MobilePreviewModalProps {
   pdfUrl: string | null;
@@ -14,6 +20,9 @@ interface MobilePreviewModalProps {
 export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreviewModalProps) {
   const { mobilePreviewOpen, setMobilePreviewOpen } = useUIStore();
   const { setOpen: setLogViewerOpen, setEnabled: setLogEnabled } = useLogStore();
+  const [numPages, setNumPages] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pdfLoading, setPdfLoading] = useState<boolean>(true);
   const [shareStatus, setShareStatus] = useState<string | null>(null);
 
   // Filter out engine reset message - it's not a user-facing error
@@ -24,29 +33,33 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
     setLogViewerOpen(true);
   };
 
-  const handleOpenInBrowser = () => {
-    if (!pdfUrl) return;
+  const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+    setCurrentPage(1);
+    setPdfLoading(false);
+  }, []);
 
-    // Use link click instead of window.open for better iOS compatibility
-    const link = document.createElement('a');
-    link.href = pdfUrl;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const onDocumentLoadError = useCallback(() => {
+    setPdfLoading(false);
+  }, []);
+
+  const goToPrevPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
-  // Save PDF - on iOS we need to open it and let user use native share
+  const goToNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, numPages));
+  };
+
+  // Save PDF using share API or fallback
   const handleSavePdf = async () => {
     if (!pdfUrl) return;
 
     try {
-      // Fetch the blob and create a fresh blob URL
       const response = await fetch(pdfUrl);
       const blob = await response.blob();
 
-      // Try Web Share API first (iOS 15+)
+      // Try Web Share API first
       if (navigator.share && navigator.canShare) {
         const file = new File([blob], 'correspondence.pdf', { type: 'application/pdf' });
         if (navigator.canShare({ files: [file] })) {
@@ -60,26 +73,22 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
         }
       }
 
-      // Fallback: Create a link and simulate click
-      // This works better than window.open on some browsers
+      // Fallback: open blob URL
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.target = '_blank';
-      link.rel = 'noopener noreferrer';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
-      // Don't revoke immediately - give browser time to open
       setTimeout(() => URL.revokeObjectURL(url), 5000);
 
-      setShareStatus('Opened - tap share icon to save');
-      setTimeout(() => setShareStatus(null), 4000);
+      setShareStatus('Opened - use share to save');
+      setTimeout(() => setShareStatus(null), 3000);
     } catch (err) {
       if ((err as Error).name !== 'AbortError') {
         console.error('Save failed:', err);
-        setShareStatus('Error - try "Open in Browser"');
+        setShareStatus('Error saving');
         setTimeout(() => setShareStatus(null), 3000);
       }
     }
@@ -88,11 +97,30 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
   if (!mobilePreviewOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-sm overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-          <span className="font-semibold">Document Preview</span>
+    <div className="fixed inset-0 z-50 bg-background flex flex-col">
+      {/* Header */}
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-card shrink-0">
+        <span className="font-semibold text-sm">Document Preview</span>
+        <div className="flex items-center gap-1">
+          {pdfUrl && !isCompiling && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSavePdf}
+              className="h-8 px-2"
+            >
+              <Share className="h-4 w-4 mr-1" />
+              Save
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={handleOpenLogs}
+          >
+            <ScrollText className="h-4 w-4" />
+          </Button>
           <Button
             variant="ghost"
             size="icon"
@@ -102,95 +130,117 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
             <X className="h-4 w-4" />
           </Button>
         </div>
+      </div>
 
-        {/* Content */}
-        <div className="p-6">
-          {/* Loading State */}
-          {isCompiling && (
-            <div className="flex flex-col items-center gap-4 py-8">
-              <div className="relative">
-                <FileText className="h-16 w-16 text-muted-foreground/30" />
-                <Loader2 className="h-8 w-8 animate-spin text-primary absolute -bottom-1 -right-1 bg-card rounded-full p-1" />
-              </div>
-              <div className="text-center">
-                <p className="font-medium">Generating PDF...</p>
-                <p className="text-sm text-muted-foreground mt-1">This may take a moment</p>
-              </div>
-            </div>
-          )}
-
-          {/* Error State */}
-          {displayError && !pdfUrl && !isCompiling && (
-            <div className="flex flex-col items-center gap-4 py-8">
-              <AlertCircle className="h-16 w-16 text-destructive/70" />
-              <div className="text-center">
-                <p className="font-medium text-destructive">Compilation Error</p>
-                <p className="text-sm text-muted-foreground mt-1 max-w-xs">{displayError}</p>
-              </div>
-              <Button variant="outline" size="sm" onClick={handleOpenLogs}>
-                <ScrollText className="h-4 w-4 mr-2" />
-                View Logs
-              </Button>
-            </div>
-          )}
-
-          {/* Ready State - PDF Available */}
-          {pdfUrl && !isCompiling && (
-            <div className="flex flex-col items-center gap-6 py-4">
-              <div className="relative">
-                <FileText className="h-20 w-20 text-primary/80" />
-                <CheckCircle2 className="h-8 w-8 text-green-500 absolute -bottom-1 -right-1 bg-card rounded-full" />
-              </div>
-              <div className="text-center">
-                <p className="font-medium text-lg">PDF Ready</p>
-                <p className="text-sm text-muted-foreground mt-1">Your document has been generated</p>
-                {shareStatus && (
-                  <p className="text-xs text-primary mt-2">{shareStatus}</p>
-                )}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="w-full space-y-3">
-                <Button
-                  className="w-full h-12 text-base"
-                  onClick={handleSavePdf}
-                >
-                  <Share className="h-5 w-5 mr-2" />
-                  Save PDF
-                </Button>
-
-                <Button
-                  variant="outline"
-                  className="w-full h-12 text-base"
-                  onClick={handleOpenInBrowser}
-                >
-                  <ExternalLink className="h-5 w-5 mr-2" />
-                  Open in Browser
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Initial State - No PDF yet, not compiling */}
-          {!pdfUrl && !displayError && !isCompiling && (
-            <div className="flex flex-col items-center gap-4 py-8">
-              <FileText className="h-16 w-16 text-muted-foreground/30" />
-              <div className="text-center">
-                <p className="font-medium">No Preview Available</p>
-                <p className="text-sm text-muted-foreground mt-1">Edit your document to generate a preview</p>
-              </div>
-            </div>
-          )}
+      {/* Status message */}
+      {shareStatus && (
+        <div className="bg-primary/10 text-primary text-xs text-center py-1 shrink-0">
+          {shareStatus}
         </div>
+      )}
 
-        {/* Footer */}
-        <div className="px-4 py-3 border-t border-border bg-muted/30 flex justify-center">
-          <Button variant="ghost" size="sm" onClick={handleOpenLogs} className="text-muted-foreground">
-            <ScrollText className="h-4 w-4 mr-2" />
-            View Compilation Logs
+      {/* PDF Content */}
+      <div className="flex-1 overflow-auto bg-muted/30">
+        {/* Loading State */}
+        {isCompiling && (
+          <div className="flex flex-col items-center justify-center h-full gap-4">
+            <div className="relative">
+              <FileText className="h-16 w-16 text-muted-foreground/30" />
+              <Loader2 className="h-8 w-8 animate-spin text-primary absolute -bottom-1 -right-1 bg-background rounded-full p-1" />
+            </div>
+            <div className="text-center">
+              <p className="font-medium">Generating PDF...</p>
+              <p className="text-sm text-muted-foreground mt-1">This may take a moment</p>
+            </div>
+          </div>
+        )}
+
+        {/* Error State */}
+        {displayError && !pdfUrl && !isCompiling && (
+          <div className="flex flex-col items-center justify-center h-full gap-4 p-4">
+            <AlertCircle className="h-16 w-16 text-destructive/70" />
+            <div className="text-center">
+              <p className="font-medium text-destructive">Compilation Error</p>
+              <p className="text-sm text-muted-foreground mt-1 max-w-xs">{displayError}</p>
+            </div>
+            <Button variant="outline" size="sm" onClick={handleOpenLogs}>
+              <ScrollText className="h-4 w-4 mr-2" />
+              View Logs
+            </Button>
+          </div>
+        )}
+
+        {/* PDF Viewer */}
+        {pdfUrl && !isCompiling && (
+          <div className="flex flex-col items-center p-2">
+            {pdfLoading && (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            )}
+            <Document
+              file={pdfUrl}
+              onLoadSuccess={onDocumentLoadSuccess}
+              onLoadError={onDocumentLoadError}
+              loading={null}
+              className="flex flex-col items-center"
+            >
+              <Page
+                pageNumber={currentPage}
+                width={Math.min(window.innerWidth - 16, 400)}
+                className="shadow-lg"
+                loading={
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  </div>
+                }
+              />
+            </Document>
+          </div>
+        )}
+
+        {/* Initial State */}
+        {!pdfUrl && !displayError && !isCompiling && (
+          <div className="flex flex-col items-center justify-center h-full gap-4">
+            <FileText className="h-16 w-16 text-muted-foreground/30" />
+            <div className="text-center">
+              <p className="font-medium">No Preview Available</p>
+              <p className="text-sm text-muted-foreground mt-1">Edit your document to generate a preview</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Page Navigation Footer */}
+      {pdfUrl && !isCompiling && numPages > 0 && (
+        <div className="flex items-center justify-between px-4 py-2 border-t border-border bg-card shrink-0">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={goToPrevPage}
+            disabled={currentPage <= 1}
+            className="h-9 px-3"
+          >
+            <ChevronLeft className="h-4 w-4 mr-1" />
+            Prev
+          </Button>
+
+          <span className="text-sm font-medium">
+            Page {currentPage} of {numPages}
+          </span>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={goToNextPage}
+            disabled={currentPage >= numPages}
+            className="h-9 px-3"
+          >
+            Next
+            <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
-      </div>
+      )}
     </div>
   );
 }
