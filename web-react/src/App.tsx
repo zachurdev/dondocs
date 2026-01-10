@@ -243,6 +243,18 @@ function App() {
 
   // Core download function - can be called for retry
   const executeDownload = useCallback(async (): Promise<boolean> => {
+    // Detect iOS Safari FIRST - need to open window before any async operations
+    const isIPad = /iPad/i.test(navigator.userAgent) ||
+      (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
+    const isIOS = /iPhone|iPod/i.test(navigator.userAgent) || isIPad;
+    const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome|CriOS/i.test(navigator.userAgent);
+
+    // For iOS Safari: open window FIRST (synchronously) to avoid popup blocker
+    let safariWindow: Window | null = null;
+    if (isIOS && isSafari) {
+      safariWindow = window.open('about:blank', '_blank');
+    }
+
     const { texFiles, enclosures, includeHyperlinks, signatureImage, referenceUrls } = generateAllLatexFiles(documentStore);
 
     // Build files object including signature image if present
@@ -273,31 +285,29 @@ function App() {
 
       const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
 
-      // iOS-compatible download handling
-      const isIPad = /iPad/i.test(navigator.userAgent) ||
-        (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
-      const isIOS = /iPhone|iPod/i.test(navigator.userAgent) || isIPad;
-      const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome|CriOS/i.test(navigator.userAgent);
-
       // Try Web Share API first (works best on iOS)
       if (isIOS && navigator.share && navigator.canShare) {
         const file = new File([blob], 'correspondence.pdf', { type: 'application/pdf' });
         if (navigator.canShare({ files: [file] })) {
           try {
             await navigator.share({ files: [file] });
+            // Close the pre-opened Safari window if share succeeded
+            if (safariWindow) safariWindow.close();
             return true;
           } catch (shareErr) {
-            if ((shareErr as Error).name === 'AbortError') return true;
+            if ((shareErr as Error).name === 'AbortError') {
+              // User cancelled - close the pre-opened window
+              if (safariWindow) safariWindow.close();
+              return true;
+            }
             console.log('Share API failed, using fallback:', shareErr);
           }
         }
       }
 
-      // iOS Safari: show instructions page, then navigate to PDF
-      if (isIOS && isSafari) {
+      // iOS Safari: use pre-opened window to show instructions page
+      if (isIOS && isSafari && safariWindow) {
         const pdfBlobUrl = URL.createObjectURL(blob);
-        const newWindow = window.open('about:blank', '_blank');
-        if (newWindow) {
           const htmlContent = `
 <!DOCTYPE html>
 <html>
@@ -355,10 +365,9 @@ function App() {
   </div>
 </body>
 </html>`;
-          newWindow.document.open();
-          newWindow.document.write(htmlContent);
-          newWindow.document.close();
-        }
+        safariWindow.document.open();
+        safariWindow.document.write(htmlContent);
+        safariWindow.document.close();
         return true;
       }
 
@@ -438,6 +447,18 @@ function App() {
   const executePIIDownload = useCallback(async (): Promise<boolean> => {
     if (!pendingDownloadRef.current) return false;
 
+    // Detect iOS Safari FIRST - need to open window before any async operations
+    const isIPad = /iPad/i.test(navigator.userAgent) ||
+      (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
+    const isIOS = /iPhone|iPod/i.test(navigator.userAgent) || isIPad;
+    const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome|CriOS/i.test(navigator.userAgent);
+
+    // For iOS Safari: open window FIRST (synchronously) to avoid popup blocker
+    let safariWindow: Window | null = null;
+    if (isIOS && isSafari) {
+      safariWindow = window.open('about:blank', '_blank');
+    }
+
     const { texFiles, enclosures, includeHyperlinks, signatureImage, referenceUrls } = pendingDownloadRef.current;
 
     const files: Record<string, string | Uint8Array> = { ...texFiles };
@@ -466,31 +487,29 @@ function App() {
 
       const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
 
-      // iOS-compatible download handling
-      const isIPad = /iPad/i.test(navigator.userAgent) ||
-        (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
-      const isIOS = /iPhone|iPod/i.test(navigator.userAgent) || isIPad;
-      const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome|CriOS/i.test(navigator.userAgent);
-
       // Try Web Share API first (works best on iOS)
       if (isIOS && navigator.share && navigator.canShare) {
         const file = new File([blob], 'correspondence.pdf', { type: 'application/pdf' });
         if (navigator.canShare({ files: [file] })) {
           try {
             await navigator.share({ files: [file] });
+            // Close the pre-opened Safari window if share succeeded
+            if (safariWindow) safariWindow.close();
             return true;
           } catch (shareErr) {
-            if ((shareErr as Error).name === 'AbortError') return true;
+            if ((shareErr as Error).name === 'AbortError') {
+              // User cancelled - close the pre-opened window
+              if (safariWindow) safariWindow.close();
+              return true;
+            }
             console.log('Share API failed, using fallback:', shareErr);
           }
         }
       }
 
-      // iOS Safari: show instructions page, then navigate to PDF
-      if (isIOS && isSafari) {
+      // iOS Safari: use pre-opened window to show instructions page
+      if (isIOS && isSafari && safariWindow) {
         const pdfBlobUrl = URL.createObjectURL(blob);
-        const newWindow = window.open('about:blank', '_blank');
-        if (newWindow) {
           const htmlContent = `
 <!DOCTYPE html>
 <html>
@@ -548,10 +567,9 @@ function App() {
   </div>
 </body>
 </html>`;
-          newWindow.document.open();
-          newWindow.document.write(htmlContent);
-          newWindow.document.close();
-        }
+        safariWindow.document.open();
+        safariWindow.document.write(htmlContent);
+        safariWindow.document.close();
         return true;
       }
 
