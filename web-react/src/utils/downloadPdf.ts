@@ -87,7 +87,25 @@ export async function downloadPdfBlob(
     });
   }
 
-  // iOS Safari: show instructions page, then navigate to PDF on button click
+  // iOS Safari: try anchor download first (works for DOCX/LaTeX), fall back to instructions page
+  if (isIOS && isSafari) {
+    // Close pre-opened window - try anchor download first
+    if (preOpenedWindow) preOpenedWindow.close();
+
+    // Try standard anchor download (like DOCX/LaTeX)
+    const pdfBlobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = pdfBlobUrl;
+    a.download = filename;
+    a.click();
+
+    // Don't revoke immediately - give Safari time to process
+    setTimeout(() => URL.revokeObjectURL(pdfBlobUrl), 10000);
+    return true;
+  }
+
+  // Fallback for iOS Safari if anchor download doesn't work (keeping for reference)
+  /*
   if (isIOS && isSafari && preOpenedWindow) {
     const pdfBlobUrl = URL.createObjectURL(blob);
     const htmlContent = `
@@ -152,6 +170,7 @@ export async function downloadPdfBlob(
     preOpenedWindow.document.close();
     return true;
   }
+  */
 
   // Desktop: standard download
   const url = URL.createObjectURL(blob);
