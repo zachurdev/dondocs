@@ -18,11 +18,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Upload, X, FileImage, PenLine, Shield, Type } from 'lucide-react';
+import { Upload, X, FileImage, PenLine, Shield, Type, Search } from 'lucide-react';
 import { useDocumentStore } from '@/stores/documentStore';
 import type { DocTypeConfig, SignatureImage, SignatureType } from '@/types/document';
 import { ALL_SERVICE_RANKS, formatRank } from '@/data/ranks';
-import { getOfficeCodesByCategory } from '@/data/officeCodes';
+import { getOfficeCode } from '@/data/officeCodes';
+import { OfficeCodeLookupModal } from '@/components/modals/OfficeCodeLookupModal';
 
 // Convert ArrayBuffer to base64
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
@@ -64,6 +65,7 @@ export function SignatureSection({ config }: SignatureSectionProps) {
   const hasDualDigitalSignature = isDualSignature && formData.signatureType === 'digital';
   const [useCustomRank, setUseCustomRank] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [officeCodeModalOpen, setOfficeCodeModalOpen] = useState(false);
 
   // Initialize useCustomRank based on current sigRank value
   useEffect(() => {
@@ -75,6 +77,13 @@ export function SignatureSection({ config }: SignatureSectionProps) {
     if (!formData.signatureImage?.data) return null;
     return base64ToDataUrl(formData.signatureImage.data, 'image/png');
   }, [formData.signatureImage?.data]);
+
+  // Get office code title for display
+  const officeCodeDisplay = useMemo(() => {
+    if (!formData.officeCode) return '';
+    const code = getOfficeCode(formData.officeCode);
+    return code ? `${code.code} - ${code.title}` : formData.officeCode;
+  }, [formData.officeCode]);
 
   // Handle signature image upload
   const handleSignatureUpload = useCallback(async (file: File) => {
@@ -132,6 +141,7 @@ export function SignatureSection({ config }: SignatureSectionProps) {
   }, [setField]);
 
   return (
+    <>
     <Accordion type="single" collapsible defaultValue="signature">
       <AccordionItem value="signature">
         <AccordionTrigger>Signature Block</AccordionTrigger>
@@ -266,32 +276,40 @@ export function SignatureSection({ config }: SignatureSectionProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-2">
                 <Label htmlFor="officeCode">Office Code</Label>
-                <Select
-                  value={formData.officeCode || ''}
-                  onValueChange={(v) => setField('officeCode', v === 'none' ? '' : v)}
-                >
-                  <SelectTrigger id="officeCode">
-                    <SelectValue placeholder="Optional..." />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    <SelectItem value="none">None</SelectItem>
-                    {getOfficeCodesByCategory().map((category) => (
-                      <SelectGroup key={category.name}>
-                        <SelectLabel className="font-bold text-primary">
-                          {category.name}
-                        </SelectLabel>
-                        {category.codes.map((code) => (
-                          <SelectItem key={code.code} value={code.code}>
-                            <span className="flex items-center gap-2">
-                              <span className="font-mono text-xs w-16">{code.code}</span>
-                              <span className="text-muted-foreground">- {code.title}</span>
-                            </span>
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Input
+                      id="officeCode"
+                      value={officeCodeDisplay}
+                      readOnly
+                      placeholder="Optional - click search..."
+                      className="pr-8 cursor-pointer"
+                      onClick={() => setOfficeCodeModalOpen(true)}
+                    />
+                    {formData.officeCode && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setField('officeCode', '');
+                        }}
+                        title="Clear office code"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    )}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setOfficeCodeModalOpen(true)}
+                    title="Search office codes"
+                  >
+                    <Search className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="pocEmail">POC Email</Label>
@@ -474,5 +492,12 @@ export function SignatureSection({ config }: SignatureSectionProps) {
         </AccordionContent>
       </AccordionItem>
     </Accordion>
+
+    <OfficeCodeLookupModal
+      open={officeCodeModalOpen}
+      onOpenChange={setOfficeCodeModalOpen}
+      onSelect={(code) => setField('officeCode', code)}
+    />
+    </>
   );
 }
