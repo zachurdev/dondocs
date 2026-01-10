@@ -43,7 +43,7 @@ export function Header({
   onRefreshPreview,
   isCompiling,
 }: HeaderProps) {
-  const { theme, toggleTheme, colorScheme, setColorScheme, density, setDensity, autoSaveStatus, setAboutModalOpen, setNistModalOpen, setBatchModalOpen, setTemplateLoaderOpen, setFindReplaceOpen } = useUIStore();
+  const { theme, toggleTheme, colorScheme, setColorScheme, density, setDensity, autoSaveStatus, setAboutModalOpen, setNistModalOpen, setBatchModalOpen, setTemplateLoaderOpen, setFindReplaceOpen, isMobile } = useUIStore();
   const documentStore = useDocumentStore();
   const { resetForm, applySnapshot } = useDocumentStore();
   const { undo, redo, canUndo, canRedo } = useHistoryStore();
@@ -275,14 +275,14 @@ export function Header({
               <span className="text-xs text-muted-foreground hidden sm:block leading-tight">Generator</span>
             </div>
           </div>
-          {/* NIST 800-171 Compliance Badge - icon on mobile, full badge on desktop */}
+          {/* NIST 800-171 Compliance Badge - icon on mobile/tablet, full badge on desktop */}
           <button
             onClick={() => setNistModalOpen(true)}
-            className="flex items-center justify-center gap-1.5 p-1.5 md:px-2 md:py-1 rounded-md bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400 text-xs cursor-pointer hover:bg-green-500/20 transition-colors"
+            className={`flex items-center justify-center gap-1.5 rounded-md bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400 text-xs cursor-pointer hover:bg-green-500/20 transition-colors ${isMobile ? 'p-1.5' : 'px-2 py-1'}`}
             title="Click to learn about NIST 800-171 compliance"
           >
-            <Shield className="h-4 w-4 md:h-3 md:w-3" />
-            <span className="hidden md:inline">NIST 800-171</span>
+            <Shield className={isMobile ? 'h-4 w-4' : 'h-3 w-3'} />
+            {!isMobile && <span>NIST 800-171</span>}
           </button>
         </div>
 
@@ -315,17 +315,19 @@ export function Header({
             <Redo2 className="h-4 w-4" />
           </Button>
 
-          {/* Refresh - hidden on mobile, in hamburger menu */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onRefreshPreview}
-            disabled={isCompiling}
-            title="Refresh Preview"
-            className="h-8 w-8 sm:h-9 sm:w-9 hidden md:flex"
-          >
-            <RefreshCw className={`h-4 w-4 ${isCompiling ? 'animate-spin' : ''}`} />
-          </Button>
+          {/* Refresh - hidden on mobile/tablet, in hamburger menu */}
+          {!isMobile && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onRefreshPreview}
+              disabled={isCompiling}
+              title="Refresh Preview"
+              className="h-8 w-8 sm:h-9 sm:w-9"
+            >
+              <RefreshCw className={`h-4 w-4 ${isCompiling ? 'animate-spin' : ''}`} />
+            </Button>
+          )}
 
           {/* Save/Load dropdown - always visible but compact on mobile */}
           <DropdownMenu>
@@ -386,52 +388,59 @@ export function Header({
           </DropdownMenu>
 
           {/* Templates button - desktop only */}
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 px-2 sm:px-3 hidden md:flex"
-            onClick={() => setTemplateLoaderOpen(true)}
-            title="Load document templates"
-          >
-            <FolderOpen className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Templates</span>
-          </Button>
+          {!isMobile && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 px-2 sm:px-3"
+              onClick={() => setTemplateLoaderOpen(true)}
+              title="Load document templates"
+            >
+              <FolderOpen className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Templates</span>
+            </Button>
+          )}
 
           {/* Batch Generation button - desktop only */}
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 px-2 sm:px-3 hidden md:flex"
-            onClick={() => setBatchModalOpen(true)}
-            title="Generate multiple documents with variables"
-          >
-            <Layers className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Batch</span>
-          </Button>
+          {!isMobile && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 px-2 sm:px-3"
+              onClick={() => setBatchModalOpen(true)}
+              title="Generate multiple documents with variables"
+            >
+              <Layers className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Batch</span>
+            </Button>
+          )}
 
           {/* Tools dropdown - desktop only */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8 px-2 sm:px-3 hidden md:flex">
-                <Wrench className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">Tools</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setFindReplaceOpen(true)}>
-                <Search className="h-4 w-4 mr-2" />
-                Find & Replace
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {!isMobile && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 px-2 sm:px-3">
+                  <Wrench className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Tools</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setFindReplaceOpen(true)}>
+                  <Search className="h-4 w-4 mr-2" />
+                  Find & Replace
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
 
           {/* Help dropdown - desktop only */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" title="Help & Info" className="h-8 w-8 hidden md:flex">
-                <HelpCircle className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
+          {!isMobile && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" title="Help & Info" className="h-8 w-8">
+                  <HelpCircle className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-72">
               <DropdownMenuItem onClick={() => setNistModalOpen(true)}>
                 <Shield className="h-4 w-4 mr-2" />
@@ -477,15 +486,17 @@ export function Header({
                 </p>
               </div>
             </DropdownMenuContent>
-          </DropdownMenu>
+            </DropdownMenu>
+          )}
 
-          {/* Appearance dropdown - hidden on mobile, in hamburger menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" title="Appearance" className="h-8 w-8 sm:h-9 sm:w-9 hidden md:flex">
-                <Settings className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
+          {/* Appearance dropdown - hidden on mobile/tablet, in hamburger menu */}
+          {!isMobile && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" title="Appearance" className="h-8 w-8 sm:h-9 sm:w-9">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               {/* Theme */}
               <DropdownMenuItem onClick={toggleTheme} className="flex items-center justify-between">
@@ -543,16 +554,18 @@ export function Header({
                 {density === 'spacious' && <Check className="h-4 w-4" />}
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+            </DropdownMenu>
+          )}
 
-          {/* Mobile menu - only visible on mobile */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden">
-                <Menu className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52">
+          {/* Mobile menu - visible on mobile/tablet */}
+          {isMobile && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Menu className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
               {/* Quick actions */}
               <DropdownMenuItem onClick={onRefreshPreview} disabled={isCompiling}>
                 <RefreshCw className={`h-4 w-4 mr-2 ${isCompiling ? 'animate-spin' : ''}`} />
@@ -607,8 +620,9 @@ export function Header({
                 <Bug className="h-4 w-4 mr-2" />
                 Report Bug
               </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
 
