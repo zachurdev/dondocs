@@ -7,14 +7,61 @@ import { Button } from '@/components/ui/button';
 import { useUIStore } from '@/stores/uiStore';
 import { useLogStore } from '@/stores/logStore';
 
-// Configure pdf.js worker
+// iPad: Use react-pdf-viewer with full features (zoom, thumbnails, navigation)
+// This library has better memory management than react-pdf on iOS
+import { Worker, Viewer } from '@react-pdf-viewer/core';
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+
+// Configure pdf.js worker for react-pdf (iPhone)
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+
+// Worker URL for react-pdf-viewer (iPad)
+const PDFJS_WORKER_URL = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`;
 
 interface MobilePreviewModalProps {
   pdfUrl: string | null;
   isCompiling: boolean;
   error: string | null;
   onDownloadPdf?: () => void;
+}
+
+// iPad PDF Viewer Component using react-pdf-viewer with full features
+// This provides: zoom controls (+/-), page thumbnails sidebar, page navigation
+function IPadPdfViewer({ pdfUrl }: { pdfUrl: string }) {
+  // Create the default layout plugin which includes all features
+  const defaultLayoutPluginInstance = defaultLayoutPlugin({
+    sidebarTabs: (defaultTabs) => [
+      // Only show thumbnails tab for cleaner mobile UI
+      defaultTabs[0], // Thumbnails
+    ],
+    toolbarPlugin: {
+      fullScreenPlugin: {
+        // Enable full screen on iPad
+        onEnterFullScreen: (zoom) => {
+          zoom(1); // Reset zoom when entering full screen
+        },
+      },
+    },
+  });
+
+  return (
+    <div className="flex-1 h-full">
+      <Worker workerUrl={PDFJS_WORKER_URL}>
+        <div className="h-full" style={{ minHeight: 'calc(100vh - 120px)' }}>
+          <Viewer
+            fileUrl={pdfUrl}
+            plugins={[defaultLayoutPluginInstance]}
+            defaultScale={1}
+            theme={{
+              theme: 'auto', // Respect system dark/light mode
+            }}
+          />
+        </div>
+      </Worker>
+    </div>
+  );
 }
 
 export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreviewModalProps) {
@@ -201,53 +248,10 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
           </div>
         )}
 
-        {/* iPad - always use native viewer (react-pdf crashes due to iOS memory limits) */}
-        {/* Reference: https://github.com/wojtekmaj/react-pdf/issues/1601 */}
+        {/* iPad - use react-pdf-viewer with full features (zoom, thumbnails, navigation) */}
+        {/* This library has better memory management than react-pdf */}
         {pdfUrl && !isCompiling && deviceInfo.isIPad && (
-          <div className="flex flex-col h-full">
-            {/* Native PDF viewer - use object tag for better iOS support */}
-            <div className="flex-1 overflow-auto bg-muted/30 p-2">
-              {/* Container with letter aspect ratio (8.5 x 11) */}
-              <div
-                className="mx-auto bg-white shadow-lg rounded overflow-hidden"
-                style={{
-                  width: '100%',
-                  maxWidth: '600px',
-                  // Letter aspect ratio: 11/8.5 = 1.294
-                  aspectRatio: '8.5 / 11',
-                }}
-              >
-                <object
-                  data={`${pdfUrl}#view=FitH&scrollbar=1&toolbar=1&navpanes=1`}
-                  type="application/pdf"
-                  className="w-full h-full"
-                >
-                  {/* Fallback to iframe if object doesn't work */}
-                  <iframe
-                    src={`${pdfUrl}#view=FitH`}
-                    className="w-full h-full border-0"
-                    title="PDF Preview"
-                  />
-                </object>
-              </div>
-            </div>
-            {/* Footer with instructions */}
-            <div className="shrink-0 px-4 py-3 border-t border-border bg-card">
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">
-                  Swipe to scroll • Pinch to zoom
-                </p>
-                <Button
-                  size="sm"
-                  variant="default"
-                  onClick={() => window.open(pdfUrl, '_blank')}
-                >
-                  <FileText className="h-4 w-4 mr-1.5" />
-                  Open Full View
-                </Button>
-              </div>
-            </div>
-          </div>
+          <IPadPdfViewer pdfUrl={pdfUrl} />
         )}
 
         {/* PDF Viewer - for iPhone only (react-pdf works on iPhone) */}
