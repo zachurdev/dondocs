@@ -10,10 +10,22 @@ interface DeviceInfo {
 }
 
 function getDeviceInfo(): DeviceInfo {
-  const isIPad = /iPad/i.test(navigator.userAgent) ||
-    (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
-  const isIOS = /iPhone|iPod/i.test(navigator.userAgent) || isIPad;
-  const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome|CriOS/i.test(navigator.userAgent);
+  const ua = navigator.userAgent;
+  const isIPad = /iPad/i.test(ua) ||
+    (/Macintosh/i.test(ua) && 'ontouchstart' in window);
+  const isIOS = /iPhone|iPod/i.test(ua) || isIPad;
+
+  // Chrome on iOS uses "CriOS", Chrome desktop uses "Chrome"
+  // Edge uses "Edg", Firefox uses "FxiOS" on iOS
+  const isChrome = /Chrome|CriOS/i.test(ua);
+  const isFirefox = /Firefox|FxiOS/i.test(ua);
+  const isEdge = /Edg/i.test(ua);
+
+  // Safari is true only if it says Safari AND is not Chrome/Firefox/Edge
+  const isSafari = /Safari/i.test(ua) && !isChrome && !isFirefox && !isEdge;
+
+  console.log('[downloadPdf] UA:', ua);
+  console.log('[downloadPdf] isIOS:', isIOS, 'isSafari:', isSafari, 'isChrome:', isChrome);
 
   return { isIOS, isIPad, isSafari };
 }
