@@ -186,12 +186,14 @@ export async function downloadPdfBlob(
 }
 
 /**
- * Pre-opens a window for iOS to avoid popup blocker
+ * Pre-opens a window for iOS Chrome to avoid popup blocker
+ * Safari doesn't need this - it uses anchor download method
  * Must be called synchronously from a user gesture (click handler)
  */
 export function preOpenWindowForIOS(): Window | null {
-  const { isIOS } = getDeviceInfo();
-  if (isIOS) {
+  const { isIOS, isSafari } = getDeviceInfo();
+  // Only pre-open for iOS non-Safari browsers (Chrome needs it for data URL approach)
+  if (isIOS && !isSafari) {
     return window.open('about:blank', '_blank');
   }
   return null;
