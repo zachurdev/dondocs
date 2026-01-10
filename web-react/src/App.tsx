@@ -361,7 +361,7 @@ function App() {
         <span class="step-text">Select <strong>"Save to Files"</strong> or <strong>"Save PDF"</strong></span>
       </div>
     </div>
-    <button onclick="window.location.href='${pdfBlobUrl}'">View PDF</button>
+    <button onclick="location.href='${pdfBlobUrl}'">View PDF</button>
   </div>
 </body>
 </html>`;
@@ -563,7 +563,7 @@ function App() {
         <span class="step-text">Select <strong>"Save to Files"</strong> or <strong>"Save PDF"</strong></span>
       </div>
     </div>
-    <button onclick="window.location.href='${pdfBlobUrl}'">View PDF</button>
+    <button onclick="location.href='${pdfBlobUrl}'">View PDF</button>
   </div>
 </body>
 </html>`;
