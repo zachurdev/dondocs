@@ -1,4 +1,4 @@
-import { X, Loader2, AlertCircle, ScrollText, Download, ExternalLink } from 'lucide-react';
+import { X, Loader2, AlertCircle, ScrollText, Download, ExternalLink, FileText, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUIStore } from '@/stores/uiStore';
 import { useLogStore } from '@/stores/logStore';
@@ -18,11 +18,11 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error, onDownloadPdf }
   const displayError = error === 'ENGINE_RESET_NEEDED' ? null : error;
 
   const handleOpenLogs = () => {
-    setLogEnabled(true); // Enable logging when opening
+    setLogEnabled(true);
     setLogViewerOpen(true);
   };
 
-  const handleOpenInNewTab = () => {
+  const handleOpenInBrowser = () => {
     if (pdfUrl) {
       window.open(pdfUrl, '_blank');
     }
@@ -31,125 +31,107 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error, onDownloadPdf }
   if (!mobilePreviewOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
-        <div className="flex items-center gap-2">
-          <span className="font-medium">PDF Preview</span>
-          {isCompiling && (
-            <div className="flex items-center gap-1.5 text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-              <Loader2 className="h-3 w-3 animate-spin" />
-              <span>Compiling...</span>
-            </div>
-          )}
-        </div>
-        <div className="flex items-center gap-1">
-          {pdfUrl && (
-            <>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleOpenInNewTab}
-                title="Open in New Tab (for multi-page viewing)"
-              >
-                <ExternalLink className="h-5 w-5" />
-              </Button>
-              {onDownloadPdf && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={onDownloadPdf}
-                  title="Download PDF"
-                >
-                  <Download className="h-5 w-5" />
-                </Button>
-              )}
-            </>
-          )}
+    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-sm overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <span className="font-semibold">Document Preview</span>
           <Button
             variant="ghost"
             size="icon"
-            onClick={handleOpenLogs}
-            title="View Logs"
-          >
-            <ScrollText className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
+            className="h-8 w-8"
             onClick={() => setMobilePreviewOpen(false)}
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </Button>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="flex-1 relative bg-muted/30">
-        {/* Show PDF if available, with optional loading overlay */}
-        {pdfUrl && (
-          <>
-            <iframe
-              src={pdfUrl}
-              className="absolute inset-0 w-full h-full border-0"
-              title="PDF Preview"
-            />
-            {/* Tip for multi-page viewing */}
-            {!isCompiling && (
-              <div className="absolute bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t border-border px-4 py-2">
-                <p className="text-xs text-muted-foreground text-center">
-                  <ExternalLink className="h-3 w-3 inline mr-1" />
-                  Tap the open icon above to view all pages in your browser
-                </p>
+        {/* Content */}
+        <div className="p-6">
+          {/* Loading State */}
+          {isCompiling && (
+            <div className="flex flex-col items-center gap-4 py-8">
+              <div className="relative">
+                <FileText className="h-16 w-16 text-muted-foreground/30" />
+                <Loader2 className="h-8 w-8 animate-spin text-primary absolute -bottom-1 -right-1 bg-card rounded-full p-1" />
               </div>
-            )}
-            {/* Loading overlay on top of existing PDF */}
-            {isCompiling && (
-              <div className="absolute inset-0 bg-background/60 backdrop-blur-sm flex items-center justify-center">
-                <div className="flex flex-col items-center gap-3 bg-card px-6 py-4 rounded-lg shadow-lg border border-border">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  <p className="text-sm font-medium">Compiling document...</p>
-                </div>
+              <div className="text-center">
+                <p className="font-medium">Generating PDF...</p>
+                <p className="text-sm text-muted-foreground mt-1">This may take a moment</p>
               </div>
-            )}
-          </>
-        )}
+            </div>
+          )}
 
-        {/* Error state - only show if no PDF */}
-        {displayError && !pdfUrl && (
-          <div className="absolute inset-0 flex items-center justify-center p-4">
-            <div className="flex flex-col items-center gap-3 text-center max-w-sm">
-              <AlertCircle className="h-8 w-8 text-destructive" />
-              <p className="text-sm text-destructive">{displayError}</p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleOpenLogs}
-                className="mt-2"
-              >
+          {/* Error State */}
+          {displayError && !pdfUrl && !isCompiling && (
+            <div className="flex flex-col items-center gap-4 py-8">
+              <AlertCircle className="h-16 w-16 text-destructive/70" />
+              <div className="text-center">
+                <p className="font-medium text-destructive">Compilation Error</p>
+                <p className="text-sm text-muted-foreground mt-1 max-w-xs">{displayError}</p>
+              </div>
+              <Button variant="outline" size="sm" onClick={handleOpenLogs}>
                 <ScrollText className="h-4 w-4 mr-2" />
                 View Logs
               </Button>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Initial loading state - no PDF yet */}
-        {!pdfUrl && !displayError && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex flex-col items-center gap-3">
-              {isCompiling ? (
-                <>
-                  <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                  <p className="text-sm font-medium">Generating PDF...</p>
-                  <p className="text-xs text-muted-foreground">This may take a moment</p>
-                </>
-              ) : (
-                <p className="text-sm text-muted-foreground">PDF preview will appear here</p>
-              )}
+          {/* Ready State - PDF Available */}
+          {pdfUrl && !isCompiling && (
+            <div className="flex flex-col items-center gap-6 py-4">
+              <div className="relative">
+                <FileText className="h-20 w-20 text-primary/80" />
+                <CheckCircle2 className="h-8 w-8 text-green-500 absolute -bottom-1 -right-1 bg-card rounded-full" />
+              </div>
+              <div className="text-center">
+                <p className="font-medium text-lg">PDF Ready</p>
+                <p className="text-sm text-muted-foreground mt-1">Your document has been generated</p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="w-full space-y-3">
+                <Button
+                  className="w-full h-12 text-base"
+                  onClick={handleOpenInBrowser}
+                >
+                  <ExternalLink className="h-5 w-5 mr-2" />
+                  Open in Browser
+                </Button>
+
+                {onDownloadPdf && (
+                  <Button
+                    variant="outline"
+                    className="w-full h-12 text-base"
+                    onClick={onDownloadPdf}
+                  >
+                    <Download className="h-5 w-5 mr-2" />
+                    Download PDF
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+
+          {/* Initial State - No PDF yet, not compiling */}
+          {!pdfUrl && !displayError && !isCompiling && (
+            <div className="flex flex-col items-center gap-4 py-8">
+              <FileText className="h-16 w-16 text-muted-foreground/30" />
+              <div className="text-center">
+                <p className="font-medium">No Preview Available</p>
+                <p className="text-sm text-muted-foreground mt-1">Edit your document to generate a preview</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="px-4 py-3 border-t border-border bg-muted/30 flex justify-center">
+          <Button variant="ghost" size="sm" onClick={handleOpenLogs} className="text-muted-foreground">
+            <ScrollText className="h-4 w-4 mr-2" />
+            View Compilation Logs
+          </Button>
+        </div>
       </div>
     </div>
   );
