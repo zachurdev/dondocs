@@ -25,7 +25,7 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
   const [pdfLoading, setPdfLoading] = useState<boolean>(true);
   const [pdfError, setPdfError] = useState<string | null>(null);
 
-  // Detect device/browser for download method
+  // Detect device/browser for download method and rendering approach
   const [deviceInfo, setDeviceInfo] = useState<{ isIPad: boolean; isSafari: boolean }>({ isIPad: false, isSafari: false });
 
   useEffect(() => {
@@ -33,6 +33,10 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
       (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
     const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome|CriOS/i.test(navigator.userAgent);
     setDeviceInfo({ isIPad, isSafari });
+
+    if (isIPad) {
+      console.log('[MobilePreview] iPad detected - using fallback mode (react-pdf crashes on iPad)');
+    }
   }, []);
 
   // Reset state when modal opens or pdfUrl changes
@@ -192,8 +196,53 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
           </div>
         )}
 
-        {/* PDF Viewer */}
-        {pdfUrl && !isCompiling && (
+        {/* iPad Fallback - react-pdf crashes on iPad, so show simple UI */}
+        {pdfUrl && !isCompiling && deviceInfo.isIPad && (
+          <div className="flex flex-col items-center justify-center h-full gap-6 p-6">
+            <div className="relative">
+              <FileText className="h-20 w-20 text-primary/80" />
+              <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1">
+                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+            <div className="text-center">
+              <p className="font-medium text-lg">PDF Ready</p>
+              <p className="text-sm text-muted-foreground mt-1">Your document has been generated</p>
+            </div>
+            <Button
+              className="h-12 px-6 text-base"
+              onClick={() => {
+                if (deviceInfo.isSafari) {
+                  // Safari: open blob URL directly
+                  window.open(pdfUrl, '_blank');
+                } else {
+                  // Chrome: use data URL workaround
+                  fetch(pdfUrl)
+                    .then(r => r.blob())
+                    .then(blob => {
+                      const reader = new FileReader();
+                      reader.onload = () => window.open(reader.result as string, '_blank');
+                      reader.readAsDataURL(blob);
+                    });
+                }
+              }}
+            >
+              <FileText className="h-5 w-5 mr-2" />
+              Open PDF
+            </Button>
+            <p className="text-xs text-muted-foreground text-center">
+              {deviceInfo.isSafari
+                ? "Use Safari's share button (↑) to save"
+                : "Long-press the PDF to save (Chrome limitation)"
+              }
+            </p>
+          </div>
+        )}
+
+        {/* PDF Viewer - for iPhone only (react-pdf works on iPhone) */}
+        {pdfUrl && !isCompiling && !deviceInfo.isIPad && (
           <div className="flex flex-col items-center p-2 min-h-full">
             {pdfLoading && !pdfError && (
               <div className="flex items-center justify-center py-12">
@@ -231,8 +280,8 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
                   pageNumber={currentPage}
                   width={Math.min(window.innerWidth - 16, 450)}
                   className="shadow-lg"
-                  renderTextLayer={false} // Disable text layer on mobile to prevent iOS crashes
-                  renderAnnotationLayer={false} // Disable annotations for performance
+                  renderTextLayer={false}
+                  renderAnnotationLayer={false}
                   loading={
                     <div className="flex items-center justify-center py-12">
                       <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -261,8 +310,8 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
         )}
       </div>
 
-      {/* Page Navigation Footer */}
-      {pdfUrl && !isCompiling && numPages > 0 && !pdfError && (
+      {/* Page Navigation Footer - only for iPhone (iPad uses fallback) */}
+      {pdfUrl && !isCompiling && numPages > 0 && !pdfError && !deviceInfo.isIPad && (
         <div className="flex items-center justify-between px-4 py-2 border-t border-border bg-card shrink-0">
           <Button
             variant="outline"
