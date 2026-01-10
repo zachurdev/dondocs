@@ -7,8 +7,18 @@ import { Button } from '@/components/ui/button';
 import { useUIStore } from '@/stores/uiStore';
 import { useLogStore } from '@/stores/logStore';
 
-// Configure pdf.js worker
+// iPad: Use react-pdf-viewer (better memory management on iOS)
+// react-pdf crashes on iPad due to iOS canvas memory limits (384MB)
+import { Worker, Viewer } from '@react-pdf-viewer/core';
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+
+// Configure pdf.js worker for react-pdf (iPhone)
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+
+// Worker URL for react-pdf-viewer (iPad)
+const PDFJS_WORKER_URL = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`;
 
 interface MobilePreviewModalProps {
   pdfUrl: string | null;
@@ -217,6 +227,64 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
   };
 
   if (!mobilePreviewOpen) return null;
+
+  // Create default layout plugin for iPad viewer (minimal toolbar)
+  const defaultLayoutPluginInstance = defaultLayoutPlugin({
+    sidebarTabs: () => [], // Hide sidebar
+  });
+
+  // iPad uses react-pdf-viewer (better memory management)
+  // Same UI style as iPhone but different PDF renderer
+  if (deviceInfo.isIPad && pdfUrl && !isCompiling) {
+    return (
+      <div className="fixed inset-0 z-50 bg-background flex flex-col">
+        {/* Header - same as iPhone */}
+        <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-card shrink-0">
+          <span className="font-semibold text-sm">PDF Preview</span>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="default"
+              size="sm"
+              onClick={handleDownload}
+              className="h-8 px-3"
+            >
+              <Download className="h-4 w-4 mr-1.5" />
+              Download
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={handleOpenLogs}
+            >
+              <ScrollText className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setMobilePreviewOpen(false)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* PDF Viewer using react-pdf-viewer */}
+        <div className="flex-1 overflow-hidden">
+          <Worker workerUrl={PDFJS_WORKER_URL}>
+            <div style={{ height: 'calc(100vh - 52px)' }}>
+              <Viewer
+                fileUrl={pdfUrl}
+                plugins={[defaultLayoutPluginInstance]}
+                defaultScale={1}
+              />
+            </div>
+          </Worker>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
