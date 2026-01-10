@@ -25,6 +25,17 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
   const [pdfLoading, setPdfLoading] = useState<boolean>(true);
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [shareStatus, setShareStatus] = useState<string | null>(null);
+  const [useFallback, setUseFallback] = useState<boolean>(false);
+
+  // Detect if we should use fallback mode (iPad has issues with react-pdf)
+  useEffect(() => {
+    const isIPad = /iPad/i.test(navigator.userAgent) ||
+      (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
+    if (isIPad) {
+      console.log('[MobilePreview] iPad detected, using fallback mode');
+      setUseFallback(true);
+    }
+  }, []);
 
   // Reset state when modal opens or pdfUrl changes
   useEffect(() => {
@@ -183,8 +194,50 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
           </div>
         )}
 
-        {/* PDF Viewer */}
-        {pdfUrl && !isCompiling && (
+        {/* PDF Viewer - Fallback mode for iPad */}
+        {pdfUrl && !isCompiling && useFallback && (
+          <div className="flex flex-col items-center justify-center h-full gap-6 p-6">
+            <div className="relative">
+              <FileText className="h-20 w-20 text-primary/80" />
+              <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1">
+                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+            <div className="text-center">
+              <p className="font-medium text-lg">PDF Ready</p>
+              <p className="text-sm text-muted-foreground mt-1">Your document has been generated</p>
+            </div>
+            <div className="w-full max-w-xs space-y-3">
+              <Button
+                className="w-full h-12 text-base"
+                onClick={() => {
+                  const link = document.createElement('a');
+                  link.href = pdfUrl;
+                  link.target = '_blank';
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+              >
+                <FileText className="h-5 w-5 mr-2" />
+                Open PDF
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full h-12 text-base"
+                onClick={handleSavePdf}
+              >
+                <Share className="h-5 w-5 mr-2" />
+                Share / Save
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* PDF Viewer - Full viewer for other devices */}
+        {pdfUrl && !isCompiling && !useFallback && (
           <div className="flex flex-col items-center p-2">
             {pdfLoading && !pdfError && (
               <div className="flex items-center justify-center py-8">
@@ -255,8 +308,8 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
         )}
       </div>
 
-      {/* Page Navigation Footer */}
-      {pdfUrl && !isCompiling && numPages > 0 && !pdfError && (
+      {/* Page Navigation Footer - only for full viewer mode */}
+      {pdfUrl && !isCompiling && numPages > 0 && !pdfError && !useFallback && (
         <div className="flex items-center justify-between px-4 py-2 border-t border-border bg-card shrink-0">
           <Button
             variant="outline"
