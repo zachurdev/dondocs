@@ -65,6 +65,28 @@ export async function downloadPdfBlob(
     }
   }
 
+  // iOS non-Safari (Chrome, Firefox, Edge): use data URL approach
+  // This must come BEFORE Safari check since blob URLs don't work in Chrome iOS
+  // Reference: https://github.com/nicbarker/pdf-viewer/issues/629
+  if (isIOS && !isSafari) {
+    console.log('[downloadPdf] Using data URL approach for non-Safari iOS browser');
+    if (preOpenedWindow) preOpenedWindow.close();
+
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUrl = reader.result as string;
+        window.open(dataUrl, '_blank');
+        resolve(true);
+      };
+      reader.onerror = () => {
+        console.error('Failed to read PDF as data URL');
+        resolve(false);
+      };
+      reader.readAsDataURL(blob);
+    });
+  }
+
   // iOS Safari: show instructions page, then navigate to PDF on button click
   if (isIOS && isSafari && preOpenedWindow) {
     const pdfBlobUrl = URL.createObjectURL(blob);
@@ -129,26 +151,6 @@ export async function downloadPdfBlob(
     preOpenedWindow.document.write(htmlContent);
     preOpenedWindow.document.close();
     return true;
-  }
-
-  // iOS Chrome: use data URL approach (blob URLs have cross-window issues)
-  // Chrome shows native "Download or Save to Drive" UI
-  if (isIOS && !isSafari) {
-    // Close pre-opened window, we'll open fresh with data URL
-    if (preOpenedWindow) preOpenedWindow.close();
-
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        window.open(reader.result as string, '_blank');
-        resolve(true);
-      };
-      reader.onerror = () => {
-        console.error('Failed to read PDF as data URL');
-        resolve(false);
-      };
-      reader.readAsDataURL(blob);
-    });
   }
 
   // Desktop: standard download
