@@ -249,10 +249,10 @@ function App() {
     const isIOS = /iPhone|iPod/i.test(navigator.userAgent) || isIPad;
     const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome|CriOS/i.test(navigator.userAgent);
 
-    // For iOS Safari: open window FIRST (synchronously) to avoid popup blocker
-    let safariWindow: Window | null = null;
-    if (isIOS && isSafari) {
-      safariWindow = window.open('about:blank', '_blank');
+    // For iOS: open window FIRST (synchronously) to avoid popup blocker
+    let iosWindow: Window | null = null;
+    if (isIOS) {
+      iosWindow = window.open('about:blank', '_blank');
     }
 
     const { texFiles, enclosures, includeHyperlinks, signatureImage, referenceUrls } = generateAllLatexFiles(documentStore);
@@ -291,13 +291,13 @@ function App() {
         if (navigator.canShare({ files: [file] })) {
           try {
             await navigator.share({ files: [file] });
-            // Close the pre-opened Safari window if share succeeded
-            if (safariWindow) safariWindow.close();
+            // Close the pre-opened iOS window if share succeeded
+            if (iosWindow) iosWindow.close();
             return true;
           } catch (shareErr) {
             if ((shareErr as Error).name === 'AbortError') {
               // User cancelled - close the pre-opened window
-              if (safariWindow) safariWindow.close();
+              if (iosWindow) iosWindow.close();
               return true;
             }
             console.log('Share API failed, using fallback:', shareErr);
@@ -306,7 +306,7 @@ function App() {
       }
 
       // iOS Safari: use pre-opened window to show instructions page
-      if (isIOS && isSafari && safariWindow) {
+      if (isIOS && isSafari && iosWindow) {
         const pdfBlobUrl = URL.createObjectURL(blob);
         // Create the instructions page as a blob URL to avoid document.write() cross-origin issues
         const htmlContent = `
@@ -368,20 +368,15 @@ function App() {
 </html>`;
         const htmlBlob = new Blob([htmlContent], { type: 'text/html' });
         const htmlBlobUrl = URL.createObjectURL(htmlBlob);
-        safariWindow.location.href = htmlBlobUrl;
+        iosWindow.location.href = htmlBlobUrl;
         return true;
       }
 
-      // iOS Chrome: use data URL
-      if (isIOS && !isSafari) {
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            window.open(reader.result as string, '_blank');
-            resolve(true);
-          };
-          reader.readAsDataURL(blob);
-        });
+      // iOS Chrome/other browsers: open PDF directly, Chrome shows native download UI
+      if (isIOS && !isSafari && iosWindow) {
+        const pdfBlobUrl = URL.createObjectURL(blob);
+        iosWindow.location.href = pdfBlobUrl;
+        return true;
       }
 
       // Desktop: standard download
@@ -454,10 +449,10 @@ function App() {
     const isIOS = /iPhone|iPod/i.test(navigator.userAgent) || isIPad;
     const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome|CriOS/i.test(navigator.userAgent);
 
-    // For iOS Safari: open window FIRST (synchronously) to avoid popup blocker
-    let safariWindow: Window | null = null;
-    if (isIOS && isSafari) {
-      safariWindow = window.open('about:blank', '_blank');
+    // For iOS: open window FIRST (synchronously) to avoid popup blocker
+    let iosWindow: Window | null = null;
+    if (isIOS) {
+      iosWindow = window.open('about:blank', '_blank');
     }
 
     const { texFiles, enclosures, includeHyperlinks, signatureImage, referenceUrls } = pendingDownloadRef.current;
@@ -494,13 +489,13 @@ function App() {
         if (navigator.canShare({ files: [file] })) {
           try {
             await navigator.share({ files: [file] });
-            // Close the pre-opened Safari window if share succeeded
-            if (safariWindow) safariWindow.close();
+            // Close the pre-opened iOS window if share succeeded
+            if (iosWindow) iosWindow.close();
             return true;
           } catch (shareErr) {
             if ((shareErr as Error).name === 'AbortError') {
               // User cancelled - close the pre-opened window
-              if (safariWindow) safariWindow.close();
+              if (iosWindow) iosWindow.close();
               return true;
             }
             console.log('Share API failed, using fallback:', shareErr);
@@ -509,7 +504,7 @@ function App() {
       }
 
       // iOS Safari: use pre-opened window to show instructions page
-      if (isIOS && isSafari && safariWindow) {
+      if (isIOS && isSafari && iosWindow) {
         const pdfBlobUrl = URL.createObjectURL(blob);
         // Create the instructions page as a blob URL to avoid document.write() cross-origin issues
         const htmlContent = `
@@ -571,20 +566,15 @@ function App() {
 </html>`;
         const htmlBlob = new Blob([htmlContent], { type: 'text/html' });
         const htmlBlobUrl = URL.createObjectURL(htmlBlob);
-        safariWindow.location.href = htmlBlobUrl;
+        iosWindow.location.href = htmlBlobUrl;
         return true;
       }
 
-      // iOS Chrome: use data URL
-      if (isIOS && !isSafari) {
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            window.open(reader.result as string, '_blank');
-            resolve(true);
-          };
-          reader.readAsDataURL(blob);
-        });
+      // iOS Chrome/other browsers: open PDF directly, Chrome shows native download UI
+      if (isIOS && !isSafari && iosWindow) {
+        const pdfBlobUrl = URL.createObjectURL(blob);
+        iosWindow.location.href = pdfBlobUrl;
+        return true;
       }
 
       // Desktop: standard download
