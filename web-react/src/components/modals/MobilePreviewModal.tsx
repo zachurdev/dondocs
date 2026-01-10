@@ -201,31 +201,49 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
           </div>
         )}
 
-        {/* iPad - always use native iframe viewer (react-pdf crashes due to iOS memory limits) */}
+        {/* iPad - always use native viewer (react-pdf crashes due to iOS memory limits) */}
         {/* Reference: https://github.com/wojtekmaj/react-pdf/issues/1601 */}
         {pdfUrl && !isCompiling && deviceInfo.isIPad && (
           <div className="flex flex-col h-full">
-            {/* Native PDF viewer via iframe - most reliable on iPad */}
-            <div className="flex-1 bg-muted/30">
-              <iframe
-                src={pdfUrl}
-                className="w-full h-full border-0"
-                title="PDF Preview"
-              />
+            {/* Native PDF viewer - use object tag for better iOS support */}
+            <div className="flex-1 overflow-auto bg-muted/30 p-2">
+              {/* Container with letter aspect ratio (8.5 x 11) */}
+              <div
+                className="mx-auto bg-white shadow-lg rounded overflow-hidden"
+                style={{
+                  width: '100%',
+                  maxWidth: '600px',
+                  // Letter aspect ratio: 11/8.5 = 1.294
+                  aspectRatio: '8.5 / 11',
+                }}
+              >
+                <object
+                  data={`${pdfUrl}#view=FitH&scrollbar=1&toolbar=1&navpanes=1`}
+                  type="application/pdf"
+                  className="w-full h-full"
+                >
+                  {/* Fallback to iframe if object doesn't work */}
+                  <iframe
+                    src={`${pdfUrl}#view=FitH`}
+                    className="w-full h-full border-0"
+                    title="PDF Preview"
+                  />
+                </object>
+              </div>
             </div>
             {/* Footer with instructions */}
             <div className="shrink-0 px-4 py-3 border-t border-border bg-card">
               <div className="flex items-center justify-between">
                 <p className="text-xs text-muted-foreground">
-                  Scroll pages • Pinch to zoom • Tap share (↑) to save
+                  Swipe to scroll • Pinch to zoom
                 </p>
                 <Button
                   size="sm"
-                  variant="outline"
+                  variant="default"
                   onClick={() => window.open(pdfUrl, '_blank')}
                 >
                   <FileText className="h-4 w-4 mr-1.5" />
-                  Full Screen
+                  Open Full View
                 </Button>
               </div>
             </div>
