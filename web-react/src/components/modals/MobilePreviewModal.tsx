@@ -2,12 +2,12 @@ import { useState, useCallback, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-import { X, Loader2, AlertCircle, ScrollText, Share, ChevronLeft, ChevronRight, FileText } from 'lucide-react';
+import { X, Loader2, AlertCircle, ScrollText, Download, ChevronLeft, ChevronRight, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUIStore } from '@/stores/uiStore';
 import { useLogStore } from '@/stores/logStore';
 
-// Configure pdf.js worker - use cdnjs which has better compatibility
+// Configure pdf.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 interface MobilePreviewModalProps {
@@ -24,23 +24,15 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pdfLoading, setPdfLoading] = useState<boolean>(true);
   const [pdfError, setPdfError] = useState<string | null>(null);
-  const [shareStatus, setShareStatus] = useState<string | null>(null);
-  const [useFallback, setUseFallback] = useState<boolean>(false);
-  const [isIPadSafari, setIsIPadSafari] = useState<boolean>(false);
 
-  // Detect if we should use fallback mode (iPad has issues with react-pdf)
+  // Detect device/browser for download method
+  const [deviceInfo, setDeviceInfo] = useState<{ isIPad: boolean; isSafari: boolean }>({ isIPad: false, isSafari: false });
+
   useEffect(() => {
     const isIPad = /iPad/i.test(navigator.userAgent) ||
       (/Macintosh/i.test(navigator.userAgent) && 'ontouchstart' in window);
-
-    // Safari doesn't have 'Chrome' in UA, Chrome on iOS does
     const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome|CriOS/i.test(navigator.userAgent);
-
-    if (isIPad) {
-      console.log('[MobilePreview] iPad detected, Safari:', isSafari);
-      setUseFallback(true);
-      setIsIPadSafari(isSafari);
-    }
+    setDeviceInfo({ isIPad, isSafari });
   }, []);
 
   // Reset state when modal opens or pdfUrl changes
@@ -52,7 +44,7 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
     }
   }, [mobilePreviewOpen, pdfUrl]);
 
-  // Filter out engine reset message - it's not a user-facing error
+  // Filter out engine reset message
   const displayError = error === 'ENGINE_RESET_NEEDED' ? null : error;
 
   const handleOpenLogs = () => {
@@ -73,54 +65,51 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
     setPdfError('Failed to load PDF preview');
   }, []);
 
-  const goToPrevPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-  };
+  const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const goToNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, numPages));
 
-  const goToNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, numPages));
-  };
-
-  // Save PDF using share API or fallback
-  const handleSavePdf = async () => {
+  // Universal download handler
+  const handleDownload = async () => {
     if (!pdfUrl) return;
 
     try {
       const response = await fetch(pdfUrl);
       const blob = await response.blob();
 
-      // Try Web Share API first
+      // Try Web Share API first (works on iPhone Safari)
       if (navigator.share && navigator.canShare) {
         const file = new File([blob], 'correspondence.pdf', { type: 'application/pdf' });
         if (navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: 'Naval Correspondence',
-          });
-          setShareStatus('Saved!');
-          setTimeout(() => setShareStatus(null), 2000);
+          await navigator.share({ files: [file], title: 'Naval Correspondence' });
           return;
         }
       }
 
-      // Fallback: open blob URL
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.target = '_blank';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      setTimeout(() => URL.revokeObjectURL(url), 5000);
-
-      setShareStatus('Opened - use share to save');
-      setTimeout(() => setShareStatus(null), 3000);
-    } catch (err) {
-      if ((err as Error).name !== 'AbortError') {
-        console.error('Save failed:', err);
-        setShareStatus('Error saving');
-        setTimeout(() => setShareStatus(null), 3000);
+      // iPad Safari: open blob URL (user uses share button)
+      if (deviceInfo.isIPad && deviceInfo.isSafari) {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        return;
       }
+
+      // Chrome iOS: use data URL workaround
+      if (deviceInfo.isIPad && !deviceInfo.isSafari) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          window.open(reader.result as string, '_blank');
+        };
+        reader.readAsDataURL(blob);
+        return;
+      }
+
+      // Default fallback: open blob URL
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    } catch (err) {
+      console.error('Download failed:', err);
+      window.open(pdfUrl, '_blank');
     }
   };
 
@@ -130,17 +119,17 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-card shrink-0">
-        <span className="font-semibold text-sm">Document Preview</span>
+        <span className="font-semibold text-sm">PDF Preview</span>
         <div className="flex items-center gap-1">
           {pdfUrl && !isCompiling && (
             <Button
-              variant="ghost"
+              variant="default"
               size="sm"
-              onClick={handleSavePdf}
-              className="h-8 px-2"
+              onClick={handleDownload}
+              className="h-8 px-3"
             >
-              <Share className="h-4 w-4 mr-1" />
-              Save
+              <Download className="h-4 w-4 mr-1.5" />
+              Download
             </Button>
           )}
           <Button
@@ -162,13 +151,6 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
         </div>
       </div>
 
-      {/* Status message */}
-      {shareStatus && (
-        <div className="bg-primary/10 text-primary text-xs text-center py-1 shrink-0">
-          {shareStatus}
-        </div>
-      )}
-
       {/* PDF Content */}
       <div className="flex-1 overflow-auto bg-muted/30">
         {/* Loading State */}
@@ -185,7 +167,7 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
           </div>
         )}
 
-        {/* Error State */}
+        {/* Compilation Error State */}
         {displayError && !pdfUrl && !isCompiling && (
           <div className="flex flex-col items-center justify-center h-full gap-4 p-4">
             <AlertCircle className="h-16 w-16 text-destructive/70" />
@@ -200,93 +182,21 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
           </div>
         )}
 
-        {/* PDF Viewer - Fallback mode for iPad */}
-        {pdfUrl && !isCompiling && useFallback && (
-          <div className="flex flex-col items-center justify-center h-full gap-6 p-6">
-            <div className="relative">
-              <FileText className="h-20 w-20 text-primary/80" />
-              <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1">
-                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-            </div>
-            <div className="text-center">
-              <p className="font-medium text-lg">PDF Ready</p>
-              <p className="text-sm text-muted-foreground mt-1">Your document has been generated</p>
-            </div>
-            <div className="w-full max-w-xs space-y-3">
-              <Button
-                className="w-full h-12 text-base"
-                onClick={async () => {
-                  if (isIPadSafari) {
-                    // Safari: just open the blob URL
-                    const link = document.createElement('a');
-                    link.href = pdfUrl;
-                    link.target = '_blank';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                  } else {
-                    // Chrome iOS workaround: convert to data URL via FileReader
-                    try {
-                      const response = await fetch(pdfUrl);
-                      const blob = await response.blob();
-                      const reader = new FileReader();
-                      reader.onload = () => {
-                        // Open data URL in new window
-                        const dataUrl = reader.result as string;
-                        window.open(dataUrl, '_blank');
-                      };
-                      reader.readAsDataURL(blob);
-                    } catch (err) {
-                      console.error('Failed to open PDF:', err);
-                      // Fallback to regular open
-                      window.open(pdfUrl, '_blank');
-                    }
-                  }
-                }}
-              >
-                <FileText className="h-5 w-5 mr-2" />
-                Open PDF
-              </Button>
-            </div>
-            {isIPadSafari ? (
-              <p className="text-xs text-muted-foreground text-center mt-2">
-                Tap "Open PDF", then use the share button (↑) to save
-              </p>
-            ) : (
-              <p className="text-xs text-muted-foreground text-center mt-2">
-                Tap "Open PDF", then long-press the PDF to save
-              </p>
-            )}
-          </div>
-        )}
-
-        {/* PDF Viewer - Full viewer for other devices */}
-        {pdfUrl && !isCompiling && !useFallback && (
-          <div className="flex flex-col items-center p-2">
+        {/* PDF Viewer */}
+        {pdfUrl && !isCompiling && (
+          <div className="flex flex-col items-center p-2 min-h-full">
             {pdfLoading && !pdfError && (
-              <div className="flex items-center justify-center py-8">
+              <div className="flex items-center justify-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
             )}
             {pdfError ? (
-              <div className="flex flex-col items-center justify-center py-8 gap-4">
+              <div className="flex flex-col items-center justify-center py-12 gap-4">
                 <AlertCircle className="h-12 w-12 text-destructive/70" />
                 <p className="text-sm text-muted-foreground">{pdfError}</p>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    const link = document.createElement('a');
-                    link.href = pdfUrl;
-                    link.target = '_blank';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                  }}
-                >
-                  Open in Browser Instead
+                <Button variant="outline" onClick={handleDownload}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Download Instead
                 </Button>
               </div>
             ) : (
@@ -297,23 +207,27 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
                 loading={null}
                 className="flex flex-col items-center"
                 error={
-                  <div className="flex flex-col items-center justify-center py-8 gap-4">
+                  <div className="flex flex-col items-center justify-center py-12 gap-4">
                     <AlertCircle className="h-12 w-12 text-destructive/70" />
                     <p className="text-sm text-muted-foreground">Failed to render PDF</p>
+                    <Button variant="outline" onClick={handleDownload}>
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Instead
+                    </Button>
                   </div>
                 }
               >
                 <Page
                   pageNumber={currentPage}
-                  width={Math.min(window.innerWidth - 16, 400)}
+                  width={Math.min(window.innerWidth - 16, 450)}
                   className="shadow-lg"
                   loading={
-                    <div className="flex items-center justify-center py-8">
+                    <div className="flex items-center justify-center py-12">
                       <Loader2 className="h-6 w-6 animate-spin text-primary" />
                     </div>
                   }
                   error={
-                    <div className="flex items-center justify-center py-8">
+                    <div className="flex items-center justify-center py-12">
                       <p className="text-sm text-muted-foreground">Error rendering page</p>
                     </div>
                   }
@@ -335,8 +249,8 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
         )}
       </div>
 
-      {/* Page Navigation Footer - only for full viewer mode */}
-      {pdfUrl && !isCompiling && numPages > 0 && !pdfError && !useFallback && (
+      {/* Page Navigation Footer */}
+      {pdfUrl && !isCompiling && numPages > 0 && !pdfError && (
         <div className="flex items-center justify-between px-4 py-2 border-t border-border bg-card shrink-0">
           <Button
             variant="outline"
