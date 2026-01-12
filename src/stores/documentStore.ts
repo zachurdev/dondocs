@@ -94,6 +94,7 @@ const DEFAULT_FORM_DATA: Partial<DocumentData> = {
   unitLine2: '2D MARINE DIVISION, II MEF',
   unitAddress: 'PSC BOX 20123, CAMP LEJEUNE, NC 28542-0123',
   sealType: 'dod',
+  letterheadColor: 'blue',
   // Document identification
   ssic: '3502',
   serial: '0847',

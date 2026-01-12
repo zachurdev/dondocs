@@ -137,6 +137,9 @@ export function generateLetterheadTex(store: DocumentStore): string {
 % Department/Service: usmc, navy, or dod
 \\setDepartment{${data.department || 'usmc'}}
 
+% Letterhead color: blue (default) or black
+\\setLetterheadColor{${data.letterheadColor || 'blue'}}
+
 \\setLetterhead
     {${line1}}
     {${line2}}

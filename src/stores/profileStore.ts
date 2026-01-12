@@ -4,6 +4,19 @@ import type { Profile } from '@/types/document';
 
 // Example profiles for common units
 const DEFAULT_PROFILES: Record<string, Profile> = {
+  '23d Marine Regiment': {
+    unitLine1: '23D MARINE REGIMENT',
+    unitLine2: '4TH MARINE DIVISION',
+    unitAddress: '900 COMMODORE DRIVE, SAN BRUNO, CA 94066-0095',
+    ssic: '5216',
+    from: 'Commanding Officer, 23d Marine Regiment',
+    sigFirst: 'James',
+    sigMiddle: 'R',
+    sigLast: 'THOMPSON',
+    sigRank: 'Colonel',
+    sigTitle: 'Commanding Officer',
+    pocEmail: 'james.thompson@usmc.mil',
+  },
   '1st Bn, 6th Marines': {
     unitLine1: '1ST BATTALION, 6TH MARINES',
     unitLine2: '2D MARINE DIVISION, II MEF',

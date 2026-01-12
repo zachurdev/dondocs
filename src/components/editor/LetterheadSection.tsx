@@ -51,9 +51,9 @@ export function LetterheadSection() {
           <AccordionTrigger>Letterhead</AccordionTrigger>
           <AccordionContent>
             <div className="space-y-4 pt-2">
-              {/* Seal Type + Department/Service + Browse Units - responsive layout */}
+              {/* Seal Type + Color + Department/Service + Browse Units - responsive layout */}
               <div className="flex flex-col sm:flex-row sm:items-end gap-3">
-                <div className="grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-0">
+                <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-3">
                   <div className="space-y-2 sm:w-28">
                     <Label>Seal</Label>
                     <Select
@@ -70,20 +70,18 @@ export function LetterheadSection() {
                     </Select>
                   </div>
 
-                  <div className="space-y-2 sm:hidden">
-                    <Label>Department</Label>
+                  <div className="space-y-2 sm:w-28">
+                    <Label>Color</Label>
                     <Select
-                      value={formData.department || 'usmc'}
-                      onValueChange={(v) => setField('department', v)}
+                      value={formData.letterheadColor || 'blue'}
+                      onValueChange={(v) => setField('letterheadColor', v as 'blue' | 'black')}
                     >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="usmc">USMC</SelectItem>
-                        <SelectItem value="navy">Navy</SelectItem>
-                        <SelectItem value="dod">DoD</SelectItem>
-                        <SelectItem value="dow">DoW</SelectItem>
+                        <SelectItem value="blue">Blue</SelectItem>
+                        <SelectItem value="black">Black</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -103,6 +101,25 @@ export function LetterheadSection() {
                       <SelectItem value="navy">Department of the Navy</SelectItem>
                       <SelectItem value="dod">Department of Defense</SelectItem>
                       <SelectItem value="dow">Department of War</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Mobile-only Department selector */}
+                <div className="space-y-2 sm:hidden">
+                  <Label>Department</Label>
+                  <Select
+                    value={formData.department || 'usmc'}
+                    onValueChange={(v) => setField('department', v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="usmc">USMC</SelectItem>
+                      <SelectItem value="navy">Navy</SelectItem>
+                      <SelectItem value="dod">DoD</SelectItem>
+                      <SelectItem value="dow">DoW</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

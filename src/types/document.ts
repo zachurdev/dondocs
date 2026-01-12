@@ -80,6 +80,7 @@ export interface DocumentData {
   unitLine2: string;
   unitAddress: string;
   sealType: string;
+  letterheadColor: 'blue' | 'black';
 
   // Document identification
   ssic: string;

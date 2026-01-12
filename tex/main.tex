@@ -543,6 +543,24 @@
 
 
 %=============================================================================
+%                    LETTERHEAD COLOR CONFIGURATION
+%=============================================================================
+% Options: blue (default, PMS 288 navy blue) or black
+%=============================================================================
+
+\newcommand{\LetterheadColor}{navyblue}
+\newcommand{\setLetterheadColor}[1]{%
+    \def\temp{#1}%
+    \def\blacktype{black}%
+    \ifx\temp\blacktype
+        \renewcommand{\LetterheadColor}{black}%
+    \else
+        \renewcommand{\LetterheadColor}{navyblue}%
+    \fi
+}
+
+
+%=============================================================================
 %                    CONDITIONAL/OPTIONAL FIELD HELPERS
 %=============================================================================
 % These macros allow format templates to conditionally print fields.
@@ -744,14 +762,16 @@
     \begin{textblock*}{4in}(2.25in, 0.625in)%
         \centering
         \usefont{\encodingdefault}{\familydefault}{\seriesdefault}{\shapedefault}%
+        % Per SECNAV M-5216.5 App C \S2a (Computer Generated Letterhead):
+        % First line: 10pt bold, Address lines: 8pt
+        % Color: \LetterheadColor (blue or black)
         \fontsize{10pt}{11pt}\selectfont
-        \textcolor{navyblue}{\textbf{UNITED STATES MARINE CORPS}}\\
+        \textcolor{\LetterheadColor}{\textbf{UNITED STATES MARINE CORPS}}\\
         \fontsize{8pt}{9pt}\selectfont
-        \textcolor{navyblue}{\UnitName}\\
-        \textcolor{navyblue}{\UnitLineTwo}\\
-        \fontsize{6pt}{7pt}\selectfont
-        \textcolor{navyblue}{\UnitLineThree}\\
-        \textcolor{navyblue}{\UnitLineFour}
+        \textcolor{\LetterheadColor}{\UnitName}\\
+        \textcolor{\LetterheadColor}{\UnitLineTwo}\\
+        \textcolor{\LetterheadColor}{\UnitLineThree}\\
+        \textcolor{\LetterheadColor}{\UnitLineFour}
     \end{textblock*}%
     \vspace*{0.5in}%
 }
