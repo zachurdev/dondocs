@@ -197,7 +197,7 @@ export default defineConfig({
             urlPattern: /\/tex\/.*/,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'tex-internal-cache-v1',
+              cacheName: 'tex-internal-cache-v2', // v2: invalidate stale HTML responses
               expiration: {
                 maxEntries: 100,
                 maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
