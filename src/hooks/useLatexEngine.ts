@@ -190,18 +190,21 @@ export function useLatexEngine() {
       // if the file doesn't exist in the virtual filesystem
       const nullStubContent = '% null stub file - prevents 404 errors\n\\endinput\n';
 
-      // Write to memfs in various locations
-      engine.writeMemFSFile('null', nullStubContent);
-      engine.writeMemFSFile('null.tex', nullStubContent);
+      // Write to memfs in various locations (including /tex/ paths)
+      const nullPaths = ['null', 'null.tex', 'tex/null', 'tex/null.tex'];
+      for (const nullPath of nullPaths) {
+        engine.writeMemFSFile(nullPath, nullStubContent);
+      }
 
       // Also preload via texlive preloader for all format types that might request it
-      // Format numbers: 26=tex, 27=sty, 32=def, 10=cfg, 39=clo
-      const nullFormats = [10, 26, 27, 32, 39];
+      // Format numbers: 26=tex, 27=sty, 32=def, 10=cfg, 39=clo, 0=unknown
+      const nullFormats = [0, 10, 26, 27, 32, 39];
       for (const format of nullFormats) {
-        engine.preloadTexliveFile(format, 'null', nullStubContent);
-        engine.preloadTexliveFile(format, 'null.tex', nullStubContent);
+        for (const nullPath of nullPaths) {
+          engine.preloadTexliveFile(format, nullPath, nullStubContent);
+        }
       }
-      debug.log('Engine', 'Null stub files written to memfs and preloaded', { formats: nullFormats });
+      debug.log('Engine', 'Null stub files written to memfs and preloaded', { paths: nullPaths, formats: nullFormats });
 
       // Load seal images into virtual filesystem
       debug.log('Engine', 'Loading seal images...', { files: LATEX.SEAL_FILES });
