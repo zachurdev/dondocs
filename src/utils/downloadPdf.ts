@@ -89,22 +89,40 @@ function downloadViaDataUrl(blob: Blob, filename: string): Promise<boolean> {
  * For browsers that don't support blob URL downloads (Chrome iOS, in-app browsers)
  * User will see the PDF and can use share button to save
  */
-function openViaDataUrlInNewWindow(blob: Blob, _filename: string): Promise<boolean> {
+function openViaDataUrlInNewWindow(blob: Blob, filename: string): Promise<boolean> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onloadend = function() {
       const dataUrl = reader.result as string;
-      // Open the data URL in a new window - browser will show the PDF
-      // User can then use the share button to save
+      console.log('[downloadPdf] Data URL created, length:', dataUrl.length);
+      
+      // Try method 1: window.open
       const newWindow = window.open(dataUrl, '_blank');
       if (newWindow) {
+        console.log('[downloadPdf] window.open succeeded');
         resolve(true);
-      } else {
-        // Popup blocked - try location.href as fallback
-        console.log('[downloadPdf] Popup blocked, trying location.href');
-        window.location.href = dataUrl;
-        resolve(true);
+        return;
       }
+      
+      console.log('[downloadPdf] window.open failed/blocked, trying anchor with data URL');
+      
+      // Try method 2: anchor tag with data URL
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = filename;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      
+      // Give it a moment, then try location.href as last resort
+      setTimeout(() => {
+        console.log('[downloadPdf] Trying location.href as final fallback');
+        window.location.href = dataUrl;
+      }, 500);
+      
+      resolve(true);
     };
     reader.onerror = function() {
       console.error('[downloadPdf] FileReader failed');
@@ -112,6 +130,22 @@ function openViaDataUrlInNewWindow(blob: Blob, _filename: string): Promise<boole
     };
     reader.readAsDataURL(blob);
   });
+}
+
+/**
+ * Try blob URL with anchor - some in-app browsers might support this
+ */
+function downloadViaBlobUrl(blob: Blob, filename: string): void {
+  const downloadBlob = new Blob([blob], { type: 'application/octet-stream' });
+  const downloadUrl = URL.createObjectURL(downloadBlob);
+  const a = document.createElement('a');
+  a.href = downloadUrl;
+  a.download = filename;
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(downloadUrl), 10000);
 }
 
 /**
@@ -193,24 +227,25 @@ export async function downloadPdfBlob(
   }
 
   // iOS In-App Browsers (Google App, Facebook, Instagram, Twitter, LinkedIn, etc.)
-  // These have various issues with blob downloads, so use data URL approach
+  // These have various issues with blob downloads
+  // The best approach is to navigate directly to the PDF blob URL
   if (isIOS && isInAppBrowser) {
-    console.log('[downloadPdf] iOS In-App Browser detected - using FileReader + window.open approach');
+    console.log('[downloadPdf] iOS In-App Browser detected - navigating to PDF blob URL');
     if (preOpenedWindow) preOpenedWindow.close();
 
+    // Create a blob URL with PDF mime type (not octet-stream)
+    // This should trigger iOS's native PDF viewer with share/save options
     const pdfBlob = new Blob([blob], { type: 'application/pdf' });
-    const success = await openViaDataUrlInNewWindow(pdfBlob, filename);
+    const pdfUrl = URL.createObjectURL(pdfBlob);
     
-    if (!success) {
-      // Fallback to anchor
-      const downloadBlob = new Blob([blob], { type: 'application/octet-stream' });
-      const downloadUrl = URL.createObjectURL(downloadBlob);
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      a.download = filename;
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(downloadUrl), 10000);
-    }
+    console.log('[downloadPdf] Navigating to blob URL:', pdfUrl);
+    
+    // Navigate directly to the PDF - iOS will show native PDF viewer
+    window.location.href = pdfUrl;
+    
+    // Don't revoke immediately since we're navigating to it
+    // The URL will be invalid after page unload anyway
+    
     return true;
   }
 
