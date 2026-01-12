@@ -10,14 +10,17 @@
  * which has fundamental limitations with blob URL downloads. There is NO
  * JavaScript-only fix for this - it requires native app code changes.
  * See: https://bugs.webkit.org/show_bug.cgi?id=216918
+ * 
+ * NOTE: This notice waits for the WelcomeModal to be dismissed before showing,
+ * to avoid overlapping modals.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { AlertTriangle, X, ExternalLink } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { getDeviceInfo, type DeviceInfo } from '@/utils/device';
 
 const NOTICE_DISMISSED_KEY = 'incompatible-browser-notice-dismissed';
+const WELCOME_STORAGE_KEY = 'libo-secured-welcome-shown'; // Must match WelcomeModal
 
 // Browser icons as simple SVG components
 function SafariIcon({ className }: { className?: string }) {
@@ -104,31 +107,58 @@ export function BrowserCompatibilityNotice() {
     }
 
     // Check if user has already dismissed this notice
-    const dismissed = localStorage.getItem(NOTICE_DISMISSED_KEY);
-    if (dismissed) {
-      return;
+    try {
+      const dismissed = localStorage.getItem(NOTICE_DISMISSED_KEY);
+      if (dismissed) {
+        return;
+      }
+    } catch {
+      // localStorage might not be available
     }
 
-    // Show the notice
-    setIsVisible(true);
+    // Check if welcome modal is still showing - if so, wait for it to be dismissed
+    const checkAndShow = () => {
+      try {
+        const welcomeShown = localStorage.getItem(WELCOME_STORAGE_KEY);
+        if (welcomeShown) {
+          // Welcome has been dismissed, show our notice
+          setIsVisible(true);
+        } else {
+          // Welcome modal is still showing, check again in 500ms
+          setTimeout(checkAndShow, 500);
+        }
+      } catch {
+        // If localStorage fails, just show the notice after a delay
+        setTimeout(() => setIsVisible(true), 1000);
+      }
+    };
+
+    // Start checking after a short delay
+    setTimeout(checkAndShow, 100);
   }, []);
 
-  const handleDismiss = () => {
-    localStorage.setItem(NOTICE_DISMISSED_KEY, 'true');
+  const handleDismiss = useCallback(() => {
+    console.log('[BrowserNotice] Dismiss clicked');
+    try {
+      localStorage.setItem(NOTICE_DISMISSED_KEY, 'true');
+    } catch {
+      // localStorage might not be available
+    }
     setIsVisible(false);
-  };
+  }, []);
 
-  const handleOpenInSafari = () => {
-    // This won't actually work programmatically, but we can try
-    // The user will need to use the app's "Open in Safari" feature
-    const currentUrl = window.location.href;
-    
-    // Try to open in Safari (this usually doesn't work from in-app browsers)
-    window.open(currentUrl, '_blank');
-    
-    // Show instructions anyway since the above likely won't work
-    alert('To open in Safari:\n\n1. Tap the ⋮ or share button\n2. Select "Open in Safari"');
-  };
+  const handleOpenInSafari = useCallback(() => {
+    console.log('[BrowserNotice] Open in Safari clicked');
+    // Show instructions - the window.open usually doesn't work from in-app browsers
+    alert('To open in Safari:\n\n1. Tap the ⋮ or share button at the top/bottom of your screen\n2. Select "Open in Safari" or "Open in Browser"');
+  }, []);
+
+  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
+    // Only dismiss if clicking the backdrop itself, not the modal content
+    if (e.target === e.currentTarget) {
+      handleDismiss();
+    }
+  }, [handleDismiss]);
 
   if (!isVisible || !deviceInfo) {
     return null;
@@ -137,8 +167,14 @@ export function BrowserCompatibilityNotice() {
   const appName = getInAppBrowserName(deviceInfo);
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-card border border-border rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <div 
+      className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4"
+      onClick={handleBackdropClick}
+    >
+      <div 
+        className="bg-card border border-border rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-start justify-between p-4 border-b border-border">
           <div className="flex items-center gap-3">
@@ -150,14 +186,13 @@ export function BrowserCompatibilityNotice() {
               <p className="text-sm text-muted-foreground">Some features may not work</p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 -mt-1 -mr-1"
+          <button
+            type="button"
+            className="h-8 w-8 -mt-1 -mr-1 rounded-md flex items-center justify-center hover:bg-muted transition-colors"
             onClick={handleDismiss}
           >
             <X className="h-4 w-4" />
-          </Button>
+          </button>
         </div>
 
         {/* Content */}
@@ -196,21 +231,21 @@ export function BrowserCompatibilityNotice() {
 
         {/* Footer */}
         <div className="p-4 border-t border-border flex gap-2">
-          <Button
-            variant="outline"
-            className="flex-1"
+          <button
+            type="button"
+            className="flex-1 px-4 py-2 text-sm font-medium border border-border rounded-md hover:bg-muted transition-colors"
             onClick={handleDismiss}
           >
             Continue Anyway
-          </Button>
-          <Button
-            variant="default"
-            className="flex-1"
+          </button>
+          <button
+            type="button"
+            className="flex-1 px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
             onClick={handleOpenInSafari}
           >
-            <ExternalLink className="h-4 w-4 mr-2" />
+            <ExternalLink className="h-4 w-4" />
             Open in Safari
-          </Button>
+          </button>
         </div>
       </div>
     </div>
