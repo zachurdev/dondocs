@@ -33,7 +33,11 @@ export function LogViewerModal() {
     }
   }, [isEnabled]);
 
-  const handleCopyLogs = async () => {
+  const handleCopyLogs = async (e: React.MouseEvent) => {
+    // Prevent event from bubbling up and closing the modal
+    e.preventDefault();
+    e.stopPropagation();
+
     const text = logs
       .map((log) => `[${log.timestamp.toISOString()}] [${log.level.toUpperCase()}] ${log.message}`)
       .join('\n');
@@ -49,9 +53,13 @@ export function LogViewerModal() {
       textArea.style.position = 'fixed';
       textArea.style.left = '-9999px';
       textArea.style.top = '0';
+      textArea.style.opacity = '0';
+      textArea.setAttribute('readonly', ''); // Prevent keyboard from showing on mobile
       document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
+
+      // On iOS, we need to use setSelectionRange instead of select()
+      // and avoid focus() which can cause modal issues
+      textArea.setSelectionRange(0, text.length);
 
       // execCommand returns false if it fails - check the return value
       const success = document.execCommand('copy');
