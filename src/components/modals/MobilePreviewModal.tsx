@@ -408,64 +408,14 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
           </div>
         )}
 
-        {/* PDF Viewer - for iPad using react-pdf (more reliable on tablets) */}
+        {/* PDF Viewer - for iPad using native iframe (Safari handles PDFs natively) */}
         {pdfUrl && !isCompiling && deviceInfo.isIPad && (
-          <div className="flex flex-col items-center p-4 min-h-full">
-            {pdfLoading && !pdfError && (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
-            )}
-            {pdfError ? (
-              <div className="flex flex-col items-center justify-center py-12 gap-4">
-                <AlertCircle className="h-12 w-12 text-destructive/70" />
-                <p className="text-sm text-muted-foreground">{pdfError}</p>
-                <Button variant="outline" onClick={handleDownload}>
-                  <Download className="h-4 w-4 mr-2" />
-                  Download Instead
-                </Button>
-              </div>
-            ) : (
-              <Document
-                file={pdfUrl}
-                onLoadSuccess={onDocumentLoadSuccess}
-                onLoadError={onDocumentLoadError}
-                loading={null}
-                className="flex flex-col items-center gap-4"
-                error={
-                  <div className="flex flex-col items-center justify-center py-12 gap-4">
-                    <AlertCircle className="h-12 w-12 text-destructive/70" />
-                    <p className="text-sm text-muted-foreground">Failed to render PDF</p>
-                    <Button variant="outline" onClick={handleDownload}>
-                      <Download className="h-4 w-4 mr-2" />
-                      Download Instead
-                    </Button>
-                  </div>
-                }
-              >
-                {/* Render all pages for iPad - more screen real estate */}
-                {Array.from(new Array(numPages), (_, index) => (
-                  <Page
-                    key={`page_${index + 1}`}
-                    pageNumber={index + 1}
-                    width={Math.min(window.innerWidth - 32, 800)}
-                    className="shadow-lg mb-4"
-                    renderTextLayer={false}
-                    renderAnnotationLayer={false}
-                    loading={
-                      <div className="flex items-center justify-center py-12">
-                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                      </div>
-                    }
-                    error={
-                      <div className="flex items-center justify-center py-12">
-                        <p className="text-sm text-muted-foreground">Error rendering page {index + 1}</p>
-                      </div>
-                    }
-                  />
-                ))}
-              </Document>
-            )}
+          <div className="flex-1 w-full h-full">
+            <iframe
+              src={pdfUrl}
+              className="w-full h-full border-0"
+              title="PDF Preview"
+            />
           </div>
         )}
 
