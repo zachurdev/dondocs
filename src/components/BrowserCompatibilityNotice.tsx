@@ -2,24 +2,21 @@
  * Browser Compatibility Notice
  * ============================
  * 
- * Shows a one-time notice to users in incompatible browsers (in-app browsers)
+ * Shows a notice to users in incompatible browsers (in-app browsers)
  * explaining that some features (like PDF downloads) won't work and listing
  * compatible browsers they can use instead.
+ * 
+ * NOTE: This shows EVERY TIME on incompatible browsers - no dismiss persistence.
  * 
  * WHY: In-app browsers (Google App, Facebook, Instagram, etc.) use WKWebView
  * which has fundamental limitations with blob URL downloads. There is NO
  * JavaScript-only fix for this - it requires native app code changes.
  * See: https://bugs.webkit.org/show_bug.cgi?id=216918
- * 
- * NOTE: This notice shows after a short delay to allow the WelcomeModal 
- * to appear first. User dismisses welcome, then sees this notice.
  */
 
 import { useEffect, useState, useCallback } from 'react';
 import { AlertTriangle, X, ExternalLink } from 'lucide-react';
 import { getDeviceInfo, type DeviceInfo } from '@/utils/device';
-
-const NOTICE_DISMISSED_KEY = 'incompatible-browser-notice-dismissed';
 
 // Browser icons as simple SVG components
 function SafariIcon({ className }: { className?: string }) {
@@ -106,31 +103,12 @@ export function BrowserCompatibilityNotice() {
 
     // Only show for in-app browsers
     if (!device.isInAppBrowser) {
-      console.log('[BrowserNotice] Not an in-app browser, skipping. Detected as:', {
-        isGoogleApp: device.isGoogleApp,
-        isFacebookApp: device.isFacebookApp,
-        isInstagramApp: device.isInstagramApp,
-        isTwitterApp: device.isTwitterApp,
-        isLinkedInApp: device.isLinkedInApp,
-      });
+      console.log('[BrowserNotice] Not an in-app browser, skipping.');
       return;
     }
 
-    // Check if user has already dismissed this notice
-    try {
-      const dismissed = localStorage.getItem(NOTICE_DISMISSED_KEY);
-      if (dismissed) {
-        console.log('[BrowserNotice] Already dismissed');
-        return;
-      }
-    } catch {
-      // localStorage might not be available
-    }
-
-    // Wait 2 seconds for welcome modal to show first, then show this notice
-    // The welcome modal will be on top initially, but when user dismisses it,
-    // this notice will be visible
-    console.log('[BrowserNotice] Will show after 2 second delay...');
+    // Show notice after 2 seconds (to let welcome modal appear first)
+    console.log('[BrowserNotice] In-app browser detected, will show after 2 second delay...');
     const timeout = setTimeout(() => {
       console.log('[BrowserNotice] Showing notice now');
       setIsVisible(true);
@@ -141,11 +119,7 @@ export function BrowserCompatibilityNotice() {
 
   const handleDismiss = useCallback(() => {
     console.log('[BrowserNotice] Dismiss clicked');
-    try {
-      localStorage.setItem(NOTICE_DISMISSED_KEY, 'true');
-    } catch {
-      // localStorage might not be available
-    }
+    // No localStorage - just hide for this session
     setIsVisible(false);
   }, []);
 
