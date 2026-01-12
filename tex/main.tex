@@ -248,6 +248,15 @@
     \normalsize
 }
 
+% Direct font size application - use when \normalsize might be overridden
+\newcommand{\applyDocumentFontSize}{%
+    \ifthenelse{\equal{\FontSize}{10pt}}{%
+        \fontsize{10pt}{12pt}\selectfont%
+    }{%
+        \fontsize{12pt}{14.4pt}\selectfont%
+    }%
+}
+
 % Default to Courier (applied initially, may be overridden)
 \renewcommand{\familydefault}{\ttdefault}
 \linespread{1.0}
@@ -1269,7 +1278,7 @@
 
 \printLetterhead
 % Ensure font size is applied before address blocks
-\normalsize
+\applyDocumentFontSize
 \printDateAndTitle
 \printAddressBlock
 \printReferences

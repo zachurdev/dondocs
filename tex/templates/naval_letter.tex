@@ -21,7 +21,7 @@
 
 \newcommand{\printDateAndTitle}{%
     \begingroup
-    \normalsize
+    \applyDocumentFontSize
     \raggedleft
     % Optional "IN REPLY REFER TO" line per SECNAV M-5216.5 App C, Para 1.a
     \ifInReplyEnabled
@@ -47,7 +47,7 @@
 \makeatletter
 \newcommand{\printAddressBlock}{%
     \begingroup
-    \normalsize
+    \applyDocumentFontSize
     \singlespacing
     \noindent
     % Build Via rows into a macro before the tabular
