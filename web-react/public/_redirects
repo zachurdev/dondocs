@@ -1,3 +1,0 @@
-# Cloudflare Pages redirects
-# No SPA fallback needed - this is a single-page app without client-side routing
-# Static files are served directly, missing files return 404
