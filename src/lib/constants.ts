@@ -11,7 +11,7 @@
 export const TIMING = {
   // Engine initialization
   ENGINE_SCRIPT_LOAD_WAIT: 100,
-  ENGINE_PRELOAD_WAIT: 1000,
+  ENGINE_PRELOAD_WAIT: 2000, // Increased for slower browsers (iPad/iOS Chrome)
 
   // Compilation
   COMPILE_DEBOUNCE: 1500,
