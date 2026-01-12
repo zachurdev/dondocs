@@ -133,22 +133,6 @@ function openViaDataUrlInNewWindow(blob: Blob, filename: string): Promise<boolea
 }
 
 /**
- * Try blob URL with anchor - some in-app browsers might support this
- */
-function downloadViaBlobUrl(blob: Blob, filename: string): void {
-  const downloadBlob = new Blob([blob], { type: 'application/octet-stream' });
-  const downloadUrl = URL.createObjectURL(downloadBlob);
-  const a = document.createElement('a');
-  a.href = downloadUrl;
-  a.download = filename;
-  a.target = '_blank';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(downloadUrl), 10000);
-}
-
-/**
  * Downloads a PDF blob with platform-specific handling
  * 
  * Strategy by platform:
