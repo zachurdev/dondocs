@@ -799,13 +799,13 @@ const LATEX_TEMPLATES = {
     \\begin{textblock*}{4in}(2.25in, 0.625in)%
         \\centering
         % Per SECNAV M-5216.5 App C S2a (Computer Generated Letterhead):
-        % First line: 10pt bold (use Times for reliable bold across all doc fonts)
+        % First line: 10pt bold in document font
         % Address lines: 8pt in document font
         % Color: \\LetterheadColor (blue or black)
-        \\fontsize{10pt}{11pt}\\selectfont
-        \\textcolor{\\LetterheadColor}{\\fontfamily{ptm}\\fontseries{b}\\selectfont UNITED STATES MARINE CORPS}\\\\%
-        \\fontsize{8pt}{9pt}\\selectfont
         \\usefont{\\encodingdefault}{\\familydefault}{\\seriesdefault}{\\shapedefault}%
+        \\fontsize{10pt}{11pt}\\selectfont
+        \\textcolor{\\LetterheadColor}{\\textbf{UNITED STATES MARINE CORPS}}\\\\%
+        \\fontsize{8pt}{9pt}\\selectfont
         \\textcolor{\\LetterheadColor}{\\UnitName}\\\\%
         \\textcolor{\\LetterheadColor}{\\UnitLineTwo}\\\\%
         \\textcolor{\\LetterheadColor}{\\UnitLineThree}\\\\%
