@@ -190,10 +190,15 @@ export default defineConfig({
         // Increase limit for large JS bundles (SwiftLaTeX is ~9MB)
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+        // Precache critical TeX files to ensure they're always available
+        // Use timestamp-based revision to ensure fresh fetch after deployment
+        additionalManifestEntries: [
+          { url: '/tex/null', revision: '2026-01-12' },
+        ],
         // Cache TeX Live files for offline use
         runtimeCaching: [
           {
-            // Handle /tex/* paths (internal TeX file requests like /tex/null)
+            // Handle /tex/* paths (internal TeX file requests)
             urlPattern: /\/tex\/.*/,
             handler: 'CacheFirst',
             options: {

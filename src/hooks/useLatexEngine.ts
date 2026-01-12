@@ -191,7 +191,12 @@ export function useLatexEngine() {
       const nullStubContent = '% null stub file - prevents 404 errors\n\\endinput\n';
 
       // Write to memfs in various locations (including /tex/ paths)
-      const nullPaths = ['null', 'null.tex', 'tex/null', 'tex/null.tex'];
+      // Include both with and without leading slashes to cover all request patterns
+      const nullPaths = [
+        'null', 'null.tex',
+        'tex/null', 'tex/null.tex',
+        '/tex/null', '/tex/null.tex',  // With leading slash (as engine requests)
+      ];
       for (const nullPath of nullPaths) {
         engine.writeMemFSFile(nullPath, nullStubContent);
       }
