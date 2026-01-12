@@ -549,6 +549,7 @@ const LATEX_TEMPLATES = {
 %   usmc - United States Marine Corps (default)
 %   navy - Department of the Navy
 %   dod  - Department of Defense
+%   dow  - Department of War
 %=============================================================================
 
 \\newcommand{\\DepartmentText}{UNITED STATES MARINE CORPS}
@@ -558,13 +559,16 @@ const LATEX_TEMPLATES = {
     \\def\\temp{#1}%
     \\def\\navytype{navy}%
     \\def\\dodtype{dod}%
+    \\def\\dowtype{dow}%
     \\ifx\\temp\\navytype
         \\renewcommand{\\DepartmentText}{DEPARTMENT OF THE NAVY}%
     \\else\\ifx\\temp\\dodtype
         \\renewcommand{\\DepartmentText}{DEPARTMENT OF DEFENSE}%
+    \\else\\ifx\\temp\\dowtype
+        \\renewcommand{\\DepartmentText}{DEPARTMENT OF WAR}%
     \\else
         \\renewcommand{\\DepartmentText}{UNITED STATES MARINE CORPS}%
-    \\fi\\fi
+    \\fi\\fi\\fi
 }
 
 

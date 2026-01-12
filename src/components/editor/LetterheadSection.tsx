@@ -83,6 +83,7 @@ export function LetterheadSection() {
                         <SelectItem value="usmc">USMC</SelectItem>
                         <SelectItem value="navy">Navy</SelectItem>
                         <SelectItem value="dod">DoD</SelectItem>
+                        <SelectItem value="dow">DoW</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -101,6 +102,7 @@ export function LetterheadSection() {
                       <SelectItem value="usmc">United States Marine Corps</SelectItem>
                       <SelectItem value="navy">Department of the Navy</SelectItem>
                       <SelectItem value="dod">Department of Defense</SelectItem>
+                      <SelectItem value="dow">Department of War</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
