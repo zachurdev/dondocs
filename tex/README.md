@@ -62,10 +62,10 @@ Per Ch 7 ¶13:
 **Example (correct):**
 ```
     a. This is a subparagraph that continues to the next line.
-The continuation line returns to the left margin, not indented.
+    The continuation line returns to the left margin, not indented.
 ```
 
-**Note:** Standard LaTeX list environments keep continuation lines indented under the label. For strict SECNAV compliance, long subparagraph text should be formatted to return to the left margin.
+**Implementation:** The LaTeX template uses `itemindent` to push the first line (with label) right while keeping `leftmargin` at the continuation position. This ensures continuation lines automatically return to the label position per SECNAV requirements.
 
 ### Page Break Rules
 Per Ch 7 ¶13:

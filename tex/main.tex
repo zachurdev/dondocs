@@ -1065,7 +1065,7 @@
 }
 
 % =============================================================================
-% PARAGRAPH LEVELS PER SECNAV M-5216.5
+% PARAGRAPH LEVELS PER SECNAV M-5216.5 Ch 7 ¶13
 % Each level indents 0.25" from the previous
 % Level 1: 1. at 0", text at 0.25" (handled by body.tex directly)
 % Level 2: a. at 0.25", text at 0.5"
@@ -1073,15 +1073,20 @@
 % Level 4: (a) at 0.75", text at 1.0"
 % Levels 5-8: Same pattern with UNDERLINED numbers/letters
 %
+% SECNAV Ch 7 ¶13: "Do not indent the continuation lines of a subparagraph."
+% Implementation: Set leftmargin to continuation position, use itemindent
+% to push first line (with label) to proper text start position.
+%
 % NOTE: leftmargin is RELATIVE when nested. Since our JS generates flat
 % environments (not nested), we use absolute positions from page margin.
 % =============================================================================
 
-% Level 2 (JS level 1): a. at 0.25", text at 0.5"
+% Level 2 (JS level 1): a. at 0.25", text at 0.5", continuation at 0.25"
 \newlist{subpara}{enumerate}{1}
 \setlist[subpara,1]{
-    label     = \alph*.,
-    leftmargin = 0.5in,
+    label      = \alph*.,
+    leftmargin = 0.25in,
+    itemindent = 0.25in,
     labelwidth = 0.2in,
     labelsep   = 0.05in,
     itemsep    = 0pt,
@@ -1089,11 +1094,12 @@
     parsep     = 0pt
 }
 
-% Level 3 (JS level 2): (1) at 0.5", text at 0.75"
+% Level 3 (JS level 2): (1) at 0.5", text at 0.75", continuation at 0.5"
 \newlist{subsubpara}{enumerate}{1}
 \setlist[subsubpara,1]{
-    label     = (\arabic*),
-    leftmargin = 0.75in,
+    label      = (\arabic*),
+    leftmargin = 0.5in,
+    itemindent = 0.25in,
     labelwidth = 0.2in,
     labelsep   = 0.05in,
     itemsep    = 0pt,
@@ -1101,11 +1107,12 @@
     parsep     = 0pt
 }
 
-% Level 4 (JS level 3): (a) at 0.75", text at 1.0"
+% Level 4 (JS level 3): (a) at 0.75", text at 1.0", continuation at 0.75"
 \newlist{subsubsubpara}{enumerate}{1}
 \setlist[subsubsubpara,1]{
-    label     = (\alph*),
-    leftmargin = 1.0in,
+    label      = (\alph*),
+    leftmargin = 0.75in,
+    itemindent = 0.25in,
     labelwidth = 0.2in,
     labelsep   = 0.05in,
     itemsep    = 0pt,
@@ -1113,11 +1120,12 @@
     parsep     = 0pt
 }
 
-% Level 5 (JS level 4): underlined 1. at 1.0", text at 1.25"
+% Level 5 (JS level 4): underlined 1. at 1.0", text at 1.25", continuation at 1.0"
 \newlist{subsubsubsubpara}{enumerate}{1}
 \setlist[subsubsubsubpara,1]{
-    label     = \underline{\arabic*}.,
-    leftmargin = 1.25in,
+    label      = \underline{\arabic*}.,
+    leftmargin = 1.0in,
+    itemindent = 0.25in,
     labelwidth = 0.2in,
     labelsep   = 0.05in,
     itemsep    = 0pt,
@@ -1125,11 +1133,12 @@
     parsep     = 0pt
 }
 
-% Level 6 (JS level 5): underlined a. at 1.25", text at 1.5"
+% Level 6 (JS level 5): underlined a. at 1.25", text at 1.5", continuation at 1.25"
 \newlist{subsubsubsubsubpara}{enumerate}{1}
 \setlist[subsubsubsubsubpara,1]{
-    label     = \underline{\alph*}.,
-    leftmargin = 1.5in,
+    label      = \underline{\alph*}.,
+    leftmargin = 1.25in,
+    itemindent = 0.25in,
     labelwidth = 0.2in,
     labelsep   = 0.05in,
     itemsep    = 0pt,
@@ -1137,11 +1146,12 @@
     parsep     = 0pt
 }
 
-% Level 7 (JS level 6): underlined (1) at 1.5", text at 1.75"
+% Level 7 (JS level 6): underlined (1) at 1.5", text at 1.75", continuation at 1.5"
 \newlist{subsubsubsubsubsubpara}{enumerate}{1}
 \setlist[subsubsubsubsubsubpara,1]{
-    label     = \underline{(\arabic*)},
-    leftmargin = 1.75in,
+    label      = \underline{(\arabic*)},
+    leftmargin = 1.5in,
+    itemindent = 0.25in,
     labelwidth = 0.25in,
     labelsep   = 0.05in,
     itemsep    = 0pt,
@@ -1149,11 +1159,12 @@
     parsep     = 0pt
 }
 
-% Level 8 (JS level 7): underlined (a) at 1.75", text at 2.0"
+% Level 8 (JS level 7): underlined (a) at 1.75", text at 2.0", continuation at 1.75"
 \newlist{subsubsubsubsubsubsubpara}{enumerate}{1}
 \setlist[subsubsubsubsubsubsubpara,1]{
-    label     = \underline{(\alph*)},
-    leftmargin = 2.0in,
+    label      = \underline{(\alph*)},
+    leftmargin = 1.75in,
+    itemindent = 0.25in,
     labelwidth = 0.25in,
     labelsep   = 0.05in,
     itemsep    = 0pt,
