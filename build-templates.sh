@@ -1,7 +1,12 @@
 #!/bin/bash
-# Build LaTeX templates for web-react
+# Build LaTeX templates
 
-OUTPUT="web-react/public/lib/latex-templates.js"
+# Output to both public and src locations
+OUTPUT_PUBLIC="public/lib/latex-templates.js"
+OUTPUT_SRC="src/lib/latex-templates.js"
+
+# Build to a temp file first
+OUTPUT="/tmp/latex-templates.js"
 
 echo "/**" > "$OUTPUT"
 echo " * LaTeX Templates for SwiftLaTeX Browser Compilation" >> "$OUTPUT"
@@ -33,4 +38,9 @@ echo "if (typeof window !== 'undefined') {" >> "$OUTPUT"
 echo "  window.LATEX_TEMPLATES = LATEX_TEMPLATES;" >> "$OUTPUT"
 echo "}" >> "$OUTPUT"
 
-echo "Generated $OUTPUT"
+# Copy to both locations
+cp "$OUTPUT" "$OUTPUT_PUBLIC"
+cp "$OUTPUT" "$OUTPUT_SRC"
+
+echo "Generated $OUTPUT_PUBLIC"
+echo "Generated $OUTPUT_SRC"

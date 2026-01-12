@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, type ChangeEvent } from 'react';
-import { Moon, Sun, Download, FileText, RefreshCw, Github, Bug, Save, RotateCcw, Shield, HelpCircle, Info, Layers, FolderOpen, Search, Keyboard, Menu, FileDown, FileUp, ScrollText, SlidersHorizontal, Minimize2, Maximize2, Check, Palette, Anchor, Medal, Wrench, Settings, Undo2, Redo2 } from 'lucide-react';
+import { Moon, Sun, Download, FileText, RefreshCw, Github, Bug, Save, RotateCcw, Shield, HelpCircle, Info, Layers, FolderOpen, Search, Keyboard, Menu, FileDown, FileUp, ScrollText, SlidersHorizontal, Minimize2, Maximize2, Check, Palette, Anchor, Medal, Wrench, Settings, Undo2, Redo2, Eraser } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -45,9 +45,10 @@ export function Header({
 }: HeaderProps) {
   const { theme, toggleTheme, colorScheme, setColorScheme, density, setDensity, autoSaveStatus, setAboutModalOpen, setNistModalOpen, setBatchModalOpen, setTemplateLoaderOpen, setFindReplaceOpen, isMobile } = useUIStore();
   const documentStore = useDocumentStore();
-  const { resetForm, applySnapshot } = useDocumentStore();
+  const { resetForm, applySnapshot, clearFieldsExceptLetterhead } = useDocumentStore();
   const { undo, redo, canUndo, canRedo } = useHistoryStore();
   const [showResetDialog, setShowResetDialog] = useState(false);
+  const [showClearFieldsDialog, setShowClearFieldsDialog] = useState(false);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -113,6 +114,11 @@ export function Header({
     localStorage.removeItem(STORAGE_KEY);
     setShowResetDialog(false);
   }, [resetForm]);
+
+  const handleClearFields = useCallback(() => {
+    clearFieldsExceptLetterhead();
+    setShowClearFieldsDialog(false);
+  }, [clearFieldsExceptLetterhead]);
 
   const handleUndo = useCallback(() => {
     const snapshot = undo();
@@ -356,6 +362,10 @@ export function Header({
                 Import Draft from File
               </DropdownMenuItem>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setShowClearFieldsDialog(true)} className="text-orange-600 dark:text-orange-400">
+                <Eraser className="h-4 w-4 mr-2" />
+                Clear Fields (Keep Letterhead)
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setShowResetDialog(true)} className="text-destructive">
                 <RotateCcw className="h-4 w-4 mr-2" />
                 Reset All Fields
@@ -645,6 +655,26 @@ export function Header({
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleReset} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Reset Everything
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Clear fields (keep letterhead) confirmation dialog */}
+      <AlertDialog open={showClearFieldsDialog} onOpenChange={setShowClearFieldsDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Clear All Fields?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will clear all document content including addressing, signature, paragraphs,
+              references, enclosures, and copy-tos. Your letterhead information (unit name,
+              address, seal, and font settings) will be preserved.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleClearFields} className="bg-orange-600 text-white hover:bg-orange-700">
+              Clear Fields
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

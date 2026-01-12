@@ -58,6 +58,7 @@ interface DocumentState {
   clearEnclosures: () => void;
   clearCopyTos: () => void;
   clearAll: () => void;
+  clearFieldsExceptLetterhead: () => void;
   loadTemplate: (data: {
     paragraphs?: Paragraph[];
     references?: Reference[];
@@ -339,6 +340,37 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
       references: [],
       enclosures: [],
       copyTos: [],
+    });
+  },
+
+  clearFieldsExceptLetterhead: () => {
+    debug.log('Store', 'Clearing all fields except letterhead');
+    set((state) => {
+      // Preserve letterhead fields and font settings
+      const preservedFields = {
+        unitLine1: state.formData.unitLine1,
+        unitLine2: state.formData.unitLine2,
+        unitAddress: state.formData.unitAddress,
+        department: state.formData.department,
+        sealType: state.formData.sealType,
+        letterheadColor: state.formData.letterheadColor,
+        fontSize: state.formData.fontSize,
+        fontFamily: state.formData.fontFamily,
+        docType: state.formData.docType,
+      };
+      return {
+        formData: {
+          ...preservedFields,
+          pageNumbering: 'none',
+          date: formatMilitaryDate(new Date()),
+          classLevel: 'unclassified',
+          includeHyperlinks: false,
+        },
+        paragraphs: [{ text: '', level: 0 }],
+        references: [],
+        enclosures: [],
+        copyTos: [],
+      };
     });
   },
 

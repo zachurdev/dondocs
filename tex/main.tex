@@ -238,12 +238,14 @@
     }{%
         \renewcommand{\familydefault}{\ttdefault}%
     }%
-    % Apply font size
+    % Apply font size by redefining \normalsize
+    % This ensures the size persists in tabular environments and after groups
     \ifthenelse{\equal{\FontSize}{10pt}}{%
-        \fontsize{10pt}{12pt}\selectfont%
+        \renewcommand{\normalsize}{\fontsize{10pt}{12pt}\selectfont}%
     }{%
-        \fontsize{12pt}{14.4pt}\selectfont%
+        \renewcommand{\normalsize}{\fontsize{12pt}{14.4pt}\selectfont}%
     }%
+    \normalsize
 }
 
 % Default to Courier (applied initially, may be overridden)
