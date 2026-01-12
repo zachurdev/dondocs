@@ -526,34 +526,24 @@ const LATEX_TEMPLATES = {
 % Options:
 %   dod - Department of Defense seal (current, default)
 %   dow - Department of War seal (historical, pre-1947)
-% Seal color is automatically selected based on letterhead color:
-%   blue -> color seal (dod-seal.png / dow-seal.png)
+% Seal file is automatically selected based on letterhead color:
+%   blue (navyblue) -> color seal (dod-seal.png / dow-seal.png)
 %   black -> B&W seal (dod-seal-bw.png / dow-seal-bw.png)
 %=============================================================================
 
 \\newcommand{\\SealFile}{dod-seal.png}
-\\newcommand{\\SealBase}{dod}
+\\newcommand{\\SealType}{dod}
+\\newcommand{\\SealColorSuffix}{}
 
-% Update seal file based on current seal type and letterhead color
-\\newcommand{\\updateSealFile}{%
-    \\def\\colorblue{navyblue}%
-    \\ifx\\LetterheadColor\\colorblue
-        \\renewcommand{\\SealFile}{\\SealBase-seal.png}%
-    \\else
-        \\renewcommand{\\SealFile}{\\SealBase-seal-bw.png}%
-    \\fi
+% Set seal type (dod or dow)
+\\newcommand{\\setSealType}[1]{%
+    \\renewcommand{\\SealType}{#1}%
+    \\updateSealFile
 }
 
-% Set seal type - converts type name to base filename
-\\newcommand{\\setSealType}[1]{%
-    \\def\\temp{#1}%
-    \\def\\dowtype{dow}%
-    \\ifx\\temp\\dowtype
-        \\renewcommand{\\SealBase}{dow}%
-    \\else
-        \\renewcommand{\\SealBase}{dod}%
-    \\fi
-    \\updateSealFile
+% Update seal file based on seal type and color suffix
+\\newcommand{\\updateSealFile}{%
+    \\edef\\SealFile{\\SealType-seal\\SealColorSuffix.png}%
 }
 
 
@@ -599,8 +589,10 @@ const LATEX_TEMPLATES = {
     \\def\\blacktype{black}%
     \\ifx\\temp\\blacktype
         \\renewcommand{\\LetterheadColor}{black}%
+        \\renewcommand{\\SealColorSuffix}{-bw}%
     \\else
         \\renewcommand{\\LetterheadColor}{navyblue}%
+        \\renewcommand{\\SealColorSuffix}{}%
     \\fi
     \\updateSealFile
 }
@@ -806,13 +798,14 @@ const LATEX_TEMPLATES = {
     \\end{textblock*}%
     \\begin{textblock*}{4in}(2.25in, 0.625in)%
         \\centering
-        \\usefont{\\encodingdefault}{\\familydefault}{\\seriesdefault}{\\shapedefault}%
         % Per SECNAV M-5216.5 App C S2a (Computer Generated Letterhead):
-        % First line: 10pt bold, Address lines: 8pt
+        % First line: 10pt bold (use Times for reliable bold across all doc fonts)
+        % Address lines: 8pt in document font
         % Color: \\LetterheadColor (blue or black)
         \\fontsize{10pt}{11pt}\\selectfont
-        \\textcolor{\\LetterheadColor}{\\textbf{\\DepartmentText}}\\\\%
+        \\textcolor{\\LetterheadColor}{\\fontfamily{ptm}\\fontseries{b}\\selectfont UNITED STATES MARINE CORPS}\\\\%
         \\fontsize{8pt}{9pt}\\selectfont
+        \\usefont{\\encodingdefault}{\\familydefault}{\\seriesdefault}{\\shapedefault}%
         \\textcolor{\\LetterheadColor}{\\UnitName}\\\\%
         \\textcolor{\\LetterheadColor}{\\UnitLineTwo}\\\\%
         \\textcolor{\\LetterheadColor}{\\UnitLineThree}\\\\%
