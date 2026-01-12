@@ -11,9 +11,8 @@
  * JavaScript-only fix for this - it requires native app code changes.
  * See: https://bugs.webkit.org/show_bug.cgi?id=216918
  * 
- * NOTE: This notice waits for the WelcomeModal to be dismissed before showing.
- * It polls for the welcome modal's localStorage key to detect when user has
- * dismissed it.
+ * NOTE: This notice shows after a short delay to allow the WelcomeModal 
+ * to appear first. User dismisses welcome, then sees this notice.
  */
 
 import { useEffect, useState, useCallback } from 'react';
@@ -21,7 +20,6 @@ import { AlertTriangle, X, ExternalLink } from 'lucide-react';
 import { getDeviceInfo, type DeviceInfo } from '@/utils/device';
 
 const NOTICE_DISMISSED_KEY = 'incompatible-browser-notice-dismissed';
-const WELCOME_STORAGE_KEY = 'libo-secured-welcome-shown';
 
 // Browser icons as simple SVG components
 function SafariIcon({ className }: { className?: string }) {
@@ -94,17 +92,6 @@ function getInAppBrowserName(device: DeviceInfo): string {
   return 'this app';
 }
 
-/**
- * Check if the WelcomeModal has been dismissed
- */
-function isWelcomeModalDismissed(): boolean {
-  try {
-    return localStorage.getItem(WELCOME_STORAGE_KEY) !== null;
-  } catch {
-    return true; // If localStorage fails, assume welcome is done
-  }
-}
-
 export function BrowserCompatibilityNotice() {
   const [isVisible, setIsVisible] = useState(false);
   const [deviceInfo, setDeviceInfo] = useState<DeviceInfo | null>(null);
@@ -112,6 +99,12 @@ export function BrowserCompatibilityNotice() {
   useEffect(() => {
     const device = getDeviceInfo();
     setDeviceInfo(device);
+
+    console.log('[BrowserNotice] Device info:', {
+      isInAppBrowser: device.isInAppBrowser,
+      isGoogleApp: device.isGoogleApp,
+      userAgent: device.userAgent
+    });
 
     // Only show for in-app browsers
     if (!device.isInAppBrowser) {
@@ -130,32 +123,16 @@ export function BrowserCompatibilityNotice() {
       // localStorage might not be available
     }
 
-    // If WelcomeModal hasn't been shown yet, wait for it to be dismissed
-    // Poll every 500ms until the welcome modal is dismissed
-    const checkAndShow = () => {
-      if (isWelcomeModalDismissed()) {
-        console.log('[BrowserNotice] Welcome dismissed, showing notice');
-        setIsVisible(true);
-        return true;
-      }
-      return false;
-    };
+    // Wait 2 seconds for welcome modal to show first, then show this notice
+    // The welcome modal will be on top initially, but when user dismisses it,
+    // this notice will be visible
+    console.log('[BrowserNotice] Will show after 2 second delay...');
+    const timeout = setTimeout(() => {
+      console.log('[BrowserNotice] Showing notice now');
+      setIsVisible(true);
+    }, 2000);
 
-    // Try immediately first
-    if (checkAndShow()) {
-      return;
-    }
-
-    // Otherwise poll until welcome is dismissed
-    console.log('[BrowserNotice] Waiting for welcome modal to be dismissed...');
-    const interval = setInterval(() => {
-      if (checkAndShow()) {
-        clearInterval(interval);
-      }
-    }, 500);
-
-    // Cleanup interval on unmount
-    return () => clearInterval(interval);
+    return () => clearTimeout(timeout);
   }, []);
 
   const handleDismiss = useCallback(() => {
