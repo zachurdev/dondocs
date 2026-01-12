@@ -1007,6 +1007,16 @@ const LATEX_TEMPLATES = {
     \\fi
 }
 
+% Reference link command - formats "reference (a)" mentions in body text
+% Links to the corresponding reference when hyperlinks are enabled
+\\newcommand{\\reflink}[1]{%
+    \\ifhyperlinks
+        \\hyperlink{reference#1}{reference~(#1)}%
+    \\else
+        reference~(#1)%
+    \\fi
+}
+
 
 %=============================================================================
 %                        COPY TO (DISTRIBUTION) COMMANDS
