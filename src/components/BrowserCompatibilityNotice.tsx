@@ -100,15 +100,19 @@ export function BrowserCompatibilityNotice() {
     const device = getDeviceInfo();
     setDeviceInfo(device);
 
-    console.log('[BrowserNotice] Device info:', {
-      isInAppBrowser: device.isInAppBrowser,
-      isGoogleApp: device.isGoogleApp,
-      userAgent: device.userAgent
-    });
+    // Log full device info for debugging
+    console.log('[BrowserNotice] Full device info:', JSON.stringify(device, null, 2));
+    console.log('[BrowserNotice] User agent:', navigator.userAgent);
 
     // Only show for in-app browsers
     if (!device.isInAppBrowser) {
-      console.log('[BrowserNotice] Not an in-app browser, skipping');
+      console.log('[BrowserNotice] Not an in-app browser, skipping. Detected as:', {
+        isGoogleApp: device.isGoogleApp,
+        isFacebookApp: device.isFacebookApp,
+        isInstagramApp: device.isInstagramApp,
+        isTwitterApp: device.isTwitterApp,
+        isLinkedInApp: device.isLinkedInApp,
+      });
       return;
     }
 
