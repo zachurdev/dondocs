@@ -161,6 +161,23 @@ export function useLatexEngine() {
           engine.preloadTexliveFile(font.format, font.filename, bytes);
         }
       }
+
+      // Preload null stub file - must happen with other preloads (before wait)
+      // This prevents 404 errors when LaTeX packages try to \input{null}
+      const nullStubContent = '% null stub file - prevents 404 errors\n\\endinput\n';
+      const nullPaths = [
+        'null', 'null.tex',
+        'tex/null', 'tex/null.tex',
+        '/tex/null', '/tex/null.tex',  // With leading slash (as engine requests)
+      ];
+      const nullFormats = [0, 10, 26, 27, 32, 39];
+      for (const format of nullFormats) {
+        for (const nullPath of nullPaths) {
+          engine.preloadTexliveFile(format, nullPath, nullStubContent);
+        }
+      }
+      debug.log('Engine', 'Null stub preloaded', { paths: nullPaths, formats: nullFormats });
+
       debug.timeEnd('PreloadPackages');
 
       // Wait for worker to process all preload messages
@@ -185,31 +202,12 @@ export function useLatexEngine() {
       }
       debug.timeEnd('WriteTemplates');
 
-      // Write null stub file to prevent 404 errors
-      // Some LaTeX packages (pdfpages, hyperref) try to \input{null} which fails
-      // if the file doesn't exist in the virtual filesystem
-      const nullStubContent = '% null stub file - prevents 404 errors\n\\endinput\n';
-
-      // Write to memfs in various locations (including /tex/ paths)
-      // Include both with and without leading slashes to cover all request patterns
-      const nullPaths = [
-        'null', 'null.tex',
-        'tex/null', 'tex/null.tex',
-        '/tex/null', '/tex/null.tex',  // With leading slash (as engine requests)
-      ];
+      // Write null stub file to memfs as backup (preloading happened earlier)
+      // Some LaTeX packages try to \input{null} - we also write to memfs in case preload fails
       for (const nullPath of nullPaths) {
         engine.writeMemFSFile(nullPath, nullStubContent);
       }
-
-      // Also preload via texlive preloader for all format types that might request it
-      // Format numbers: 26=tex, 27=sty, 32=def, 10=cfg, 39=clo, 0=unknown
-      const nullFormats = [0, 10, 26, 27, 32, 39];
-      for (const format of nullFormats) {
-        for (const nullPath of nullPaths) {
-          engine.preloadTexliveFile(format, nullPath, nullStubContent);
-        }
-      }
-      debug.log('Engine', 'Null stub files written to memfs and preloaded', { paths: nullPaths, formats: nullFormats });
+      debug.log('Engine', 'Null stub files written to memfs');
 
       // Load seal images into virtual filesystem
       debug.log('Engine', 'Loading seal images...', { files: LATEX.SEAL_FILES });
