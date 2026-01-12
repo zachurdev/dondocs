@@ -517,19 +517,34 @@
 % Options:
 %   dod - Department of Defense seal (current, default)
 %   dow - Department of War seal (historical, pre-1947)
+% Seal color is automatically selected based on letterhead color:
+%   blue → color seal (dod-seal.png / dow-seal.png)
+%   black → B&W seal (dod-seal-bw.png / dow-seal-bw.png)
 %=============================================================================
 
 \newcommand{\SealFile}{dod-seal.png}
+\newcommand{\SealBase}{dod}
 
-% Set seal type - converts type name to filename
+% Update seal file based on current seal type and letterhead color
+\newcommand{\updateSealFile}{%
+    \def\colorblue{navyblue}%
+    \ifx\LetterheadColor\colorblue
+        \renewcommand{\SealFile}{\SealBase-seal.png}%
+    \else
+        \renewcommand{\SealFile}{\SealBase-seal-bw.png}%
+    \fi
+}
+
+% Set seal type - converts type name to base filename
 \newcommand{\setSealType}[1]{%
     \def\temp{#1}%
     \def\dowtype{dow}%
     \ifx\temp\dowtype
-        \renewcommand{\SealFile}{dow-seal.png}%
+        \renewcommand{\SealBase}{dow}%
     \else
-        \renewcommand{\SealFile}{dod-seal.png}%
+        \renewcommand{\SealBase}{dod}%
     \fi
+    \updateSealFile
 }
 
 %=============================================================================
@@ -557,6 +572,7 @@
     \else
         \renewcommand{\LetterheadColor}{navyblue}%
     \fi
+    \updateSealFile
 }
 
 
