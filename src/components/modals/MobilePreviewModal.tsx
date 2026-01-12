@@ -324,17 +324,18 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
 
   if (!mobilePreviewOpen) return null;
 
-  // For mobile devices with PDF loaded, use full-screen viewer with integrated toolbar
-  // react-pdf has issues on mobile (canvas memory limits, rendering bugs), so we use react-pdf-viewer instead
-  if (deviceInfo.isMobile && pdfUrl && !isCompiling && !displayError) {
-    const isPhone = !deviceInfo.isIPad; // phones get smaller default zoom
+  // For phones (not tablets) with PDF loaded, use full-screen viewer with integrated toolbar
+  // react-pdf has issues on phones (canvas memory limits, rendering bugs), so we use react-pdf-viewer instead
+  // iPads/tablets work better with react-pdf which has more reliable rendering
+  const isPhone = deviceInfo.isMobile && !deviceInfo.isIPad;
+  if (isPhone && pdfUrl && !isCompiling && !displayError) {
     return (
       <div className="fixed inset-0 z-50 bg-background flex flex-col">
         <IPadPdfViewer
           pdfUrl={pdfUrl}
           onClose={() => setMobilePreviewOpen(false)}
           onDownload={handleDownload}
-          isPhone={isPhone}
+          isPhone={true}
         />
       </div>
     );
@@ -346,7 +347,7 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
       <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-card shrink-0">
         <span className="font-semibold text-sm">PDF Preview</span>
         <div className="flex items-center gap-1">
-          {pdfUrl && !isCompiling && !deviceInfo.isIPad && (
+          {pdfUrl && !isCompiling && (
             <Button
               variant="default"
               size="sm"
@@ -407,8 +408,69 @@ export function MobilePreviewModal({ pdfUrl, isCompiling, error }: MobilePreview
           </div>
         )}
 
-        {/* PDF Viewer - for iPhone (iPad uses separate full-screen viewer above) */}
-        {pdfUrl && !isCompiling && !deviceInfo.isIPad && (
+        {/* PDF Viewer - for iPad using react-pdf (more reliable on tablets) */}
+        {pdfUrl && !isCompiling && deviceInfo.isIPad && (
+          <div className="flex flex-col items-center p-4 min-h-full">
+            {pdfLoading && !pdfError && (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            )}
+            {pdfError ? (
+              <div className="flex flex-col items-center justify-center py-12 gap-4">
+                <AlertCircle className="h-12 w-12 text-destructive/70" />
+                <p className="text-sm text-muted-foreground">{pdfError}</p>
+                <Button variant="outline" onClick={handleDownload}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Download Instead
+                </Button>
+              </div>
+            ) : (
+              <Document
+                file={pdfUrl}
+                onLoadSuccess={onDocumentLoadSuccess}
+                onLoadError={onDocumentLoadError}
+                loading={null}
+                className="flex flex-col items-center gap-4"
+                error={
+                  <div className="flex flex-col items-center justify-center py-12 gap-4">
+                    <AlertCircle className="h-12 w-12 text-destructive/70" />
+                    <p className="text-sm text-muted-foreground">Failed to render PDF</p>
+                    <Button variant="outline" onClick={handleDownload}>
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Instead
+                    </Button>
+                  </div>
+                }
+              >
+                {/* Render all pages for iPad - more screen real estate */}
+                {Array.from(new Array(numPages), (_, index) => (
+                  <Page
+                    key={`page_${index + 1}`}
+                    pageNumber={index + 1}
+                    width={Math.min(window.innerWidth - 32, 800)}
+                    className="shadow-lg mb-4"
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
+                    loading={
+                      <div className="flex items-center justify-center py-12">
+                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                      </div>
+                    }
+                    error={
+                      <div className="flex items-center justify-center py-12">
+                        <p className="text-sm text-muted-foreground">Error rendering page {index + 1}</p>
+                      </div>
+                    }
+                  />
+                ))}
+              </Document>
+            )}
+          </div>
+        )}
+
+        {/* PDF Viewer - for non-iPad mobile (uses react-pdf-viewer above, this is fallback) */}
+        {pdfUrl && !isCompiling && !deviceInfo.isIPad && !isPhone && (
           <div className="flex flex-col items-center p-2 min-h-full">
             {pdfLoading && !pdfError && (
               <div className="flex items-center justify-center py-12">

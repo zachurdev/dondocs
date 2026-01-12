@@ -211,24 +211,41 @@ export async function downloadPdfBlob(
   }
 
   // iOS In-App Browsers (Google App, Facebook, Instagram, Twitter, LinkedIn, etc.)
-  // These have various issues with blob downloads
-  // The best approach is to navigate directly to the PDF blob URL
+  // KNOWN LIMITATION: WKWebView-based in-app browsers do NOT support blob URL downloads
+  // This is a WebKit bug that has existed since 2020: https://bugs.webkit.org/show_bug.cgi?id=216918
+  // The only reliable solution is to tell users to open in Safari
   if (isIOS && isInAppBrowser) {
-    console.log('[downloadPdf] iOS In-App Browser detected - navigating to PDF blob URL');
+    console.log('[downloadPdf] iOS In-App Browser detected - blob downloads not supported');
     if (preOpenedWindow) preOpenedWindow.close();
 
-    // Create a blob URL with PDF mime type (not octet-stream)
-    // This should trigger iOS's native PDF viewer with share/save options
+    // Show alert with instructions to open in Safari
+    // The user needs to long-press the link and choose "Open in Safari"
+    // or copy the current URL and paste it in Safari
+    const currentUrl = window.location.href;
+    
+    // Create a user-friendly message
+    const message = `PDF downloads don't work in this app's browser.\n\nTo download your PDF:\n1. Tap the ⋮ or share button\n2. Select "Open in Safari"\n\nOr copy this link and paste in Safari:\n${currentUrl}`;
+    
+    alert(message);
+    
+    // Also try the blob URL approach as a last-ditch effort
+    // It probably won't work, but doesn't hurt to try
     const pdfBlob = new Blob([blob], { type: 'application/pdf' });
     const pdfUrl = URL.createObjectURL(pdfBlob);
     
-    console.log('[downloadPdf] Navigating to blob URL:', pdfUrl);
+    // Try opening in a new window
+    const newWindow = window.open(pdfUrl, '_blank');
+    if (!newWindow) {
+      // Try anchor click
+      const a = document.createElement('a');
+      a.href = pdfUrl;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
     
-    // Navigate directly to the PDF - iOS will show native PDF viewer
-    window.location.href = pdfUrl;
-    
-    // Don't revoke immediately since we're navigating to it
-    // The URL will be invalid after page unload anyway
+    setTimeout(() => URL.revokeObjectURL(pdfUrl), 30000);
     
     return true;
   }
