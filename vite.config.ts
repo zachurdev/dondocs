@@ -193,6 +193,39 @@ export default defineConfig({
         // Cache TeX Live files for offline use
         runtimeCaching: [
           {
+            // Handle /tex/* paths (internal TeX file requests like /tex/null)
+            urlPattern: /\/tex\/.*/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'tex-internal-cache-v1',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+              },
+              plugins: [
+                {
+                  // Reject HTML responses (Cloudflare SPA returns HTML for 404s)
+                  cacheWillUpdate: async ({ response }) => {
+                    const contentType = response.headers.get('content-type') || '';
+                    if (contentType.includes('text/html')) {
+                      console.warn('[SW] Rejecting HTML response for tex file');
+                      return null;
+                    }
+                    return response;
+                  },
+                  fetchDidSucceed: async ({ response }) => {
+                    const contentType = response.headers.get('content-type') || '';
+                    if (contentType.includes('text/html')) {
+                      console.warn('[SW] Returning 404 for HTML tex response');
+                      return new Response('', { status: 404, statusText: 'Not Found' });
+                    }
+                    return response;
+                  },
+                },
+              ],
+            },
+          },
+          {
             urlPattern: /\/lib\/texlive\/.*/,
             handler: 'CacheFirst',
             options: {
