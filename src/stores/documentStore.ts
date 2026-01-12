@@ -131,19 +131,20 @@ const DEFAULT_REFERENCES: Reference[] = [
 const DEFAULT_ENCLOSURES: Enclosure[] = [];
 
 // Default paragraphs for example document (two pages of content)
-// Headers are separate from text and will be auto-underlined per SECNAV Ch 7 ¶13d
+// Headers are for main paragraphs only, per SECNAV Ch 7 ¶13d
+// Subparagraphs typically don't have headers unless they're significant sections
 const DEFAULT_PARAGRAPHS: Paragraph[] = [
   { header: 'Purpose', text: 'Per reference (a), this letter provides the after action report for Exercise Steel Knight 25-1, conducted 3-17 December 2025 at Camp Lejeune.', level: 0 },
   { header: 'Background', text: 'Exercise Steel Knight 25-1 was a battalion-level combined arms exercise to validate combat readiness of 1st Battalion, 6th Marines per reference (b).', level: 0 },
   { header: 'Execution Summary', text: 'The exercise was executed in three phases:', level: 0 },
-  { header: 'Phase I (3-6 Dec)', text: 'Pre-deployment preparation. All companies completed certifications including weapons qualification and communications checks.', level: 1 },
-  { header: 'Phase II (7-12 Dec)', text: 'Force-on-force operations against 2d LAR Battalion. Key events included battalion attack, deliberate defense, and 48-hour sustained ops.', level: 1 },
-  { header: 'Phase III (13-17 Dec)', text: 'Live-fire combined arms training at Range G-10 with mortars, artillery, and close air support.', level: 1 },
+  { text: 'Phase I (3-6 Dec): Pre-deployment preparation. All companies completed certifications including weapons qualification and communications checks.', level: 1 },
+  { text: 'Phase II (7-12 Dec): Force-on-force operations against 2d LAR Battalion. Key events included battalion attack, deliberate defense, and 48-hour sustained ops.', level: 1 },
+  { text: 'Phase III (13-17 Dec): Live-fire combined arms training at Range G-10 with mortars, artillery, and close air support.', level: 1 },
   { header: 'Assessment', text: '1st Battalion, 6th Marines demonstrated high tactical proficiency and combat readiness:', level: 0 },
-  { header: 'Tactical Proficiency', text: 'Excellent small unit tactics and fire team coordination. Squad leaders showed marked improvement under combat stress.', level: 1 },
-  { header: 'Command and Control', text: 'Effective communications maintained throughout. TOC successfully tracked all elements during sustained operations.', level: 1 },
+  { text: 'Tactical proficiency was excellent. Small unit tactics and fire team coordination exceeded standards. Squad leaders showed marked improvement under combat stress.', level: 1 },
+  { text: 'Command and control was effective. Communications maintained throughout exercise. TOC successfully tracked all elements during sustained operations.', level: 1 },
   { header: 'Areas for Improvement', text: '', level: 0 },
-  { header: 'Night Operations', text: 'Several squads had difficulty maintaining dispersion during limited visibility. Recommend emphasis on night land navigation.', level: 1 },
+  { text: 'Night operations require additional emphasis. Several squads had difficulty maintaining dispersion during limited visibility. Recommend increased focus on night land navigation training.', level: 1 },
   { header: 'Recommendation', text: '1st Battalion, 6th Marines is assessed combat ready. Recommend certification for deployment per reference (d).', level: 0 },
   { header: 'Point of Contact', text: 'POC is the undersigned or Major J.Q. Smith, S-3, at (910) 451-0001.', level: 0 },
 ];

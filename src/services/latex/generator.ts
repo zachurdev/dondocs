@@ -388,7 +388,7 @@ export function generateBodyTex(store: DocumentStore): string {
       // Per SECNAV M-5216.5 Ch 7 ¶13d: "Underline any heading and capitalize its key words"
       if (headerText) {
         const formattedHeader = toTitleCase(headerText);
-        latex += `\\vspace{12pt}\n\\noindent ${label} \\underline{${escapeLatex(formattedHeader)}.}  ${processBodyText(para.text)}\n\n`;
+        latex += `\\vspace{12pt}\n\\noindent ${label} \\underline{${escapeLatex(formattedHeader)}}.  ${processBodyText(para.text)}\n\n`;
       } else {
         latex += `\\vspace{12pt}\n\\noindent ${label}  ${processBodyText(para.text)}\n\n`;
       }
@@ -400,7 +400,7 @@ export function generateBodyTex(store: DocumentStore): string {
       // Nested paragraphs: Optional underlined header
       if (headerText) {
         const formattedHeader = toTitleCase(headerText);
-        latex += `\\item \\underline{${escapeLatex(formattedHeader)}.} ${processBodyText(para.text)}\n\n`;
+        latex += `\\item \\underline{${escapeLatex(formattedHeader)}}. ${processBodyText(para.text)}\n\n`;
       } else {
         latex += `\\item ${processBodyText(para.text)}\n\n`;
       }
