@@ -86,22 +86,27 @@ export function getPdfDownloadStrategy(device?: DeviceInfo): PdfDownloadStrategy
 
 /**
  * Get the recommended PDF preview strategy for the current device
+ * 
+ * NOTE: We use react-pdf-viewer for ALL iOS devices (iPhone AND iPad) because:
+ * - react-pdf crashes on iOS due to canvas memory limits (384MB)
+ * - iframe shows black screen on iPad (tested and failed)
+ * - react-pdf-viewer works reliably on all iOS devices
  */
 export function getPdfPreviewStrategy(device?: DeviceInfo): PdfPreviewStrategy {
   const info = device || getDeviceInfo();
+  
+  // iOS (iPhone AND iPad): Use react-pdf-viewer
+  // This is the ONLY viewer that works reliably on iOS
+  if (info.isIOS) {
+    return 'react-pdf-viewer';
+  }
   
   // Desktop: Use native iframe, browser has built-in PDF viewer
   if (info.isDesktop) {
     return 'iframe';
   }
   
-  // iPad: Use native iframe, Safari has excellent PDF viewing
-  if (info.isIPad) {
-    return 'iframe';
-  }
-  
-  // Phones (iPhone, Android): Use react-pdf-viewer for custom UI
-  // Native viewer is awkward on small screens
+  // Android phones/tablets: Use react-pdf-viewer for custom UI
   return 'react-pdf-viewer';
 }
 
