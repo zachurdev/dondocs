@@ -72,7 +72,7 @@ function downloadViaDataUrl(blob: Blob, filename: string): Promise<boolean> {
  * Chrome iOS doesn't support blob URL downloads, but can open data URLs
  * User will see the PDF and can use share button to save
  */
-function openViaDataUrlInNewWindow(blob: Blob, filename: string): Promise<boolean> {
+function openViaDataUrlInNewWindow(blob: Blob, _filename: string): Promise<boolean> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onloadend = function() {
