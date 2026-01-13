@@ -7,6 +7,23 @@ import type { DocumentSnapshot } from './historyStore';
 import { debug } from '@/lib/debug';
 import { TIMING } from '@/lib/constants';
 
+// Session persistence keys
+const SESSION_STORAGE_KEY = 'libo-document-session';
+const SESSION_TIMESTAMP_KEY = 'libo-session-timestamp';
+const SESSION_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+
+// Serializable session data (excludes file ArrayBuffers)
+export interface SerializedSession {
+  documentMode: DocumentMode;
+  docType: string;
+  formData: Partial<DocumentData>;
+  references: Reference[];
+  enclosures: Array<Omit<Enclosure, 'file'> & { hasFile?: boolean }>;
+  paragraphs: Paragraph[];
+  copyTos: CopyTo[];
+  timestamp: number;
+}
+
 // Military date format per SECNAV M-5216.5: "4 Jan 26" (day month 2-digit year)
 const formatMilitaryDate = (date: Date): string => format(date, 'd MMM yy');
 
@@ -442,6 +459,7 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
 // Subscribe to document changes and save snapshots
 // Debounce to avoid saving on every keystroke
 let saveTimeout: ReturnType<typeof setTimeout> | null = null;
+let sessionSaveTimeout: ReturnType<typeof setTimeout> | null = null;
 
 useDocumentStore.subscribe((state: DocumentState) => {
   // Debounce snapshot saving
@@ -466,4 +484,161 @@ useDocumentStore.subscribe((state: DocumentState) => {
       debug.error('Store', 'Failed to save snapshot to history', err);
     }
   }, TIMING.HISTORY_SNAPSHOT_DEBOUNCE);
+
+  // Also persist to localStorage for session restore (debounced more)
+  if (sessionSaveTimeout) {
+    clearTimeout(sessionSaveTimeout);
+  }
+
+  sessionSaveTimeout = setTimeout(() => {
+    saveSessionToStorage(state);
+  }, 2000); // 2 second debounce for localStorage
 });
+
+/**
+ * Saves the current document state to localStorage for session restore.
+ * Excludes non-serializable data like file ArrayBuffers.
+ */
+function saveSessionToStorage(state: DocumentState): void {
+  try {
+    // Create serializable session (excluding file data)
+    const session: SerializedSession = {
+      documentMode: state.documentMode,
+      docType: state.docType,
+      formData: {
+        ...state.formData,
+        // Exclude signature image from session storage
+        signatureImage: undefined,
+      },
+      references: state.references,
+      enclosures: state.enclosures.map(enc => ({
+        title: enc.title,
+        pageStyle: enc.pageStyle,
+        hasCoverPage: enc.hasCoverPage,
+        coverPageDescription: enc.coverPageDescription,
+        hasFile: !!enc.file,
+      })),
+      paragraphs: state.paragraphs,
+      copyTos: state.copyTos,
+      timestamp: Date.now(),
+    };
+
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+    localStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
+    debug.log('Store', 'Session saved to localStorage');
+  } catch (err) {
+    debug.error('Store', 'Failed to save session to localStorage', err);
+  }
+}
+
+/**
+ * Checks if there's a valid saved session that can be restored.
+ */
+export function hasSavedSession(): boolean {
+  try {
+    const sessionData = localStorage.getItem(SESSION_STORAGE_KEY);
+    const timestamp = localStorage.getItem(SESSION_TIMESTAMP_KEY);
+
+    if (!sessionData || !timestamp) {
+      return false;
+    }
+
+    // Check if session is too old
+    const sessionAge = Date.now() - parseInt(timestamp, 10);
+    if (sessionAge > SESSION_MAX_AGE) {
+      // Clear old session
+      clearSavedSession();
+      return false;
+    }
+
+    // Validate session data
+    const session = JSON.parse(sessionData) as SerializedSession;
+
+    // Check if it has meaningful content (not just default empty state)
+    const hasContent =
+      (session.paragraphs && session.paragraphs.length > 0 && session.paragraphs.some(p => p.text.trim() !== '')) ||
+      (session.references && session.references.length > 0) ||
+      (session.formData?.subject && session.formData.subject.trim() !== '');
+
+    return !!hasContent;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Gets the saved session data.
+ */
+export function getSavedSession(): SerializedSession | null {
+  try {
+    const sessionData = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (!sessionData) return null;
+    return JSON.parse(sessionData) as SerializedSession;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Restores a saved session to the document store.
+ */
+export function restoreSession(): boolean {
+  try {
+    const session = getSavedSession();
+    if (!session) return false;
+
+    useDocumentStore.setState({
+      documentMode: session.documentMode,
+      docType: session.docType,
+      formData: session.formData,
+      references: session.references,
+      enclosures: session.enclosures.map(enc => ({
+        title: enc.title,
+        pageStyle: enc.pageStyle,
+        hasCoverPage: enc.hasCoverPage,
+        coverPageDescription: enc.coverPageDescription,
+        // File data is not restored - user will need to re-attach
+        file: undefined,
+      })),
+      paragraphs: session.paragraphs,
+      copyTos: session.copyTos,
+    });
+
+    debug.log('Store', 'Session restored from localStorage');
+    return true;
+  } catch (err) {
+    debug.error('Store', 'Failed to restore session', err);
+    return false;
+  }
+}
+
+/**
+ * Clears the saved session from localStorage.
+ */
+export function clearSavedSession(): void {
+  localStorage.removeItem(SESSION_STORAGE_KEY);
+  localStorage.removeItem(SESSION_TIMESTAMP_KEY);
+  debug.log('Store', 'Saved session cleared');
+}
+
+/**
+ * Gets a human-readable description of when the session was saved.
+ */
+export function getSessionAge(): string {
+  try {
+    const timestamp = localStorage.getItem(SESSION_TIMESTAMP_KEY);
+    if (!timestamp) return '';
+
+    const age = Date.now() - parseInt(timestamp, 10);
+    const minutes = Math.floor(age / 60000);
+    const hours = Math.floor(age / 3600000);
+    const days = Math.floor(age / 86400000);
+
+    if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    return 'just now';
+  } catch {
+    return '';
+  }
+}

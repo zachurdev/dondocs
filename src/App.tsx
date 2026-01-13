@@ -14,6 +14,7 @@ import { WelcomeModal } from '@/components/modals/WelcomeModal';
 import { PIIWarningModal } from '@/components/modals/PIIWarningModal';
 import { LogViewerModal } from '@/components/modals/LogViewerModal';
 import { EnclosureErrorModal } from '@/components/modals/EnclosureErrorModal';
+import { RestoreSessionModal } from '@/components/modals/RestoreSessionModal';
 import { BrowserCompatibilityNotice } from '@/components/BrowserCompatibilityNotice';
 import { UpdateBanner } from '@/components/UpdateBanner';
 import { useUIStore } from '@/stores/uiStore';
@@ -761,6 +762,7 @@ ${texFiles['body.tex'] || '% No body content'}
           setEnclosureErrors([]);
         }}
       />
+      <RestoreSessionModal />
       <BrowserCompatibilityNotice />
       <UpdateBanner show={showUpdateBanner} onDismiss={dismissBanner} />
     </div>
