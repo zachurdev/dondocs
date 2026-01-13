@@ -38,7 +38,7 @@
 | **Drag & Drop Reordering** | **Yes** | No | Yes |
 | **Voice Recognition** | No | **Yes** | No |
 | **EDMS Integration** | No | **Yes (Supabase)** | No |
-| **PWA/Offline Mode** | No | No | **Yes** |
+| **PWA/Offline Mode** | **Yes** | No | Yes |
 | **100% Client-Side** | **Yes** | Partial (cloud storage) | Yes |
 | **Air-Gap Compatible** | **Yes** | No | Yes |
 | **Mobile Responsive** | **Yes** | Yes | Partial |
@@ -140,11 +140,13 @@
 - **Real-time PDF Preview** - See your document as you type (1.5s debounce)
 - **17 Document Types** - Letters, memoranda, endorsements, and agreements
 - **SECNAV M-5216.5 Compliant** - Automatic formatting per Navy/Marine Corps regulations
-- **Offline Capable** - Works entirely in your browser with no server required
+- **PWA/Offline Mode** - Install as an app and work offline with cached TeX Live packages
+- **Compliant vs Custom Modes** - Strict regulation mode or customizable fonts and formatting
 
 ### Document Management
 - **Profiles System** - Save and reuse unit information and signature images
 - **Template Library** - 38 pre-built letter templates for common correspondence
+- **Clear Fields** - Reset all content while preserving letterhead for quick new document creation
 - **Reference Library** - 107 searchable military references with one-click insert
 - **Unit Directory** - 3,139 units searchable by name, abbreviation, MCC, or location
 - **Office Codes** - 74 standard military position codes for signature blocks
@@ -152,6 +154,7 @@
 - **Batch Generation** - Generate multiple documents with 28 built-in placeholders and Insert Variable button
 - **Find & Replace** - Search and replace text across your document
 - **Undo/Redo** - 50-level history with keyboard shortcuts
+- **Document Statistics** - Real-time word count, character count, paragraph count
 
 ### Security Features
 - **PII/PHI Detection** - Pre-download warning for sensitive data:
@@ -173,6 +176,12 @@
 - **Copy To/Distribution** - Standard distribution list support
 - **Signature Images** - Upload and embed your signature
 - **Drag & Drop** - Reorder paragraphs, references, and enclosures
+
+### User Experience
+- **Welcome Modal** - Interactive onboarding with feature highlights and rotating tips
+- **Browser Compatibility Detection** - Warns users in in-app browsers (Google, Facebook, Instagram, Twitter, LinkedIn) about limited functionality
+- **Mobile Responsive** - Hamburger menu, touch-friendly controls, full-screen preview on mobile
+- **Installable PWA** - Add to home screen for native app-like experience
 
 ### Batch Generation
 Generate multiple personalized documents from a single template using the **Insert Variable** button or `{{PLACEHOLDER}}` syntax.
@@ -293,7 +302,8 @@ PDF output includes empty signature fields compatible with:
 
 ### Editor Panel (Left)
 - **Profile Bar** - Quick profile selector with unit lookup
-- **Document Type** - 17 correspondence formats
+- **Mode Toggle** - Switch between Compliant (strict SECNAV) and Custom (flexible) modes
+- **Document Type** - 17 correspondence formats with **Clear Fields** button to reset content while preserving letterhead
 - **Letterhead** - Unit name, address, seal type
 - **Addressing** - From, To, Via, Subject
 - **Classification** - Security markings and CUI settings
@@ -302,6 +312,7 @@ PDF output includes empty signature fields compatible with:
 - **Enclosures** - PDF attachments with cover pages
 - **Copy To** - Distribution list
 - **Signature** - Signatory information and image
+- **Document Statistics** - Word/character/paragraph counts
 
 ### Preview Panel (Right)
 - Real-time PDF preview
@@ -343,18 +354,25 @@ PDF output includes empty signature fields compatible with:
 
 ### Frontend
 - **React 19** with TypeScript
-- **Zustand** for state management
-- **Tailwind CSS** with shadcn/ui components
+- **Zustand 5** for state management
+- **Tailwind CSS 4** with shadcn/ui components
 - **dnd-kit** for drag and drop
+- **Vite 7** for build tooling
 
 ### Document Generation
 - **SwiftLaTeX** - WebAssembly LaTeX compiler for publication-quality PDFs
 - **pdf-lib** - PDF manipulation (enclosures, signatures, metadata)
 - **docx** - Microsoft Word document generation
+- **react-pdf-viewer** - In-browser PDF preview
 
 ### Data Processing
 - **date-fns** - Military date formatting (4 Jan 26)
 - **TipTap** - Rich text editing
+- **react-day-picker** - Date selection
+
+### Progressive Web App
+- **vite-plugin-pwa** - Service worker for offline support
+- **Workbox** - Intelligent caching for TeX Live packages
 
 ---
 
@@ -424,6 +442,7 @@ Naval Correspondence Generator is designed for information security:
 - **No Telemetry** - No tracking or analytics
 - **Air-Gap Compatible** - Works on isolated networks (SIPR/JWICS)
 - **CUI Support** - Proper marking for Controlled Unclassified Information
+- **PWA Offline Mode** - Install as an app; TeX Live packages cached locally for offline use
 
 **Note:** Users are responsible for handling classified information according to their organization's security policies.
 
@@ -434,6 +453,12 @@ Naval Correspondence Generator is designed for information security:
 **Q: Does this work on NMCI computers?**
 A: Yes. It's a standard webpage that works in any modern browser. No installation required.
 
+**Q: Can I install this as an app?**
+A: Yes. Naval Correspondence Generator is a Progressive Web App (PWA). Click "Install" in your browser or use "Add to Home Screen" on mobile. Once installed, it works offline.
+
+**Q: Does it work offline?**
+A: Yes. After the first visit, the app caches all necessary files including the TeX Live packages. You can generate documents without an internet connection.
+
 **Q: Can I use this for classified correspondence?**
 A: The tool formats documents but does not provide security controls for classified data. Use appropriate systems for classified information.
 
@@ -442,6 +467,9 @@ A: Everything runs in your browser. Nothing is transmitted to any server. Data c
 
 **Q: Why LaTeX instead of jsPDF?**
 A: LaTeX produces publication-quality output with proper kerning, ligatures, and typography that matches official military publications.
+
+**Q: Why does it warn me about my browser?**
+A: If you're viewing in an in-app browser (Google App, Facebook, Instagram, etc.), some features like PDF downloads may not work. Open in Safari, Chrome, Firefox, or Edge for full functionality.
 
 ---
 

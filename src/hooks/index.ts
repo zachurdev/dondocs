@@ -7,3 +7,4 @@
 
 export { useLatexEngine } from './useLatexEngine';
 export { useStatusMessage } from './useStatusMessage';
+export { useServiceWorker } from './useServiceWorker';

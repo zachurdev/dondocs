@@ -14,12 +14,13 @@ import { WelcomeModal } from '@/components/modals/WelcomeModal';
 import { PIIWarningModal } from '@/components/modals/PIIWarningModal';
 import { LogViewerModal } from '@/components/modals/LogViewerModal';
 import { BrowserCompatibilityNotice } from '@/components/BrowserCompatibilityNotice';
+import { UpdateBanner } from '@/components/UpdateBanner';
 import { useUIStore } from '@/stores/uiStore';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useHistoryStore } from '@/stores/historyStore';
 import { useProfileStore } from '@/stores/profileStore';
 import { useLogStore } from '@/stores/logStore';
-import { useLatexEngine } from '@/hooks/useLatexEngine';
+import { useLatexEngine, useServiceWorker } from '@/hooks';
 import { generateAllLatexFiles, type GeneratedFiles } from '@/services/latex/generator';
 import { generateDocx } from '@/services/docx/generator';
 import { mergeEnclosures } from '@/services/pdf/mergeEnclosures';
@@ -68,6 +69,7 @@ function App() {
   const { selectedProfile, profiles } = useProfileStore();
   const { addLogDirect } = useLogStore();
   const { isReady, compile, waitForReady, error: engineError } = useLatexEngine();
+  const { showUpdateBanner, dismissBanner } = useServiceWorker();
 
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [isCompiling, setIsCompiling] = useState(false);
@@ -726,6 +728,7 @@ ${texFiles['body.tex'] || '% No body content'}
       />
       <LogViewerModal />
       <BrowserCompatibilityNotice />
+      <UpdateBanner show={showUpdateBanner} onDismiss={dismissBanner} />
     </div>
   );
 }

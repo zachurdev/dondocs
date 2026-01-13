@@ -397,4 +397,9 @@
   .space-y-density-6 > * + * { margin-top: var(--density-space-6); }
   .text-density-sm { font-size: var(--density-text-sm); }
   .text-density-base { font-size: var(--density-text-base); }
+
+  /* Slow spin animation for update banner */
+  .animate-spin-slow {
+    animation: spin 3s linear infinite;
+  }
 }
