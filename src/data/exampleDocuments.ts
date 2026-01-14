@@ -60,8 +60,6 @@ export const EXAMPLE_DOCUMENTS: ExampleDocument[] = [
       unitAddress: '1530 GILBERT STREET, NORFOLK, VA 23511-2797',
       sealType: 'dod',
       letterheadColor: 'blue',
-      ssic: '5720',
-      serial: '0023',
       date: 'January 20, 2026',
       to: 'Ms. Patricia Sandoval\nExecutive Director\nHampton Roads Veterans Council\n500 Main Street, Suite 200\nNorfolk, VA 23510',
       subject: 'APPRECIATION FOR VETERANS DAY SUPPORT',

@@ -74,8 +74,21 @@ export function AddressingSection({ config }: AddressingSectionProps) {
           <AccordionTrigger>Document Information</AccordionTrigger>
           <AccordionContent>
             <div className="space-y-4 pt-2">
-              {/* SSIC / Serial / Date */}
-              {config.ssic && (
+              {/* Date Only - for business letters (no SSIC/Serial) */}
+              {config.dateOnly && (
+                <div className="space-y-2">
+                  <Label htmlFor="date">Date</Label>
+                  <DatePicker
+                    id="date"
+                    value={formData.date || ''}
+                    onChange={(value) => setField('date', value)}
+                    dateFormat={dateFormat}
+                  />
+                </div>
+              )}
+
+              {/* SSIC / Serial / Date - for standard documents */}
+              {config.ssic && !config.dateOnly && (
                 <>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                   <div className="space-y-2">
@@ -140,6 +153,21 @@ export function AddressingSection({ config }: AddressingSectionProps) {
                 )}
               </div>
               </>
+            )}
+
+            {/* Recipient Address - for business letters (multi-line address block) */}
+            {config.recipientAddress && (
+              <div className="space-y-2">
+                <Label htmlFor="to">Recipient Address</Label>
+                <textarea
+                  id="to"
+                  value={formData.to || ''}
+                  onChange={(e) => setField('to', e.target.value)}
+                  placeholder="Mr. John Smith&#10;Director of Operations&#10;ABC Company&#10;123 Main Street&#10;City, State ZIP"
+                  className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  rows={5}
+                />
+              </div>
             )}
 
             {/* From / To */}
