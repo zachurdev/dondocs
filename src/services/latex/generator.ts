@@ -97,8 +97,8 @@ ${data.via?.trim() ? `\\setVia
 
 \\setSubject{${escapeLatex(isMOAMode ? data.moaSubject : data.subject)}}
 
-\\setBusinessSalutation{Dear Sir or Madam:}
-\\setBusinessClose{Very respectfully,}
+\\setBusinessSalutation{${escapeLatex(data.salutation || 'Dear Sir or Madam:')}}
+\\setBusinessClose{${escapeLatex(data.complimentaryClose || 'Very respectfully,')}}
 
 \\setPOC{${escapeLatex(data.pocEmail)}}
 `;

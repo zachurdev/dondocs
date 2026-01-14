@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { BookOpen, Plus, Trash2 } from 'lucide-react';
+import { BookOpen, Plus, Trash2, AlertCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -22,8 +22,13 @@ interface AddressingSectionProps {
 }
 
 export function AddressingSection({ config }: AddressingSectionProps) {
-  const { formData, setField } = useDocumentStore();
+  const { formData, setField, documentMode } = useDocumentStore();
   const [ssicModalOpen, setSSICModalOpen] = useState(false);
+
+  // Check compliance requirements for business letters
+  const isCompliantMode = documentMode === 'compliant';
+  const requiresSalutation = isCompliantMode && config.compliance.requiresSalutation;
+  const dateFormat = isCompliantMode ? config.compliance.dateFormat : 'military';
 
   const handleSSICSelect = (code: string) => {
     setField('ssic', code);
@@ -109,7 +114,7 @@ export function AddressingSection({ config }: AddressingSectionProps) {
                     id="date"
                     value={formData.date || ''}
                     onChange={(value) => setField('date', value)}
-                    placeholder="15 Dec 24"
+                    dateFormat={dateFormat}
                   />
                 </div>
               </div>
@@ -201,6 +206,29 @@ export function AddressingSection({ config }: AddressingSectionProps) {
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Salutation - Required for business letters in compliant mode */}
+            {requiresSalutation && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="salutation">Salutation</Label>
+                  <span className="text-xs text-destructive">* Required</span>
+                </div>
+                <Input
+                  id="salutation"
+                  value={formData.salutation || ''}
+                  onChange={(e) => setField('salutation', e.target.value)}
+                  placeholder="Dear Sir or Madam:"
+                  className={!formData.salutation?.trim() ? 'border-destructive' : ''}
+                />
+                {!formData.salutation?.trim() && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    Per SECNAV M-5216.5 Ch 11: Business letters require a salutation
+                  </p>
+                )}
               </div>
             )}
 

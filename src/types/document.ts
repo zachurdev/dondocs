@@ -166,6 +166,10 @@ export interface DocumentData {
 
   // Hyperlinks
   includeHyperlinks: boolean;
+
+  // Business letter fields (compliance-driven)
+  salutation: string;
+  complimentaryClose: string;
 }
 
 export interface DocTypeConfig {

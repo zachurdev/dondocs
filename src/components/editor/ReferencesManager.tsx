@@ -214,23 +214,26 @@ export function ReferencesManager() {
               </SortableContext>
             </DndContext>
 
-            <div className="flex gap-2 mt-2">
-              <Button
-                variant="outline"
-                onClick={() => addReference('')}
-                className="flex-1"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Reference
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setReferenceLibraryOpen(true)}
-              >
-                <Library className="h-4 w-4 mr-2" />
-                Library
-              </Button>
-            </div>
+            {/* Hide add buttons when references not allowed in compliant mode */}
+            {!referencesNotAllowed && (
+              <div className="flex gap-2 mt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => addReference('')}
+                  className="flex-1"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Reference
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setReferenceLibraryOpen(true)}
+                >
+                  <Library className="h-4 w-4 mr-2" />
+                  Library
+                </Button>
+              </div>
+            )}
           </div>
         </AccordionContent>
       </AccordionItem>
