@@ -156,7 +156,7 @@ export default defineConfig({
     tailwindcss(),
     texliveMiddleware(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'lib/**/*'],
       manifest: {
         name: 'Naval Correspondence Generator',
