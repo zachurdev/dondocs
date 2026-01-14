@@ -700,10 +700,12 @@ const LATEX_TEMPLATES = {
 % Command to render digital signature field placeholder
 % Creates an invisible PDF annotation marker for pdf-lib to detect position
 % The actual AcroForm signature field is added by pdf-lib post-processing
+% NOTE: Using depth (not height) so annotation extends BELOW baseline where sig field goes
 \\newcommand{\\DigitalSignatureBox}{%
     % Create an invisible PDF text annotation as a position marker
     % pdf-lib will find this annotation and replace it with a signature field
-    \\pdfannot width 2in height 0.5in depth 0pt {%
+    % depth=0.5in positions the annotation below the baseline (where we want the sig)
+    \\pdfannot width 2in height 0pt depth 0.5in {%
         /Subtype /Text
         /Contents (DIGSIG_FIELD_MARKER)
         /Open false
@@ -716,7 +718,7 @@ const LATEX_TEMPLATES = {
 % Separate markers for dual signature documents (joint letter, MOA, MOU)
 % Junior signs on LEFT (first), Senior signs on RIGHT (last)
 \\newcommand{\\DigitalSignatureBoxJunior}{%
-    \\pdfannot width 2in height 0.5in depth 0pt {%
+    \\pdfannot width 2in height 0pt depth 0.5in {%
         /Subtype /Text
         /Contents (DIGSIG_FIELD_MARKER_JUNIOR)
         /Open false
@@ -726,7 +728,7 @@ const LATEX_TEMPLATES = {
 }
 
 \\newcommand{\\DigitalSignatureBoxSenior}{%
-    \\pdfannot width 2in height 0.5in depth 0pt {%
+    \\pdfannot width 2in height 0pt depth 0.5in {%
         /Subtype /Text
         /Contents (DIGSIG_FIELD_MARKER_SENIOR)
         /Open false

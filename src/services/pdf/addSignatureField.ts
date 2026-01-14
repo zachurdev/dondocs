@@ -100,11 +100,11 @@ function findSignatureMarker(
           if (rect instanceof PDFArray && rect.size() >= 4) {
             // Rect is [x1, y1, x2, y2] - lower-left and upper-right corners
             const x1 = rect.lookup(0);
-            const y2 = rect.lookup(3);
+            const y1 = rect.lookup(1);
 
-            // Get the coordinates (use lower-left x and upper-right y for top of rect)
+            // Use lower-left corner (x1, y1) directly - this is where the signature field bottom goes
             const x = x1 instanceof PDFNumber ? x1.asNumber() : FALLBACK_POSITION.x;
-            const y = y2 instanceof PDFNumber ? y2.asNumber() : FALLBACK_POSITION.y;
+            const y = y1 instanceof PDFNumber ? y1.asNumber() : FALLBACK_POSITION.y;
 
             console.log(`Found marker annotation '${markerName}' at page ${pageIndex + 1}, x=${x}, y=${y}`);
             return { pageIndex, x, y, annotRef: annotRef as ReturnType<typeof pdfDoc.context.register> };
@@ -179,11 +179,11 @@ export async function addSignatureField(
   let y: number;
 
   if (markerPosition) {
-    // Use marker position - the marker rect's top Y is our reference
+    // Use marker position - we now get y1 (bottom of annotation) directly
     targetPageIndex = markerPosition.pageIndex;
     x = markerPosition.x;
-    // Position field at the marker's location
-    y = markerPosition.y - height;
+    // Use y directly - it's already the bottom of the signature area
+    y = markerPosition.y;
     console.log(`Using marker position: page ${targetPageIndex + 1}, x=${x}, y=${y}`);
 
     // Remove the marker annotation so it doesn't show in the final PDF
@@ -321,8 +321,8 @@ export async function addDualSignatureFields(
   if (juniorMarker) {
     juniorPageIndex = juniorMarker.pageIndex;
     juniorX = juniorMarker.x;
-    // Marker Y is at top of sig area, field goes downward
-    juniorY = juniorMarker.y - height;
+    // Use y directly - it's already the bottom of the signature area
+    juniorY = juniorMarker.y;
     console.log(`Found junior marker: page ${juniorPageIndex + 1}, x=${juniorX}, y=${juniorY}`);
   } else {
     const pages = pdfDoc.getPages();
@@ -339,8 +339,8 @@ export async function addDualSignatureFields(
   if (seniorMarker) {
     seniorPageIndex = seniorMarker.pageIndex;
     seniorX = seniorMarker.x;
-    // Marker Y is at top of sig area, field goes downward
-    seniorY = seniorMarker.y - height;
+    // Use y directly - it's already the bottom of the signature area
+    seniorY = seniorMarker.y;
     console.log(`Found senior marker: page ${seniorPageIndex + 1}, x=${seniorX}, y=${seniorY}`);
   } else {
     const pages = pdfDoc.getPages();
