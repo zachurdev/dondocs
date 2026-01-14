@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Building2, BookOpen } from 'lucide-react';
+import { Building2, BookOpen, Type, Shield } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import { useDocumentStore } from '@/stores/documentStore';
 import { UnitLookupModal } from '@/components/modals/UnitLookupModal';
 import { SSICLookupModal } from '@/components/modals/SSICLookupModal';
 import { type UnitInfo } from '@/data/unitDirectory';
+import type { SignatureType } from '@/types/document';
 
 export function JointLetterSection() {
   const { formData, setField } = useDocumentStore();
@@ -333,6 +334,80 @@ export function JointLetterSection() {
                     />
                   </div>
                 </div>
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+
+      {/* Signature Options */}
+      <Accordion type="single" collapsible defaultValue="signature-options">
+        <AccordionItem value="signature-options">
+          <AccordionTrigger>Signature Options</AccordionTrigger>
+          <AccordionContent>
+            <div className="space-y-4 pt-2">
+              <div className="p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg text-sm text-blue-800 dark:text-blue-200">
+                <p className="font-medium">Per SECNAV M-5216.5 Ch 7:</p>
+                <p className="text-xs mt-1">
+                  The junior command signs FIRST (left side), then the senior command signs LAST (right side).
+                  Both signatures use the same style selected below.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <Label>Signature Style (Both Signatories)</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    type="button"
+                    variant={(formData.signatureType || 'none') === 'none' ? 'default' : 'outline'}
+                    size="sm"
+                    className="flex flex-col items-center gap-1 h-auto py-3"
+                    onClick={() => setField('signatureType', 'none' as SignatureType)}
+                  >
+                    <Type className="h-5 w-5" />
+                    <span className="text-xs">Typed Only</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={formData.signatureType === 'digital' ? 'default' : 'outline'}
+                    size="sm"
+                    className="flex flex-col items-center gap-1 h-auto py-3"
+                    onClick={() => setField('signatureType', 'digital' as SignatureType)}
+                  >
+                    <Shield className="h-5 w-5" />
+                    <span className="text-xs">Digital Fields (PKI)</span>
+                  </Button>
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  {(formData.signatureType || 'none') === 'none' && 'Just typed names and titles for both signatories.'}
+                  {formData.signatureType === 'digital' && 'Creates empty signature fields above BOTH signatory blocks for CAC/PKI digital signing.'}
+                </p>
+
+                {formData.signatureType === 'digital' && (
+                  <div className="border rounded-lg p-4 bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
+                    <div className="flex items-start gap-3">
+                      <Shield className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-blue-900 dark:text-blue-200">
+                          Dual Digital Signature Fields
+                        </p>
+                        <p className="text-xs text-blue-700 dark:text-blue-300">
+                          Empty signature fields will be placed above BOTH signatory blocks.
+                          After downloading, you can digitally sign using:
+                        </p>
+                        <ul className="text-xs text-blue-700 dark:text-blue-300 list-disc list-inside mt-2 space-y-1">
+                          <li>Adobe Acrobat with CAC/PIV</li>
+                          <li>DoD PKI certificate</li>
+                          <li>Other digital signature tools</li>
+                        </ul>
+                        <p className="text-xs text-blue-700 dark:text-blue-300 mt-2 pt-2 border-t border-blue-200 dark:border-blue-700">
+                          <strong>Signing Order:</strong> Junior signatory signs first (left), then Senior signatory (right).
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </AccordionContent>

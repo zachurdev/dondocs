@@ -2029,8 +2029,8 @@ const LATEX_TEMPLATES = {
         {\\usefont{\\encodingdefault}{\\familydefault}{\\seriesdefault}{\\shapedefault}%
         \\fontsize{10pt}{11pt}\\selectfont\\textbf{DEPARTMENT OF THE NAVY}}\\\\[6pt]
         {\\fontsize{8pt}{9pt}\\selectfont
-            \\MakeUppercase{\\SeniorCommandName} (\\SeniorCommandZip)\\\\
-            \\MakeUppercase{\\JuniorCommandName} (\\JuniorCommandZip)\\\\
+            \\MakeUppercase{\\SeniorCommandName}\\ifdefempty{\\SeniorCommandZip}{}{ (\\SeniorCommandZip\\ifdefempty{\\SeniorCommandCode}{}{ \\SeniorCommandCode})}\\\\
+            \\MakeUppercase{\\JuniorCommandName}\\ifdefempty{\\JuniorCommandZip}{}{ (\\JuniorCommandZip\\ifdefempty{\\JuniorCommandCode}{}{ \\JuniorCommandCode})}\\\\
             \\ifdefempty{\\CommonLocation}{}{\\MakeUppercase{\\CommonLocation}}
         }
     \\end{center}
@@ -2039,30 +2039,19 @@ const LATEX_TEMPLATES = {
 
 
 %=============================================================================
-%                    DUAL ID BLOCKS AND DESIGNATION
+%                    ID BLOCK AND DESIGNATION
 %=============================================================================
-% Junior command LEFT (signs first), Senior command RIGHT (signs last)
+% Per SECNAV M-5216.5 Ch 7: Junior command provides SSIC/Serial/Date
+% ID block positioned at right margin (standard letter format)
 % "JOINT LETTER" typed at left margin above From: line
 
 \\newcommand{\\printDateAndTitle}{%
-    % Dual ID symbols - side by side
-    \\noindent
-    \\begin{tabular}[t]{@{}p{3in}@{\\hfill}p{3in}@{}}
-        % Junior command (LEFT) - signs FIRST
-        \\begin{tabular}[t]{@{}l@{}}
-            \\optionalLine{\\JuniorCommandCode}%
-            \\optionalLine{\\JuniorSSIC}%
-            \\optionalLine{\\JuniorSerial}%
-            \\optionalField{\\JuniorDate}%
-        \\end{tabular}
-        &
-        % Senior command (RIGHT) - signs LAST
-        \\begin{tabular}[t]{@{}l@{}}
-            \\optionalLine{\\SeniorCommandCode}%
-            \\optionalLine{\\DocumentSSIC}%
-            \\optionalLine{\\DocumentSerial}%
-            \\optionalField{\\DocumentDate}%
-        \\end{tabular}
+    % Single ID block from junior command (right-aligned)
+    \\hfill
+    \\begin{tabular}[t]{@{}l@{}}
+        \\optionalLine{\\JuniorSSIC}%
+        \\optionalLine{\\JuniorSerial}%
+        \\optionalField{\\JuniorDate}%
     \\end{tabular}
     \\par\\vspace{24pt}%
     %
@@ -2121,6 +2110,7 @@ const LATEX_TEMPLATES = {
 % Junior signs on LEFT (signs FIRST)
 % Senior signs on RIGHT (signs LAST)
 % NO overscoring (unlike MOA/MOU)
+% Supports digital signature fields for PKI/CAC signing
 
 \\newcommand{\\printSignature}{%
     \\par\\vspace{48pt}%
@@ -2129,6 +2119,10 @@ const LATEX_TEMPLATES = {
         % Junior command signature (LEFT) - signs FIRST
         \\begin{minipage}[t]{2.5in}
             \\raggedright
+            % Digital signature field for junior signatory
+            \\ifHasDigitalSigField
+                \\DigitalSignatureBox
+            \\fi
             \\MakeUppercase{\\JuniorSignatoryName}\\par
             \\JuniorSignatoryTitle\\par
             \\JuniorByDirection
@@ -2137,6 +2131,10 @@ const LATEX_TEMPLATES = {
         % Senior command signature (RIGHT) - signs LAST
         \\begin{minipage}[t]{2.5in}
             \\raggedright
+            % Digital signature field for senior signatory
+            \\ifHasDigitalSigField
+                \\DigitalSignatureBox
+            \\fi
             \\ifdefempty{\\SignatoryAbbrev}{\\MakeUppercase{\\SignatoryName}}{\\SignatoryAbbrev}\\par
             \\SignatoryTitle\\par
             \\ByDirection
@@ -2213,8 +2211,8 @@ const LATEX_TEMPLATES = {
         {\\usefont{\\encodingdefault}{\\familydefault}{\\seriesdefault}{\\shapedefault}%
         \\fontsize{10pt}{11pt}\\selectfont\\textbf{DEPARTMENT OF THE NAVY}}\\\\[6pt]
         {\\fontsize{8pt}{9pt}\\selectfont
-            \\MakeUppercase{\\SeniorCommandName} (\\SeniorCommandZip)\\\\
-            \\MakeUppercase{\\JuniorCommandName} (\\JuniorCommandZip)\\\\
+            \\MakeUppercase{\\SeniorCommandName}\\ifdefempty{\\SeniorCommandZip}{}{ (\\SeniorCommandZip\\ifdefempty{\\SeniorCommandCode}{}{ \\SeniorCommandCode})}\\\\
+            \\MakeUppercase{\\JuniorCommandName}\\ifdefempty{\\JuniorCommandZip}{}{ (\\JuniorCommandZip\\ifdefempty{\\JuniorCommandCode}{}{ \\JuniorCommandCode})}\\\\
             \\ifdefempty{\\CommonLocation}{}{\\MakeUppercase{\\CommonLocation}}
         }
     \\end{center}
@@ -2223,31 +2221,14 @@ const LATEX_TEMPLATES = {
 
 
 %=============================================================================
-%                    DUAL ID BLOCKS AND DESIGNATION
+%                    ID BLOCK AND DESIGNATION
 %=============================================================================
-% Junior command LEFT (signs first), Senior command RIGHT (signs last)
+% Per SECNAV M-5216.5: Simple date for joint memorandum
 % "JOINT MEMORANDUM" typed at left margin above From: line
 
 \\newcommand{\\printDateAndTitle}{%
-    % Dual ID symbols - side by side
-    \\noindent
-    \\begin{tabular}[t]{@{}p{3in}@{\\hfill}p{3in}@{}}
-        % Junior command (LEFT) - signs FIRST
-        \\begin{tabular}[t]{@{}l@{}}
-            \\optionalLine{\\JuniorCommandCode}%
-            \\optionalLine{\\JuniorSSIC}%
-            \\optionalLine{\\JuniorSerial}%
-            \\optionalField{\\JuniorDate}%
-        \\end{tabular}
-        &
-        % Senior command (RIGHT) - signs LAST
-        \\begin{tabular}[t]{@{}l@{}}
-            \\optionalLine{\\SeniorCommandCode}%
-            \\optionalLine{\\DocumentSSIC}%
-            \\optionalLine{\\DocumentSerial}%
-            \\optionalField{\\DocumentDate}%
-        \\end{tabular}
-    \\end{tabular}
+    % Date positioned at right margin
+    \\hfill \\DocumentDate
     \\par\\vspace{24pt}%
     %
     % JOINT MEMORANDUM designation
@@ -2305,6 +2286,7 @@ const LATEX_TEMPLATES = {
 % Junior signs on LEFT (signs FIRST)
 % Senior signs on RIGHT (signs LAST)
 % NO overscoring (unlike MOA/MOU)
+% Supports digital signature fields for PKI/CAC signing
 
 \\newcommand{\\printSignature}{%
     \\par\\vspace{48pt}%
@@ -2313,6 +2295,10 @@ const LATEX_TEMPLATES = {
         % Junior command signature (LEFT) - signs FIRST
         \\begin{minipage}[t]{2.5in}
             \\raggedright
+            % Digital signature field for junior signatory
+            \\ifHasDigitalSigField
+                \\DigitalSignatureBox
+            \\fi
             \\MakeUppercase{\\JuniorSignatoryName}\\par
             \\JuniorSignatoryTitle\\par
             \\JuniorByDirection
@@ -2321,6 +2307,10 @@ const LATEX_TEMPLATES = {
         % Senior command signature (RIGHT) - signs LAST
         \\begin{minipage}[t]{2.5in}
             \\raggedright
+            % Digital signature field for senior signatory
+            \\ifHasDigitalSigField
+                \\DigitalSignatureBox
+            \\fi
             \\ifdefempty{\\SignatoryAbbrev}{\\MakeUppercase{\\SignatoryName}}{\\SignatoryAbbrev}\\par
             \\SignatoryTitle\\par
             \\ByDirection
