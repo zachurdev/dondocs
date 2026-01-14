@@ -89,58 +89,60 @@ export function RestoreSessionModal() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-md overflow-hidden">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <History className="h-5 w-5 text-primary" />
-            Restore Previous Session?
-          </DialogTitle>
-          <DialogDescription>
-            You have unsaved work from a previous session ({sessionAge}).
-            Would you like to restore it?
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-md w-[calc(100vw-2rem)] max-h-[90vh] overflow-hidden">
+        <div className="flex flex-col gap-4 overflow-hidden">
+          <DialogHeader className="min-w-0">
+            <DialogTitle className="flex items-center gap-2 min-w-0">
+              <History className="h-5 w-5 text-primary flex-shrink-0" />
+              <span className="truncate">Restore Previous Session?</span>
+            </DialogTitle>
+            <DialogDescription className="break-words">
+              You have unsaved work from a previous session ({sessionAge}).
+              Would you like to restore it?
+            </DialogDescription>
+          </DialogHeader>
 
-        {sessionPreview && (
-          <div className="bg-muted/50 border rounded-lg p-4 space-y-2">
-            <div className="flex items-center gap-2 text-sm">
-              <FileText className="h-4 w-4 text-muted-foreground" />
-              <span className="font-medium">{formatDocType(sessionPreview.docType)}</span>
-            </div>
-            {sessionPreview.subject && (
-              <div className="text-sm text-muted-foreground pl-6 truncate">
-                Subject: {sessionPreview.subject}
+          {sessionPreview && (
+            <div className="bg-muted/50 border rounded-lg p-4 space-y-2 min-w-0 overflow-hidden">
+              <div className="flex items-center gap-2 text-sm min-w-0">
+                <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                <span className="font-medium truncate">{formatDocType(sessionPreview.docType)}</span>
               </div>
-            )}
-            <div className="text-xs text-muted-foreground pl-6 flex gap-4">
-              <span>{sessionPreview.paragraphCount} paragraph{sessionPreview.paragraphCount !== 1 ? 's' : ''}</span>
-              <span>{sessionPreview.referenceCount} reference{sessionPreview.referenceCount !== 1 ? 's' : ''}</span>
+              {sessionPreview.subject && (
+                <div className="text-sm text-muted-foreground pl-6 truncate">
+                  Subject: {sessionPreview.subject}
+                </div>
+              )}
+              <div className="text-xs text-muted-foreground pl-6 flex gap-4 flex-wrap">
+                <span>{sessionPreview.paragraphCount} paragraph{sessionPreview.paragraphCount !== 1 ? 's' : ''}</span>
+                <span>{sessionPreview.referenceCount} reference{sessionPreview.referenceCount !== 1 ? 's' : ''}</span>
+              </div>
             </div>
+          )}
+
+          <div className="text-xs text-muted-foreground bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800 rounded-md p-3 break-words">
+            <strong>Note:</strong> PDF enclosure files and signature images are not preserved
+            and will need to be re-attached.
           </div>
-        )}
 
-        <div className="text-xs text-muted-foreground bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800 rounded-md p-3">
-          <strong>Note:</strong> PDF enclosure files and signature images are not preserved
-          and will need to be re-attached.
+          <DialogFooter className="flex-col sm:flex-row gap-2 flex-shrink-0">
+            <Button
+              variant="outline"
+              onClick={handleStartFresh}
+              className="flex items-center justify-center gap-2 w-full sm:w-auto"
+            >
+              <Trash2 className="h-4 w-4 flex-shrink-0" />
+              <span>Start Fresh</span>
+            </Button>
+            <Button
+              onClick={handleRestore}
+              className="flex items-center justify-center gap-2 w-full sm:w-auto"
+            >
+              <RotateCcw className="h-4 w-4 flex-shrink-0" />
+              <span>Restore Session</span>
+            </Button>
+          </DialogFooter>
         </div>
-
-        <DialogFooter className="flex-col sm:flex-row gap-2">
-          <Button
-            variant="outline"
-            onClick={handleStartFresh}
-            className="flex items-center gap-2"
-          >
-            <Trash2 className="h-4 w-4" />
-            Start Fresh
-          </Button>
-          <Button
-            onClick={handleRestore}
-            className="flex items-center gap-2"
-          >
-            <RotateCcw className="h-4 w-4" />
-            Restore Session
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
