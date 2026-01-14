@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { FileText, Shield, Zap, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getDeviceInfo } from '@/utils/device';
+import { hasSavedSession } from '@/stores/documentStore';
 import {
   Dialog,
   DialogContent,
@@ -64,6 +65,13 @@ export function WelcomeModal() {
     const device = getDeviceInfo();
     if (device.isInAppBrowser) {
       console.log('[WelcomeModal] Skipping - in-app browser detected');
+      return;
+    }
+
+    // Don't show welcome modal if there's a saved session to restore
+    // Returning users have already seen the welcome
+    if (hasSavedSession()) {
+      console.log('[WelcomeModal] Skipping - saved session exists');
       return;
     }
 
