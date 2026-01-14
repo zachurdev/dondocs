@@ -1,7 +1,9 @@
 import { PDFDocument, PDFName, PDFDict, PDFArray, PDFString, PDFNumber } from 'pdf-lib';
 
-// Signature field marker name (must match LaTeX \hypertarget name)
+// Signature field marker names (must match LaTeX \hypertarget names)
 const SIGNATURE_MARKER_NAME = 'DIGSIG_FIELD_MARKER';
+const SIGNATURE_MARKER_JUNIOR = 'DIGSIG_FIELD_MARKER_JUNIOR';
+const SIGNATURE_MARKER_SENIOR = 'DIGSIG_FIELD_MARKER_SENIOR';
 
 /**
  * Signature field configuration
@@ -44,12 +46,17 @@ const DUAL_SIGNATURE_POSITIONS = {
 };
 
 /**
- * Finds the signature field marker destination in the PDF.
- * The marker is created by LaTeX using \hypertarget{DIGSIG_FIELD_MARKER}{}
+ * Finds a signature field marker destination in the PDF.
+ * The marker is created by LaTeX using \hypertarget{markerName}{}
  *
+ * @param pdfDoc - The PDF document
+ * @param markerName - The marker name to search for (default: DIGSIG_FIELD_MARKER)
  * @returns Position info or null if not found
  */
-function findSignatureMarker(pdfDoc: PDFDocument): { pageIndex: number; x: number; y: number } | null {
+function findSignatureMarker(
+  pdfDoc: PDFDocument,
+  markerName: string = SIGNATURE_MARKER_NAME
+): { pageIndex: number; x: number; y: number } | null {
   try {
     const catalog = pdfDoc.catalog;
 
@@ -86,7 +93,7 @@ function findSignatureMarker(pdfDoc: PDFDocument): { pageIndex: number; x: numbe
         nameStr = nameObj.decodeText();
       }
 
-      if (nameStr === SIGNATURE_MARKER_NAME) {
+      if (nameStr === markerName) {
         // Found our marker! Get the destination
         const destObj = namesArray.lookup(i + 1);
 
@@ -298,8 +305,12 @@ function createEmptySignatureAppearance(
 }
 
 /**
- * Adds dual digital signature fields for MOA/MOU documents.
+ * Adds dual digital signature fields for joint letters, MOA/MOU documents.
  * Junior signs on LEFT (first), Senior signs on RIGHT (last).
+ *
+ * Looks for DIGSIG_FIELD_MARKER_JUNIOR and DIGSIG_FIELD_MARKER_SENIOR markers
+ * placed by LaTeX to determine exact positions. Falls back to hardcoded
+ * positions if markers are not found.
  *
  * @param pdfBytes - The PDF document as a Uint8Array
  * @param config - Optional configuration for the signature fields
@@ -316,11 +327,48 @@ export async function addDualSignatureFields(
     height = DEFAULT_CONFIG.height,
   } = config;
 
-  // Get the last page (where signatures typically are)
+  // Try to find the signature markers from LaTeX
+  const juniorMarker = findSignatureMarker(pdfDoc, SIGNATURE_MARKER_JUNIOR);
+  const seniorMarker = findSignatureMarker(pdfDoc, SIGNATURE_MARKER_SENIOR);
+
+  // Determine positions - use markers if found, otherwise fall back to hardcoded
+  let juniorPageIndex: number;
+  let juniorX: number;
+  let juniorY: number;
+
+  if (juniorMarker) {
+    juniorPageIndex = juniorMarker.pageIndex;
+    juniorX = juniorMarker.x;
+    // Marker Y is at top of sig area, field goes downward
+    juniorY = juniorMarker.y - height;
+    console.log(`Found junior marker: page ${juniorPageIndex + 1}, x=${juniorX}, y=${juniorY}`);
+  } else {
+    const pages = pdfDoc.getPages();
+    juniorPageIndex = pages.length - 1;
+    juniorX = DUAL_SIGNATURE_POSITIONS.junior.x;
+    juniorY = DUAL_SIGNATURE_POSITIONS.junior.y;
+    console.log(`Junior marker not found, using fallback: page ${juniorPageIndex + 1}, x=${juniorX}, y=${juniorY}`);
+  }
+
+  let seniorPageIndex: number;
+  let seniorX: number;
+  let seniorY: number;
+
+  if (seniorMarker) {
+    seniorPageIndex = seniorMarker.pageIndex;
+    seniorX = seniorMarker.x;
+    // Marker Y is at top of sig area, field goes downward
+    seniorY = seniorMarker.y - height;
+    console.log(`Found senior marker: page ${seniorPageIndex + 1}, x=${seniorX}, y=${seniorY}`);
+  } else {
+    const pages = pdfDoc.getPages();
+    seniorPageIndex = pages.length - 1;
+    seniorX = DUAL_SIGNATURE_POSITIONS.senior.x;
+    seniorY = DUAL_SIGNATURE_POSITIONS.senior.y;
+    console.log(`Senior marker not found, using fallback: page ${seniorPageIndex + 1}, x=${seniorX}, y=${seniorY}`);
+  }
+
   const pages = pdfDoc.getPages();
-  const targetPageIndex = pages.length - 1;
-  const page = pages[targetPageIndex];
-  const pageRef = page.ref;
 
   // Get or create the AcroForm
   const catalog = pdfDoc.catalog;
@@ -343,27 +391,24 @@ export async function addDualSignatureFields(
     acroForm.set(PDFName.of('Fields'), fields);
   }
 
-  // Get or create page Annots array
-  let annots = page.node.lookup(PDFName.of('Annots')) as PDFArray | undefined;
-  if (!annots) {
-    annots = pdfDoc.context.obj([]) as PDFArray;
-    page.node.set(PDFName.of('Annots'), annots);
+  // Create Junior signature field (LEFT - signs FIRST)
+  const juniorPage = pages[juniorPageIndex];
+  const juniorPageRef = juniorPage.ref;
+
+  let juniorAnnots = juniorPage.node.lookup(PDFName.of('Annots')) as PDFArray | undefined;
+  if (!juniorAnnots) {
+    juniorAnnots = pdfDoc.context.obj([]) as PDFArray;
+    juniorPage.node.set(PDFName.of('Annots'), juniorAnnots);
   }
 
-  // Create Junior signature field (LEFT - signs FIRST)
   const juniorField = pdfDoc.context.obj({
     Type: PDFName.of('Annot'),
     Subtype: PDFName.of('Widget'),
     FT: PDFName.of('Sig'),
     T: PDFString.of('JuniorSignature'),
-    Rect: [
-      DUAL_SIGNATURE_POSITIONS.junior.x,
-      DUAL_SIGNATURE_POSITIONS.junior.y,
-      DUAL_SIGNATURE_POSITIONS.junior.x + width,
-      DUAL_SIGNATURE_POSITIONS.junior.y + height,
-    ],
+    Rect: [juniorX, juniorY, juniorX + width, juniorY + height],
     F: 4,
-    P: pageRef,
+    P: juniorPageRef,
     Border: [0, 0, 0],
   }) as PDFDict;
 
@@ -372,22 +417,26 @@ export async function addDualSignatureFields(
 
   const juniorFieldRef = pdfDoc.context.register(juniorField);
   fields.push(juniorFieldRef);
-  annots.push(juniorFieldRef);
+  juniorAnnots.push(juniorFieldRef);
 
   // Create Senior signature field (RIGHT - signs LAST)
+  const seniorPage = pages[seniorPageIndex];
+  const seniorPageRef = seniorPage.ref;
+
+  let seniorAnnots = seniorPage.node.lookup(PDFName.of('Annots')) as PDFArray | undefined;
+  if (!seniorAnnots) {
+    seniorAnnots = pdfDoc.context.obj([]) as PDFArray;
+    seniorPage.node.set(PDFName.of('Annots'), seniorAnnots);
+  }
+
   const seniorField = pdfDoc.context.obj({
     Type: PDFName.of('Annot'),
     Subtype: PDFName.of('Widget'),
     FT: PDFName.of('Sig'),
     T: PDFString.of('SeniorSignature'),
-    Rect: [
-      DUAL_SIGNATURE_POSITIONS.senior.x,
-      DUAL_SIGNATURE_POSITIONS.senior.y,
-      DUAL_SIGNATURE_POSITIONS.senior.x + width,
-      DUAL_SIGNATURE_POSITIONS.senior.y + height,
-    ],
+    Rect: [seniorX, seniorY, seniorX + width, seniorY + height],
     F: 4,
-    P: pageRef,
+    P: seniorPageRef,
     Border: [0, 0, 0],
   }) as PDFDict;
 
@@ -396,11 +445,11 @@ export async function addDualSignatureFields(
 
   const seniorFieldRef = pdfDoc.context.register(seniorField);
   fields.push(seniorFieldRef);
-  annots.push(seniorFieldRef);
+  seniorAnnots.push(seniorFieldRef);
 
-  console.log(`Added dual signature fields on page ${targetPageIndex + 1}`);
-  console.log(`  Junior: x=${DUAL_SIGNATURE_POSITIONS.junior.x}, y=${DUAL_SIGNATURE_POSITIONS.junior.y}`);
-  console.log(`  Senior: x=${DUAL_SIGNATURE_POSITIONS.senior.x}, y=${DUAL_SIGNATURE_POSITIONS.senior.y}`);
+  console.log(`Added dual signature fields:`);
+  console.log(`  Junior: page ${juniorPageIndex + 1}, x=${juniorX}, y=${juniorY}`);
+  console.log(`  Senior: page ${seniorPageIndex + 1}, x=${seniorX}, y=${seniorY}`);
 
   return await pdfDoc.save();
 }

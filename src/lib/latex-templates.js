@@ -707,6 +707,18 @@ const LATEX_TEMPLATES = {
     \\vspace{0.5in}%
 }
 
+% Separate markers for dual signature documents (joint letter, MOA, MOU)
+% Junior signs on LEFT (first), Senior signs on RIGHT (last)
+\\newcommand{\\DigitalSignatureBoxJunior}{%
+    \\hypertarget{DIGSIG_FIELD_MARKER_JUNIOR}{}%
+    \\vspace{0.5in}%
+}
+
+\\newcommand{\\DigitalSignatureBoxSenior}{%
+    \\hypertarget{DIGSIG_FIELD_MARKER_SENIOR}{}%
+    \\vspace{0.5in}%
+}
+
 
 %=============================================================================
 %               JOINT LETTER / JOINT MEMORANDUM COMMAND STUBS
@@ -2121,7 +2133,7 @@ const LATEX_TEMPLATES = {
             \\raggedright
             % Digital signature field for junior signatory
             \\ifHasDigitalSigField
-                \\DigitalSignatureBox
+                \\DigitalSignatureBoxJunior
             \\fi
             \\MakeUppercase{\\JuniorSignatoryName}\\par
             \\JuniorSignatoryTitle\\par
@@ -2133,7 +2145,7 @@ const LATEX_TEMPLATES = {
             \\raggedright
             % Digital signature field for senior signatory
             \\ifHasDigitalSigField
-                \\DigitalSignatureBox
+                \\DigitalSignatureBoxSenior
             \\fi
             \\ifdefempty{\\SignatoryAbbrev}{\\MakeUppercase{\\SignatoryName}}{\\SignatoryAbbrev}\\par
             \\SignatoryTitle\\par
@@ -2297,7 +2309,7 @@ const LATEX_TEMPLATES = {
             \\raggedright
             % Digital signature field for junior signatory
             \\ifHasDigitalSigField
-                \\DigitalSignatureBox
+                \\DigitalSignatureBoxJunior
             \\fi
             \\MakeUppercase{\\JuniorSignatoryName}\\par
             \\JuniorSignatoryTitle\\par
@@ -2309,7 +2321,7 @@ const LATEX_TEMPLATES = {
             \\raggedright
             % Digital signature field for senior signatory
             \\ifHasDigitalSigField
-                \\DigitalSignatureBox
+                \\DigitalSignatureBoxSenior
             \\fi
             \\ifdefempty{\\SignatoryAbbrev}{\\MakeUppercase{\\SignatoryName}}{\\SignatoryAbbrev}\\par
             \\SignatoryTitle\\par
@@ -2883,7 +2895,7 @@ const LATEX_TEMPLATES = {
 %=============================================================================
 % Junior signs on LEFT (signs first)
 % Senior signs on RIGHT (signs last)
-% Use overscoring (line above the name)
+% Use overscoring (line above the name) OR digital signature field
 
 \\newcommand{\\printSignature}{%
     \\par\\vspace{48pt}%
@@ -2892,7 +2904,11 @@ const LATEX_TEMPLATES = {
         % Junior command signature (LEFT) - signs FIRST
         \\begin{minipage}[t]{2.5in}
             \\centering
-            \\rule{2in}{0.4pt}\\par
+            \\ifHasDigitalSigField
+                \\DigitalSignatureBoxJunior
+            \\else
+                \\rule{2in}{0.4pt}\\par
+            \\fi
             \\MakeUppercase{\\JuniorSignatoryName}\\par
             \\JuniorSignatoryRank\\par
             \\JuniorSignatoryTitle\\par
@@ -2902,7 +2918,11 @@ const LATEX_TEMPLATES = {
         % Senior command signature (RIGHT) - signs LAST
         \\begin{minipage}[t]{2.5in}
             \\centering
-            \\rule{2in}{0.4pt}\\par
+            \\ifHasDigitalSigField
+                \\DigitalSignatureBoxSenior
+            \\else
+                \\rule{2in}{0.4pt}\\par
+            \\fi
             \\ifdefempty{\\SignatoryAbbrev}{\\MakeUppercase{\\SignatoryName}}{\\SignatoryAbbrev}\\par
             \\SignatoryRank\\par
             \\SignatoryTitle\\par
@@ -3055,7 +3075,7 @@ const LATEX_TEMPLATES = {
 %=============================================================================
 % Junior signs on LEFT (signs first)
 % Senior signs on RIGHT (signs last)
-% Use overscoring (line above the name)
+% Use overscoring (line above the name) OR digital signature field
 
 \\newcommand{\\printSignature}{%
     \\par\\vspace{48pt}%
@@ -3064,7 +3084,11 @@ const LATEX_TEMPLATES = {
         % Junior command signature (LEFT) - signs FIRST
         \\begin{minipage}[t]{2.5in}
             \\centering
-            \\rule{2in}{0.4pt}\\par
+            \\ifHasDigitalSigField
+                \\DigitalSignatureBoxJunior
+            \\else
+                \\rule{2in}{0.4pt}\\par
+            \\fi
             \\MakeUppercase{\\JuniorSignatoryName}\\par
             \\JuniorSignatoryRank\\par
             \\JuniorSignatoryTitle\\par
@@ -3074,7 +3098,11 @@ const LATEX_TEMPLATES = {
         % Senior command signature (RIGHT) - signs LAST
         \\begin{minipage}[t]{2.5in}
             \\centering
-            \\rule{2in}{0.4pt}\\par
+            \\ifHasDigitalSigField
+                \\DigitalSignatureBoxSenior
+            \\else
+                \\rule{2in}{0.4pt}\\par
+            \\fi
             \\ifdefempty{\\SignatoryAbbrev}{\\MakeUppercase{\\SignatoryName}}{\\SignatoryAbbrev}\\par
             \\SignatoryRank\\par
             \\SignatoryTitle\\par
