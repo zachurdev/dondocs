@@ -98,14 +98,13 @@ function findSignatureMarker(
           // Found our marker! Get the position from Rect
           const rect = annot.lookup(PDFName.of('Rect'));
           if (rect instanceof PDFArray && rect.size() >= 4) {
+            // Rect is [x1, y1, x2, y2] - lower-left and upper-right corners
             const x1 = rect.lookup(0);
-            const y1 = rect.lookup(1);
-            const x2 = rect.lookup(2);
             const y2 = rect.lookup(3);
 
-            // Get the coordinates (use lower-left corner as position)
+            // Get the coordinates (use lower-left x and upper-right y for top of rect)
             const x = x1 instanceof PDFNumber ? x1.asNumber() : FALLBACK_POSITION.x;
-            const y = y2 instanceof PDFNumber ? y2.asNumber() : FALLBACK_POSITION.y; // Use top of rect
+            const y = y2 instanceof PDFNumber ? y2.asNumber() : FALLBACK_POSITION.y;
 
             console.log(`Found marker annotation '${markerName}' at page ${pageIndex + 1}, x=${x}, y=${y}`);
             return { pageIndex, x, y, annotRef: annotRef as ReturnType<typeof pdfDoc.context.register> };
