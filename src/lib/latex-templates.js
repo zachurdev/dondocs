@@ -701,18 +701,14 @@ const LATEX_TEMPLATES = {
 % Creates an invisible PDF annotation marker for pdf-lib to detect position
 % The actual AcroForm signature field is added by pdf-lib post-processing
 % NOTE: Using depth (not height) so annotation extends BELOW baseline where sig field goes
+% The depth=0.5in already reserves vertical space, no additional vspace needed
 \\newcommand{\\DigitalSignatureBox}{%
-    % Create an invisible PDF text annotation as a position marker
-    % pdf-lib will find this annotation and replace it with a signature field
-    % depth=0.5in positions the annotation below the baseline (where we want the sig)
     \\pdfannot width 2in height 0pt depth 0.5in {%
         /Subtype /Text
         /Contents (DIGSIG_FIELD_MARKER)
         /Open false
         /F 6
     }%
-    % Reserve vertical space for the signature field (0.5 inches)
-    \\vspace{0.5in}%
 }
 
 % Separate markers for dual signature documents (joint letter, MOA, MOU)
@@ -724,7 +720,6 @@ const LATEX_TEMPLATES = {
         /Open false
         /F 6
     }%
-    \\vspace{0.5in}%
 }
 
 \\newcommand{\\DigitalSignatureBoxSenior}{%
@@ -734,7 +729,6 @@ const LATEX_TEMPLATES = {
         /Open false
         /F 6
     }%
-    \\vspace{0.5in}%
 }
 
 
