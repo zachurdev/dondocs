@@ -322,8 +322,8 @@ function findSignatoryPosition(
       if (position) {
         return {
           pageIndex: i,
-          x: position.x - 12, // Shift left to center over signature block
-          y: position.y + SIGNATURE_FIELD_OFFSET,
+          x: position.x - 16, // Shift left to center over signature block
+          y: position.y + SIGNATURE_FIELD_OFFSET + 2,
         };
       }
     }
