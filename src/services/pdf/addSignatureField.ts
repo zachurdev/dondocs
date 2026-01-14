@@ -35,7 +35,7 @@ const DEFAULT_CONFIG = {
 const SIGNATURE_FIELD_OFFSET = 42; // 36pt height + 6pt padding
 
 // ============================================================================
-// IMPROVED TEXT EXTRACTION - handles more PDF encodings
+// TEXT EXTRACTION - handles SwiftLaTeX PDF format
 // ============================================================================
 
 interface ExtractedTextItem {
@@ -45,8 +45,8 @@ interface ExtractedTextItem {
 }
 
 /**
- * Extracts text from PDF content stream with improved encoding support.
- * FIXED: Properly handles SwiftLaTeX output which uses cumulative Td operators
+ * Extracts text from PDF content stream.
+ * Handles SwiftLaTeX output which uses cumulative Td operators
  * and puts multiple operators on single lines.
  */
 function extractTextFromPage(
@@ -90,17 +90,15 @@ function extractTextFromPage(
     console.log(`[TEXT] Page ${pageIndex + 1}: Content stream length = ${contentStr.length} bytes`);
 
     // SwiftLaTeX puts multiple operators on single lines, so we can't split by \n
-    // Instead, we need to parse sequentially using regex to find operators
+    // Instead, we parse sequentially using regex to find operators
 
     let currentX = 0;
     let currentY = 0;
 
     // Find all Td operators and their positions in the string
-    // Format: "x y Td" where x and y are numbers
     const tdRegex = /([\d.\-]+)\s+([\d.\-]+)\s+Td/g;
 
     // Find all TJ arrays and their positions
-    // Format: "[(text)(text)...]TJ"
     const tjRegex = /\[((?:[^\[\]]*|\([^)]*\))*)\]TJ/g;
 
     // Build ordered list of operations
@@ -145,7 +143,6 @@ function extractTextFromPage(
         currentY += op.dy;
       } else if (op.type === 'tj' && op.content) {
         // Extract text from TJ array
-        // Format: [(text)-600(more text)] where -600 is kerning adjustment
         let combinedText = '';
         const textParts = op.content.matchAll(/\(([^)]*)\)/g);
         for (const part of textParts) {
@@ -185,24 +182,6 @@ function decodePdfLiteralString(str: string): string {
 }
 
 /**
- * Decode hex string to text
- * Note: This assumes simple encoding. SwiftLaTeX may use font-specific mappings.
- */
-function decodeHexString(hex: string): string {
-  let result = '';
-  const padded = hex.length % 2 ? hex + '0' : hex;
-
-  for (let i = 0; i < padded.length; i += 2) {
-    const charCode = parseInt(padded.substring(i, i + 2), 16);
-    // Include printable ASCII and extended Latin
-    if (charCode >= 32 && charCode <= 255) {
-      result += String.fromCharCode(charCode);
-    }
-  }
-  return result;
-}
-
-/**
  * Search for text in extracted items.
  * Handles text where spaces are visual (kerning) rather than actual characters.
  */
@@ -210,7 +189,7 @@ function searchInItems(
   items: ExtractedTextItem[],
   searchText: string
 ): { x: number; y: number } | null {
-  // Normalize both search and item text by removing spaces and periods for comparison
+  // Normalize by removing spaces and periods for comparison
   // This handles "J. A. DOE" matching "J.A.DOE" (kerning creates visual spaces)
   const normalizeForSearch = (text: string): string => {
     return text.toUpperCase().replace(/[\s.]/g, '');
@@ -266,11 +245,7 @@ function searchInItems(
 
 /**
  * Calculate signature position based on page layout.
- * This is used when text extraction fails.
- * 
- * Based on analysis of actual SwiftLaTeX PDFs:
- * - Single signature "J. A. DOE" appears at approximately x=306, y=279
- * - The signature field should be positioned ABOVE this
+ * Used when text extraction fails.
  */
 function calculateFallbackPosition(
   page: ReturnType<PDFDocument['getPage']>,
@@ -280,12 +255,6 @@ function calculateFallbackPosition(
 
   console.log(`[FALLBACK] Page size: ${width} x ${height} points`);
 
-  // Standard US Letter: 612 x 792 points (8.5" x 11")
-  // Based on actual PDF analysis:
-  // - "J. A. DOE" appears at x=306, y≈279
-  // - "By direction of J. A. DOE" at y≈265
-  // - "Copy to: G-1" at y≈240
-
   const leftMargin = 72; // 1 inch
 
   let x: number;
@@ -293,21 +262,17 @@ function calculateFallbackPosition(
 
   switch (signatureType) {
     case 'junior':
-      // Left signature for dual signature documents
       x = leftMargin;
-      y = height * 0.35; // About 35% from bottom (~277pt on letter)
+      y = height * 0.35;
       break;
     case 'senior':
-      // Right signature for dual signature documents  
-      x = width * 0.50; // Center-right position
+      x = width * 0.50;
       y = height * 0.35;
       break;
     case 'single':
     default:
-      // Single signature - right-aligned
-      // Based on PDF analysis: x=306, y=279 for the name text
       x = 306;
-      y = 279; // Actual position from PDF content stream analysis
+      y = 279;
       break;
   }
 
