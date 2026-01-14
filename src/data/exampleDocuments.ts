@@ -79,31 +79,7 @@ export const EXAMPLE_DOCUMENTS: ExampleDocument[] = [
     ],
     copyTos: [],
   },
-  {
-    id: 'standard-letter-example',
-    name: 'Standard Letter (Plain Paper)',
-    description: 'Internal routing slip for travel claim',
-    category: 'Letters',
-    docType: 'standard_letter',
-    formData: {
-      ssic: '4650',
-      serial: '0156',
-      date: '10 Jan 26',
-      from: 'Disbursing Officer, Marine Corps Air Station Miramar',
-      to: 'Commanding Officer, Marine Corps Air Station Miramar',
-      via: 'Comptroller',
-      subject: 'TRAVEL CLAIM EXCEPTION REQUEST',
-    },
-    references: [
-      { letter: 'a', title: 'JTR, Chapter 2' },
-    ],
-    paragraphs: [
-      { text: 'Request approval for reimbursement exception for Cpl J. D. Martinez, per reference (a).', level: 0 },
-      { text: 'The service member submitted receipts totaling 347.82 USD for lodging expenses during TAD to NAS Pensacola. Original receipts were lost during return travel; however, certified copies from the hotel have been obtained and are attached.', level: 0 },
-      { text: 'Recommend approval of this exception to allow processing of the travel claim.', level: 0 },
-    ],
-    copyTos: [],
-  },
+  // Standard Letter example temporarily removed - see KNOWN_ISSUES.md
   {
     id: 'multiple-address-letter-example',
     name: 'Multiple Address Letter',
