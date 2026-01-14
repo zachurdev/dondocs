@@ -29,7 +29,7 @@ const FINDER_QUESTIONS: Question[] = [
     options: [
       { label: 'Military command or unit', value: 'military', icon: '🎖️' },
       { label: 'Civilian person or business', value: 'civilian', icon: '💼' },
-      { label: 'Multiple addressees', value: 'multiple', icon: '📨' },
+      { label: 'Multiple commands/addressees', value: 'multiple', icon: '📨' },
       { label: 'For the record (no specific recipient)', value: 'record', icon: '📔' },
     ],
   },
@@ -37,19 +37,21 @@ const FINDER_QUESTIONS: Question[] = [
     id: 'purpose',
     question: 'What is the main purpose?',
     options: [
-      { label: 'Request or recommendation', value: 'request', icon: '📋' },
-      { label: 'Provide information or guidance', value: 'inform', icon: '📢' },
-      { label: 'Document a decision or event', value: 'document', icon: '📝' },
-      { label: 'Establish an agreement', value: 'agreement', icon: '🤝' },
-      { label: 'Respond to another letter', value: 'response', icon: '↩️' },
+      { label: 'Request, recommendation, or tasking', value: 'request', icon: '📋' },
+      { label: 'Provide information or status update', value: 'inform', icon: '📢' },
+      { label: 'Present options for a decision', value: 'decision', icon: '⚖️' },
+      { label: 'Document an event for the record', value: 'document', icon: '📝' },
+      { label: 'Establish an agreement between parties', value: 'agreement', icon: '🤝' },
+      { label: 'Endorse/forward another letter', value: 'response', icon: '↩️' },
     ],
   },
   {
-    id: 'signers',
-    question: 'How many officials are signing?',
+    id: 'routing',
+    question: 'How will this be routed?',
     options: [
-      { label: 'One person signing', value: 'single', icon: '✍️' },
-      { label: 'Two people/commands signing together', value: 'dual', icon: '✍️✍️' },
+      { label: 'Direct to recipient', value: 'direct', icon: '➡️' },
+      { label: 'Through chain of command (via)', value: 'via', icon: '⬆️' },
+      { label: 'Internal within my command', value: 'internal', icon: '🏢' },
     ],
   },
   {
@@ -57,8 +59,8 @@ const FINDER_QUESTIONS: Question[] = [
     question: 'What level of formality is needed?',
     options: [
       { label: 'Formal with official letterhead', value: 'formal', icon: '🏛️' },
-      { label: 'Internal/routine (less formal)', value: 'informal', icon: '📄' },
-      { label: 'Executive/senior leadership', value: 'executive', icon: '⭐' },
+      { label: 'Routine/working level', value: 'informal', icon: '📄' },
+      { label: 'Flag/General officer level', value: 'executive', icon: '⭐' },
     ],
   },
 ];
@@ -71,180 +73,243 @@ interface FinderResult {
 
 function getRecommendations(answers: Record<string, string>): FinderResult[] {
   const results: FinderResult[] = [];
-  const { recipient, purpose, signers, formality } = answers;
+  const { recipient, purpose, routing, formality } = answers;
 
-  // Endorsement - responding to another letter
+  // ===========================================
+  // ENDORSEMENTS (Ch 7) - Responding to/forwarding another letter
+  // ===========================================
   if (purpose === 'response') {
-    if (formality === 'informal') {
+    if (formality === 'informal' || routing === 'internal') {
       results.push({
         docType: 'same_page_endorsement',
         confidence: 'high',
-        reason: 'Best for brief endorsements that fit on the original letter',
+        reason: 'Per Ch 7: Brief endorsements added directly below the basic letter when space permits',
+      });
+      results.push({
+        docType: 'new_page_endorsement',
+        confidence: 'medium',
+        reason: 'Use if endorsement is lengthy or basic letter page is full',
       });
     } else {
       results.push({
         docType: 'new_page_endorsement',
         confidence: 'high',
-        reason: 'Best for detailed endorsements requiring own letterhead',
+        reason: 'Per Ch 7: New page endorsement with own letterhead for formal/detailed responses',
+      });
+      results.push({
+        docType: 'same_page_endorsement',
+        confidence: 'medium',
+        reason: 'Alternative if endorsement is brief and fits on original letter',
       });
     }
     return results;
   }
 
-  // Agreements - MOA/MOU
+  // ===========================================
+  // AGREEMENTS (Ch 12) - MOA vs MOU
+  // MOA = Specific resource/funding commitments
+  // MOU = General understanding, roles, coordination
+  // ===========================================
   if (purpose === 'agreement') {
-    if (signers === 'dual') {
+    if (formality === 'formal' || formality === 'executive') {
       results.push({
         docType: 'moa',
         confidence: 'high',
-        reason: 'Best for formal agreements with specific resource commitments',
+        reason: 'Per Ch 12: MOA for agreements with specific resource commitments, funding, or binding obligations',
       });
       results.push({
         docType: 'mou',
         confidence: 'medium',
-        reason: 'Alternative for less formal understanding without specific commitments',
+        reason: 'Alternative: MOU if establishing general understanding without specific resource commitments',
       });
     } else {
       results.push({
         docType: 'mou',
         confidence: 'high',
-        reason: 'MOUs can be signed by one party first, then countersigned',
+        reason: 'Per Ch 12: MOU for establishing working relationships and general coordination frameworks',
+      });
+      results.push({
+        docType: 'moa',
+        confidence: 'medium',
+        reason: 'Use MOA instead if agreement involves specific resources or funding',
       });
     }
     return results;
   }
 
-  // For the record - MFR
+  // ===========================================
+  // FOR THE RECORD - MFR (Ch 10)
+  // ===========================================
   if (recipient === 'record') {
     results.push({
       docType: 'mfr',
       confidence: 'high',
-      reason: 'Memorandum for the Record is specifically designed for documentation',
+      reason: 'Per Ch 10: Memorandum for the Record documents events, decisions, or conversations for official record',
     });
     return results;
   }
 
-  // Civilian recipients - Business Letter
+  // ===========================================
+  // CIVILIAN RECIPIENTS - Business Letter (Ch 11)
+  // ===========================================
   if (recipient === 'civilian') {
     results.push({
       docType: 'business_letter',
       confidence: 'high',
-      reason: 'Business letter format is appropriate for civilian recipients',
+      reason: 'Per Ch 11: Business letter format for correspondence with civilians, contractors, and non-DoD entities',
     });
     return results;
   }
 
-  // Multiple addressees
+  // ===========================================
+  // DECISION MEMOS (Ch 12) - Presenting options
+  // ===========================================
+  if (purpose === 'decision') {
+    results.push({
+      docType: 'decision_memorandum',
+      confidence: 'high',
+      reason: 'Per Ch 12: Decision memo presents options with pros/cons and staff recommendation for command decision',
+    });
+    if (formality === 'executive') {
+      results.push({
+        docType: 'executive_memorandum',
+        confidence: 'medium',
+        reason: 'Alternative for flag/general officer level with executive summary format',
+      });
+    }
+    return results;
+  }
+
+  // ===========================================
+  // MULTIPLE ADDRESSEES (Ch 2)
+  // ===========================================
   if (recipient === 'multiple') {
-    if (signers === 'dual') {
-      results.push({
-        docType: 'joint_letter',
-        confidence: 'high',
-        reason: 'Joint letter for coordinated communication from two commands',
-      });
-    } else {
-      results.push({
-        docType: 'multiple_address_letter',
-        confidence: 'high',
-        reason: 'Multiple address letter sends same content to many recipients',
-      });
-    }
+    results.push({
+      docType: 'multiple_address_letter',
+      confidence: 'high',
+      reason: 'Per Ch 2: Multiple address letter for identical content to several commands simultaneously',
+    });
+    results.push({
+      docType: 'naval_letter',
+      confidence: 'medium',
+      reason: 'Alternative: Standard naval letter with distribution list in Copy To section',
+    });
     return results;
   }
 
-  // Dual signers
-  if (signers === 'dual') {
-    if (purpose === 'inform' || purpose === 'document') {
-      results.push({
-        docType: 'joint_memorandum',
-        confidence: 'high',
-        reason: 'Joint memorandum for coordinated internal communication',
-      });
-    } else {
-      results.push({
-        docType: 'joint_letter',
-        confidence: 'high',
-        reason: 'Joint letter for coordinated official correspondence',
-      });
-    }
-    return results;
-  }
-
-  // Executive level
+  // ===========================================
+  // EXECUTIVE/FLAG LEVEL (Ch 12)
+  // ===========================================
   if (formality === 'executive') {
-    if (purpose === 'document') {
+    if (routing === 'internal' || purpose === 'inform') {
       results.push({
         docType: 'executive_memorandum',
         confidence: 'high',
-        reason: 'Executive memorandum for senior leadership communication',
+        reason: 'Per Ch 12: Executive memo for staff-to-senior leadership communication, status updates, and briefings',
       });
     } else {
       results.push({
         docType: 'executive_correspondence',
         confidence: 'high',
-        reason: 'Executive correspondence for flag/general officer level',
+        reason: 'Per Ch 12: Executive correspondence for flag-to-flag or communication with very senior officials',
       });
     }
     results.push({
       docType: 'naval_letter',
       confidence: 'medium',
-      reason: 'Naval letter is also appropriate for formal executive matters',
+      reason: 'Naval letter is also appropriate for formal executive matters requiring official record',
     });
     return results;
   }
 
-  // Document a decision
+  // ===========================================
+  // DOCUMENTING EVENTS (Ch 10)
+  // ===========================================
   if (purpose === 'document') {
-    if (answers.recipient === 'military' && formality === 'formal') {
-      results.push({
-        docType: 'decision_memorandum',
-        confidence: 'high',
-        reason: 'Decision memorandum presents options for commander decision',
-      });
-    }
     results.push({
       docType: 'mfr',
-      confidence: 'medium',
-      reason: 'MFR is good for documenting events or decisions for the record',
+      confidence: 'high',
+      reason: 'Per Ch 10: MFR documents meetings, verbal orders, decisions, or events for the official record',
     });
+    if (routing === 'internal') {
+      results.push({
+        docType: 'letterhead_memorandum',
+        confidence: 'medium',
+        reason: 'Alternative: Letterhead memo if document needs to be shared formally within command',
+      });
+    }
     return results;
   }
 
-  // Internal/informal communication
-  if (formality === 'informal') {
-    if (purpose === 'inform') {
+  // ===========================================
+  // INTERNAL/ROUTINE COMMUNICATION (Ch 12)
+  // ===========================================
+  if (routing === 'internal') {
+    if (formality === 'informal') {
       results.push({
         docType: 'plain_paper_memorandum',
         confidence: 'high',
-        reason: 'Plain paper memo for routine internal communication',
+        reason: 'Per Ch 12: Plain paper memo for routine internal working-level communication',
       });
       results.push({
         docType: 'mf',
         confidence: 'medium',
-        reason: 'Memorandum For is also good for direct internal communication',
+        reason: 'Alternative: "Memorandum For" format for direct communication to specific person/office',
       });
     } else {
       results.push({
         docType: 'letterhead_memorandum',
         confidence: 'high',
-        reason: 'Letterhead memo for semi-formal internal requests',
+        reason: 'Per Ch 12: Letterhead memo for formal internal communications that may be forwarded',
+      });
+      results.push({
+        docType: 'mf',
+        confidence: 'medium',
+        reason: 'Alternative: "Memorandum For" for direct staff actions or information papers',
       });
     }
     return results;
   }
 
-  // Default - formal military correspondence
-  results.push({
-    docType: 'naval_letter',
-    confidence: 'high',
-    reason: 'Naval letter is the standard format for official military correspondence',
-  });
-
-  if (formality === 'formal' && purpose === 'request') {
+  // ===========================================
+  // CHAIN OF COMMAND ROUTING (Ch 2)
+  // ===========================================
+  if (routing === 'via') {
     results.push({
-      docType: 'letterhead_memorandum',
+      docType: 'naval_letter',
+      confidence: 'high',
+      reason: 'Per Ch 2: Naval letter with Via line for correspondence routed through chain of command',
+    });
+    if (formality === 'informal') {
+      results.push({
+        docType: 'standard_letter',
+        confidence: 'medium',
+        reason: 'Alternative: Standard letter (same format without letterhead) if letterhead not available',
+      });
+    }
+    return results;
+  }
+
+  // ===========================================
+  // DEFAULT - NAVAL LETTER (Ch 2)
+  // The standard format for official DoN correspondence
+  // ===========================================
+  if (formality === 'formal') {
+    results.push({
+      docType: 'naval_letter',
+      confidence: 'high',
+      reason: 'Per Ch 2: Naval letter is the standard format for official Department of the Navy correspondence',
+    });
+  } else {
+    results.push({
+      docType: 'naval_letter',
+      confidence: 'high',
+      reason: 'Per Ch 2: Naval letter is appropriate for most official military correspondence',
+    });
+    results.push({
+      docType: 'standard_letter',
       confidence: 'medium',
-      reason: 'Letterhead memo is also appropriate for formal internal requests',
+      reason: 'Alternative: Standard letter (same format) when letterhead is not required or available',
     });
   }
 
