@@ -47,96 +47,91 @@ const DUAL_SIGNATURE_POSITIONS = {
 
 /**
  * Finds a signature field marker in the PDF.
- * The marker is created by LaTeX using \pdfdest name {markerName} xyz
- * This creates a named destination in the PDF's name tree.
+ * The marker is a TextField created by hyperref with the marker name.
+ * We search the AcroForm fields for a field with matching name.
  *
  * @param pdfDoc - The PDF document
  * @param markerName - The marker name to search for (default: DIGSIG_FIELD_MARKER)
- * @returns Position info or null if not found
+ * @returns Position info and field reference, or null if not found
  */
 function findSignatureMarker(
   pdfDoc: PDFDocument,
   markerName: string = SIGNATURE_MARKER_NAME
-): { pageIndex: number; x: number; y: number } | null {
+): { pageIndex: number; x: number; y: number; fieldRef?: unknown; fieldIndex?: number } | null {
   try {
     const catalog = pdfDoc.catalog;
     const pages = pdfDoc.getPages();
 
-    // Get the Names dictionary
-    const namesDict = catalog.lookup(PDFName.of('Names')) as PDFDict | undefined;
-    if (!namesDict) {
-      console.log('No Names dictionary found in PDF');
+    // Get the AcroForm dictionary
+    const acroForm = catalog.lookup(PDFName.of('AcroForm')) as PDFDict | undefined;
+    if (!acroForm) {
+      console.log('No AcroForm found in PDF');
       return null;
     }
 
-    // Get the Dests (destinations) name tree
-    const destsDict = namesDict.lookup(PDFName.of('Dests')) as PDFDict | undefined;
-    if (!destsDict) {
-      console.log('No Dests dictionary found in Names');
+    // Get the Fields array
+    const fields = acroForm.lookup(PDFName.of('Fields')) as PDFArray | undefined;
+    if (!fields) {
+      console.log('No Fields array found in AcroForm');
       return null;
     }
 
-    // The name tree can have Names array directly or Kids for larger trees
-    const namesArray = destsDict.lookup(PDFName.of('Names')) as PDFArray | undefined;
-    if (!namesArray) {
-      console.log('No Names array found in Dests');
-      return null;
-    }
+    console.log(`Found ${fields.size()} form fields in PDF`);
 
-    // Names array is [name1, dest1, name2, dest2, ...]
-    // Search for our marker
-    for (let i = 0; i < namesArray.size(); i += 2) {
-      const nameObj = namesArray.lookup(i);
-      let nameStr: string | null = null;
+    // Search through fields for our marker
+    for (let i = 0; i < fields.size(); i++) {
+      const fieldRef = fields.get(i);
+      const field = fields.lookup(i);
 
-      if (nameObj instanceof PDFString) {
-        nameStr = nameObj.decodeText();
-      } else if (nameObj instanceof PDFName) {
-        nameStr = nameObj.decodeText();
+      if (!(field instanceof PDFDict)) {
+        continue;
       }
 
-      if (nameStr === markerName) {
-        // Found our marker! Get the destination
-        const destObj = namesArray.lookup(i + 1);
+      // Get the field name (T = Title/Name)
+      const nameObj = field.lookup(PDFName.of('T'));
+      let fieldName: string | null = null;
 
-        if (destObj instanceof PDFArray) {
-          // Destination format: [page_ref /XYZ left top zoom]
-          const pageRef = destObj.get(0);
+      if (nameObj instanceof PDFString) {
+        fieldName = nameObj.decodeText();
+      } else if (nameObj instanceof PDFName) {
+        fieldName = nameObj.decodeText();
+      }
 
-          // Find page index from reference
-          let pageIndex = -1;
+      console.log(`Field ${i}: name="${fieldName}"`);
+
+      if (fieldName === markerName) {
+        // Found our marker! Get the position from Rect
+        const rect = field.lookup(PDFName.of('Rect')) as PDFArray | undefined;
+        if (!rect || rect.size() < 4) {
+          console.log('Field found but no Rect');
+          continue;
+        }
+
+        // Rect is [x1, y1, x2, y2]
+        const x1 = rect.lookup(0);
+        const y1 = rect.lookup(1);
+
+        const x = x1 instanceof PDFNumber ? x1.asNumber() : FALLBACK_POSITION.x;
+        const y = y1 instanceof PDFNumber ? y1.asNumber() : FALLBACK_POSITION.y;
+
+        // Find which page this field is on
+        const pageRef = field.lookup(PDFName.of('P'));
+        let pageIndex = 0; // Default to first page
+        if (pageRef) {
           for (let p = 0; p < pages.length; p++) {
             if (pages[p].ref === pageRef) {
               pageIndex = p;
               break;
             }
           }
-
-          if (pageIndex === -1) {
-            console.log('Could not find page for destination');
-            return null;
-          }
-
-          // Get coordinates - XYZ format: [page /XYZ left top zoom]
-          const destType = destObj.lookup(1);
-          if (destType instanceof PDFName && destType.decodeText() === 'XYZ') {
-            const leftObj = destObj.lookup(2);
-            const topObj = destObj.lookup(3);
-
-            const x = leftObj instanceof PDFNumber ? leftObj.asNumber() : FALLBACK_POSITION.x;
-            const y = topObj instanceof PDFNumber ? topObj.asNumber() : FALLBACK_POSITION.y;
-
-            console.log(`Found destination '${markerName}' at page ${pageIndex + 1}, x=${x}, y=${y}`);
-            return { pageIndex, x, y };
-          }
         }
 
-        console.log('Found marker but could not parse destination format');
-        return null;
+        console.log(`Found marker field '${markerName}' at page ${pageIndex + 1}, x=${x}, y=${y}`);
+        return { pageIndex, x, y, fieldRef, fieldIndex: i };
       }
     }
 
-    console.log(`Destination '${markerName}' not found in PDF`);
+    console.log(`Marker field '${markerName}' not found in AcroForm`);
     return null;
   } catch (error) {
     console.error('Error finding signature marker:', error);
@@ -170,20 +165,32 @@ export async function addSignatureField(
     height = DEFAULT_CONFIG.height,
   } = config;
 
-  // Try to find the signature marker annotation from LaTeX
+  // Try to find the signature marker TextField from LaTeX
   const markerPosition = findSignatureMarker(pdfDoc);
 
   let targetPageIndex: number;
   let x: number;
   let y: number;
 
+  // Get or create the AcroForm first (we might need to remove marker field)
+  const catalog = pdfDoc.catalog;
+  let acroForm = catalog.lookup(PDFName.of('AcroForm')) as PDFDict | undefined;
+
   if (markerPosition) {
-    // Use marker position - pdfdest xyz gives us the TOP of the signature area
+    // Use marker position - TextField gives us y1 (bottom) directly
     targetPageIndex = markerPosition.pageIndex;
     x = markerPosition.x;
-    // Subtract height since y is at top and signature field rect uses bottom-left
-    y = markerPosition.y - height;
+    y = markerPosition.y; // y1 is already the bottom of the field
     console.log(`Using marker position: page ${targetPageIndex + 1}, x=${x}, y=${y}`);
+
+    // Remove the marker TextField from the AcroForm fields
+    if (acroForm && markerPosition.fieldIndex !== undefined) {
+      const fields = acroForm.lookup(PDFName.of('Fields')) as PDFArray | undefined;
+      if (fields && markerPosition.fieldIndex < fields.size()) {
+        fields.remove(markerPosition.fieldIndex);
+        console.log('Removed marker TextField from AcroForm');
+      }
+    }
   } else {
     // Fallback to last page with default position
     const pages = pdfDoc.getPages();
@@ -196,10 +203,6 @@ export async function addSignatureField(
   const pages = pdfDoc.getPages();
   const page = pages[targetPageIndex];
   const pageRef = page.ref;
-
-  // Get or create the AcroForm
-  const catalog = pdfDoc.catalog;
-  let acroForm = catalog.lookup(PDFName.of('AcroForm')) as PDFDict | undefined;
 
   if (!acroForm) {
     acroForm = pdfDoc.context.obj({
@@ -302,9 +305,31 @@ export async function addDualSignatureFields(
     height = DEFAULT_CONFIG.height,
   } = config;
 
+  // Get or create the AcroForm first (we need it to find and remove marker fields)
+  const catalog = pdfDoc.catalog;
+  let acroForm = catalog.lookup(PDFName.of('AcroForm')) as PDFDict | undefined;
+
   // Try to find the signature markers from LaTeX
   const juniorMarker = findSignatureMarker(pdfDoc, SIGNATURE_MARKER_JUNIOR);
   const seniorMarker = findSignatureMarker(pdfDoc, SIGNATURE_MARKER_SENIOR);
+
+  // Remove marker TextFields from AcroForm (remove higher index first to avoid shifting)
+  if (acroForm) {
+    const fields = acroForm.lookup(PDFName.of('Fields')) as PDFArray | undefined;
+    if (fields) {
+      const indicesToRemove: number[] = [];
+      if (juniorMarker?.fieldIndex !== undefined) indicesToRemove.push(juniorMarker.fieldIndex);
+      if (seniorMarker?.fieldIndex !== undefined) indicesToRemove.push(seniorMarker.fieldIndex);
+      // Sort descending so we remove higher indices first
+      indicesToRemove.sort((a, b) => b - a);
+      for (const idx of indicesToRemove) {
+        if (idx < fields.size()) {
+          fields.remove(idx);
+          console.log(`Removed marker TextField at index ${idx}`);
+        }
+      }
+    }
+  }
 
   // Determine positions - use markers if found, otherwise fall back to hardcoded
   let juniorPageIndex: number;
@@ -314,8 +339,8 @@ export async function addDualSignatureFields(
   if (juniorMarker) {
     juniorPageIndex = juniorMarker.pageIndex;
     juniorX = juniorMarker.x;
-    // pdfdest xyz gives top position, subtract height to get bottom
-    juniorY = juniorMarker.y - height;
+    // TextField gives us y1 (bottom) directly
+    juniorY = juniorMarker.y;
     console.log(`Found junior marker: page ${juniorPageIndex + 1}, x=${juniorX}, y=${juniorY}`);
   } else {
     const pages = pdfDoc.getPages();
@@ -332,8 +357,8 @@ export async function addDualSignatureFields(
   if (seniorMarker) {
     seniorPageIndex = seniorMarker.pageIndex;
     seniorX = seniorMarker.x;
-    // pdfdest xyz gives top position, subtract height to get bottom
-    seniorY = seniorMarker.y - height;
+    // TextField gives us y1 (bottom) directly
+    seniorY = seniorMarker.y;
     console.log(`Found senior marker: page ${seniorPageIndex + 1}, x=${seniorX}, y=${seniorY}`);
   } else {
     const pages = pdfDoc.getPages();
@@ -344,10 +369,6 @@ export async function addDualSignatureFields(
   }
 
   const pages = pdfDoc.getPages();
-
-  // Get or create the AcroForm
-  const catalog = pdfDoc.catalog;
-  let acroForm = catalog.lookup(PDFName.of('AcroForm')) as PDFDict | undefined;
 
   if (!acroForm) {
     acroForm = pdfDoc.context.obj({

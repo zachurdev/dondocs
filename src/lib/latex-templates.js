@@ -698,24 +698,20 @@ const LATEX_TEMPLATES = {
 \\newcommand{\\setDigitalSignatureField}{\\HasDigitalSigFieldtrue}
 
 % Command to render digital signature field placeholder
-% Creates a PDF named destination for pdf-lib to detect position
-% The actual AcroForm signature field is added by pdf-lib post-processing
-% Uses \\pdfdest which creates an XYZ destination at current position
+% Creates a PDF text field using hyperref that pdf-lib can find and replace
+% with a signature field. The TextField creates a real AcroForm field.
 \\newcommand{\\DigitalSignatureBox}{%
-    \\pdfdest name {DIGSIG_FIELD_MARKER} xyz%
-    \\vspace{0.5in}%
+    \\TextField[name=DIGSIG_FIELD_MARKER,width=2in,height=0.5in,borderwidth=0,backgroundcolor=]{}%
 }
 
 % Separate markers for dual signature documents (joint letter, MOA, MOU)
 % Junior signs on LEFT (first), Senior signs on RIGHT (last)
 \\newcommand{\\DigitalSignatureBoxJunior}{%
-    \\pdfdest name {DIGSIG_FIELD_MARKER_JUNIOR} xyz%
-    \\vspace{0.5in}%
+    \\TextField[name=DIGSIG_FIELD_MARKER_JUNIOR,width=2in,height=0.5in,borderwidth=0,backgroundcolor=]{}%
 }
 
 \\newcommand{\\DigitalSignatureBoxSenior}{%
-    \\pdfdest name {DIGSIG_FIELD_MARKER_SENIOR} xyz%
-    \\vspace{0.5in}%
+    \\TextField[name=DIGSIG_FIELD_MARKER_SENIOR,width=2in,height=0.5in,borderwidth=0,backgroundcolor=]{}%
 }
 
 
@@ -1254,7 +1250,7 @@ const LATEX_TEMPLATES = {
 
 
 \\begin{document}
-
+\\begin{Form}
 
 %=============================================================================
 % LOAD CONFIGURATION FROM EXTERNAL FILES
@@ -1331,7 +1327,7 @@ const LATEX_TEMPLATES = {
 
 \\includeEnclosures
 
-
+\\end{Form}
 %=============================================================================
 \\end{document}
 `,
