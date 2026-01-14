@@ -15,6 +15,7 @@ import { PIIWarningModal } from '@/components/modals/PIIWarningModal';
 import { LogViewerModal } from '@/components/modals/LogViewerModal';
 import { EnclosureErrorModal } from '@/components/modals/EnclosureErrorModal';
 import { RestoreSessionModal } from '@/components/modals/RestoreSessionModal';
+import { UpdatePromptModal } from '@/components/modals/UpdatePromptModal';
 import { BrowserCompatibilityNotice } from '@/components/BrowserCompatibilityNotice';
 import { UpdateBanner } from '@/components/UpdateBanner';
 import { useUIStore } from '@/stores/uiStore';
@@ -71,7 +72,7 @@ function App() {
   const { selectedProfile, profiles } = useProfileStore();
   const { addLogDirect } = useLogStore();
   const { isReady, compile, waitForReady, error: engineError } = useLatexEngine();
-  const { showUpdateBanner, dismissBanner } = useServiceWorker();
+  const { showUpdateBanner, showUpdatePrompt, dismissBanner, confirmUpdate, dismissUpdatePrompt } = useServiceWorker();
 
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [isCompiling, setIsCompiling] = useState(false);
@@ -763,6 +764,11 @@ ${texFiles['body.tex'] || '% No body content'}
         }}
       />
       <RestoreSessionModal />
+      <UpdatePromptModal
+        open={showUpdatePrompt}
+        onConfirm={confirmUpdate}
+        onDismiss={dismissUpdatePrompt}
+      />
       <BrowserCompatibilityNotice />
       <UpdateBanner show={showUpdateBanner} onDismiss={dismissBanner} />
     </div>

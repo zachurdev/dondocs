@@ -24,6 +24,7 @@ import {
   getSessionAge,
 } from '@/stores/documentStore';
 import { getDeviceInfo } from '@/utils/device';
+import { SW_AUTO_RESTORE_KEY } from '@/hooks/useServiceWorker';
 
 // Storage key to prevent showing modal in same session
 const RESTORE_SHOWN_KEY = 'libo-restore-shown-session';
@@ -43,6 +44,21 @@ export function RestoreSessionModal() {
     const device = getDeviceInfo();
     if (device.isInAppBrowser) {
       return;
+    }
+
+    // Check if this is an auto-restore after app update
+    const autoRestore = localStorage.getItem(SW_AUTO_RESTORE_KEY);
+    if (autoRestore && hasSavedSession()) {
+      console.log('[RestoreSession] Auto-restoring after app update');
+      localStorage.removeItem(SW_AUTO_RESTORE_KEY);
+      restoreSession();
+      // Mark as shown so we don't prompt again
+      sessionStorage.setItem(RESTORE_SHOWN_KEY, 'true');
+      return;
+    }
+    // Clean up the flag if no session to restore
+    if (autoRestore) {
+      localStorage.removeItem(SW_AUTO_RESTORE_KEY);
     }
 
     // Check if we already showed the modal in this session

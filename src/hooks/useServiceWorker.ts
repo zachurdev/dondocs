@@ -4,9 +4,8 @@
  * Handles PWA service worker registration and update notifications.
  * Uses vite-plugin-pwa's useRegisterSW hook for automatic updates.
  *
- * With registerType: 'autoUpdate' in vite.config.ts, the service worker
- * updates silently. This hook tracks when updates occur and shows a
- * brief notification after the page reloads with the new version.
+ * When an update is detected, prompts the user before reloading.
+ * After reload, automatically restores their work without prompting.
  */
 
 import { useEffect, useState, useCallback } from 'react';
@@ -14,9 +13,12 @@ import { useRegisterSW } from 'virtual:pwa-register/react';
 
 const SW_UPDATE_KEY = 'libo-sw-updated';
 const SW_UPDATE_SHOWN_KEY = 'libo-sw-update-shown';
+// Key to signal auto-restore after update reload
+export const SW_AUTO_RESTORE_KEY = 'libo-sw-auto-restore';
 
 export function useServiceWorker() {
   const [showUpdateBanner, setShowUpdateBanner] = useState(false);
+  const [showUpdatePrompt, setShowUpdatePrompt] = useState(false);
 
   const {
     needRefresh: [needRefresh],
@@ -38,16 +40,29 @@ export function useServiceWorker() {
     },
   });
 
-  // When needRefresh is true, an update is available and will be applied
-  // Mark that an update is pending so we can show banner after reload
+  // When needRefresh is true, show prompt instead of auto-reloading
   useEffect(() => {
     if (needRefresh) {
-      console.log('[SW] Update available, will apply on next reload');
-      localStorage.setItem(SW_UPDATE_KEY, Date.now().toString());
-      // With autoUpdate, it will reload automatically or on next visit
-      updateServiceWorker(true);
+      console.log('[SW] Update available, prompting user');
+      setShowUpdatePrompt(true);
     }
-  }, [needRefresh, updateServiceWorker]);
+  }, [needRefresh]);
+
+  // User confirms update - save state and reload
+  const confirmUpdate = useCallback(() => {
+    console.log('[SW] User confirmed update, marking for auto-restore');
+    // Mark that we should auto-restore after reload (skip restore modal)
+    localStorage.setItem(SW_AUTO_RESTORE_KEY, 'true');
+    localStorage.setItem(SW_UPDATE_KEY, Date.now().toString());
+    setShowUpdatePrompt(false);
+    // Trigger the service worker update which will reload the page
+    updateServiceWorker(true);
+  }, [updateServiceWorker]);
+
+  // User dismisses update prompt (update later)
+  const dismissUpdatePrompt = useCallback(() => {
+    setShowUpdatePrompt(false);
+  }, []);
 
   // Check if we just loaded after an update
   useEffect(() => {
@@ -83,7 +98,10 @@ export function useServiceWorker() {
 
   return {
     showUpdateBanner,
+    showUpdatePrompt,
     dismissBanner,
+    confirmUpdate,
+    dismissUpdatePrompt,
     offlineReady,
   };
 }
