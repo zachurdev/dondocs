@@ -698,20 +698,21 @@ const LATEX_TEMPLATES = {
 \\newcommand{\\setDigitalSignatureField}{\\HasDigitalSigFieldtrue}
 
 % Command to render digital signature field placeholder
-% Creates a PDF text field using hyperref that pdf-lib can find and replace
-% with a signature field. The TextField creates a real AcroForm field.
+% Since SwiftLaTeX doesn't support PDF form fields, named destinations, or annotations,
+% we simply reserve space with vspace. The PDF post-processing will use calculated
+% positions based on the known document structure.
 \\newcommand{\\DigitalSignatureBox}{%
-    \\TextField[name=DIGSIG_FIELD_MARKER,width=2in,height=0.5in,borderwidth=0,backgroundcolor=]{}%
+    \\vspace{0.5in}%
 }
 
 % Separate markers for dual signature documents (joint letter, MOA, MOU)
 % Junior signs on LEFT (first), Senior signs on RIGHT (last)
 \\newcommand{\\DigitalSignatureBoxJunior}{%
-    \\TextField[name=DIGSIG_FIELD_MARKER_JUNIOR,width=2in,height=0.5in,borderwidth=0,backgroundcolor=]{}%
+    \\vspace{0.5in}%
 }
 
 \\newcommand{\\DigitalSignatureBoxSenior}{%
-    \\TextField[name=DIGSIG_FIELD_MARKER_SENIOR,width=2in,height=0.5in,borderwidth=0,backgroundcolor=]{}%
+    \\vspace{0.5in}%
 }
 
 
