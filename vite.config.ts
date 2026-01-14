@@ -184,9 +184,8 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // skipWaiting allows the new SW to activate when updateServiceWorker(true) is called
-        // We do NOT use clientsClaim - that would cause auto-reload before user confirms
-        skipWaiting: true,
+        // With registerType: 'prompt', vite-plugin-pwa handles skipWaiting via message
+        // Do NOT add skipWaiting or clientsClaim here - they cause auto-reload
         // Increase limit for large JS bundles (SwiftLaTeX is ~9MB)
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
