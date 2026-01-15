@@ -13,13 +13,15 @@ import { DocumentStats } from '@/components/editor/DocumentStats';
 import { MOASection } from '@/components/editor/MOASection';
 import { JointLetterSection } from '@/components/editor/JointLetterSection';
 import { JointMemoSection } from '@/components/editor/JointMemoSection';
+import { Form6105Section } from '@/components/editor/Form6105Section';
 import { useDocumentStore } from '@/stores/documentStore';
 import { DOC_TYPE_CONFIG } from '@/types/document';
 
 export function FormPanel() {
-  const { docType } = useDocumentStore();
+  const { docType, documentCategory, formType } = useDocumentStore();
   const config = DOC_TYPE_CONFIG[docType] || DOC_TYPE_CONFIG.naval_letter;
 
+  const isFormsMode = documentCategory === 'forms';
   const isMOAMode = config.uiMode === 'moa';
   const isJointLetterMode = config.uiMode === 'joint';
   const isJointMemoMode = config.uiMode === 'joint_memo';
@@ -33,7 +35,12 @@ export function FormPanel() {
           <div className="p-3 sm:p-density-4 space-y-density-6 max-w-full overflow-x-hidden">
           <DocumentTypeSelector />
 
-          {isMOAMode ? (
+          {isFormsMode ? (
+            <>
+              {/* Forms UI */}
+              {formType === 'form_6105' && <Form6105Section />}
+            </>
+          ) : isMOAMode ? (
             <>
               {/* MOA/MOU specific UI - handles dual commands and signatures */}
               <MOASection />

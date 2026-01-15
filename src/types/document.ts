@@ -1,5 +1,22 @@
 export type DocumentMode = 'compliant' | 'custom';
 
+// Top-level document category: correspondence (letters, memos, etc.) or forms (6105, Page 11, etc.)
+export type DocumentCategory = 'correspondence' | 'forms';
+
+// Form types
+export type FormType = 'form_6105';
+
+export const FORM_TYPE_LABELS: Record<FormType, string> = {
+  form_6105: 'NAVPERS 6105/1 - Page 13 Entry',
+};
+
+export const FORM_TYPE_CATEGORIES: { category: string; types: FormType[] }[] = [
+  {
+    category: 'Administrative',
+    types: ['form_6105'],
+  },
+];
+
 export interface Reference {
   letter: string;
   title: string;
