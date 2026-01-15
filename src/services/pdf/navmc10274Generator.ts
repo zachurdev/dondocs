@@ -162,7 +162,7 @@ export async function generateNavmc10274Pdf(data: NavmcForm10274Data): Promise<U
   const titleWidth = arialBold.widthOfTextAtSize(titleText, 10);
   page1.drawText(titleText, {
     x: FORM_LEFT + (FORM_WIDTH - titleWidth) / 2,
-    y: y - TITLE_HEIGHT + 10,
+    y: y - 14, // Flush to top of box
     size: 10,
     font: arialBold,
     color: BLACK,
@@ -229,7 +229,7 @@ export async function generateNavmc10274Pdf(data: NavmcForm10274Data): Promise<U
   // TO field 7: 324pt wide, 99pt tall (rowspan 2)
   drawCell(page1, FORM_LEFT, y, TO_COL_WIDTH, TO_ROW_HEIGHT);
   page1.drawText('7.', { x: FORM_LEFT + 3, y: y - 12, size: 8, font: arial, color: BLACK });
-  page1.drawText('TO:', { x: FORM_LEFT + 11, y: y - TO_ROW_HEIGHT + 18, size: 8, font: arial, color: BLACK });
+  page1.drawText('TO:', { x: FORM_LEFT + 11, y: y - (TO_ROW_HEIGHT / 2) - 4, size: 8, font: arial, color: BLACK }); // Vertically centered
   // Draw TO value
   if (data.to) {
     const toLines = wrapText(data.to, TO_COL_WIDTH - 50, times, 10);
