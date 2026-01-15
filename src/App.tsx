@@ -20,12 +20,14 @@ import { UpdatePromptModal } from '@/components/modals/UpdatePromptModal';
 import { BrowserCompatibilityNotice } from '@/components/BrowserCompatibilityNotice';
 import { useUIStore } from '@/stores/uiStore';
 import { useDocumentStore } from '@/stores/documentStore';
+import { useFormStore } from '@/stores/formStore';
 import { useHistoryStore } from '@/stores/historyStore';
 import { useProfileStore } from '@/stores/profileStore';
 import { useLogStore } from '@/stores/logStore';
 import { useLatexEngine, useServiceWorker } from '@/hooks';
 import { generateAllLatexFiles, type GeneratedFiles } from '@/services/latex/generator';
 import { generateDocx } from '@/services/docx/generator';
+import { generateNavmc10274Pdf } from '@/services/pdf/navmc10274Generator';
 import { mergeEnclosures } from '@/services/pdf/mergeEnclosures';
 import type { ClassificationInfo, EnclosureError } from '@/services/pdf/mergeEnclosures';
 import { addSignatureField, addDualSignatureFields, type DualSignatureFieldConfig, type SignatureFieldConfig } from '@/services/pdf/addSignatureField';
@@ -128,7 +130,9 @@ function App() {
     closeAllModals,
   } = useUIStore();
   const documentStore = useDocumentStore();
+  const { documentCategory } = useDocumentStore();
   const { setFormData, applySnapshot } = useDocumentStore();
+  const formStore = useFormStore();
   const { undo, redo } = useHistoryStore();
   const { selectedProfile, profiles } = useProfileStore();
   const { addLogDirect } = useLogStore();
@@ -136,9 +140,11 @@ function App() {
   const { showUpdatePrompt, confirmUpdate, dismissUpdatePrompt } = useServiceWorker();
 
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [formPdfUrl, setFormPdfUrl] = useState<string | null>(null);
   const [isCompiling, setIsCompiling] = useState(false);
   const [compileError, setCompileError] = useState<string | null>(null);
   const compileTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const formCompileTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isResettingRef = useRef(false);
 
   // PII detection state
@@ -327,6 +333,38 @@ function App() {
     documentStore.paragraphs,
     documentStore.copyTos,
   ]);
+
+  // Generate form PDF preview when in forms mode
+  useEffect(() => {
+    if (documentCategory !== 'forms') return;
+
+    if (formCompileTimeoutRef.current) {
+      clearTimeout(formCompileTimeoutRef.current);
+    }
+
+    formCompileTimeoutRef.current = setTimeout(async () => {
+      try {
+        const pdfBytes = await generateNavmc10274Pdf(formStore.navmc10274);
+
+        // Revoke old URL
+        if (formPdfUrl) {
+          URL.revokeObjectURL(formPdfUrl);
+        }
+
+        const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        setFormPdfUrl(url);
+      } catch (err) {
+        console.error('Form PDF generation error:', err);
+      }
+    }, 500); // Faster debounce for forms since no LaTeX compilation
+
+    return () => {
+      if (formCompileTimeoutRef.current) {
+        clearTimeout(formCompileTimeoutRef.current);
+      }
+    };
+  }, [documentCategory, formStore.navmc10274, formPdfUrl]);
 
   // Track if download is in progress to prevent double downloads
   const downloadInProgressRef = useRef(false);
@@ -795,9 +833,9 @@ ${texFiles['body.tex'] || '% No body content'}
         </div>
 
         <PreviewPanel
-          pdfUrl={pdfUrl}
-          isCompiling={isCompiling || !isReady}
-          error={compileError || engineError}
+          pdfUrl={documentCategory === 'forms' ? formPdfUrl : pdfUrl}
+          isCompiling={documentCategory === 'forms' ? false : (isCompiling || !isReady)}
+          error={documentCategory === 'forms' ? null : (compileError || engineError)}
         />
       </main>
 
@@ -805,9 +843,9 @@ ${texFiles['body.tex'] || '% No body content'}
       <ProfileModal />
       <ReferenceLibraryModal />
       <MobilePreviewModal
-        pdfUrl={pdfUrl}
-        isCompiling={isCompiling || !isReady}
-        error={compileError || engineError}
+        pdfUrl={documentCategory === 'forms' ? formPdfUrl : pdfUrl}
+        isCompiling={documentCategory === 'forms' ? false : (isCompiling || !isReady)}
+        error={documentCategory === 'forms' ? null : (compileError || engineError)}
         onDownloadPdf={handleDownloadPdf}
       />
       <AboutModal />

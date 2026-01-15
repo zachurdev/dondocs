@@ -11,7 +11,7 @@ const FORM_WIDTH = 558;
 const FORM_TOP = PAGE_HEIGHT - 45; // Top margin (adjusted for MCO text above)
 
 // Border and colors
-const BORDER_WIDTH = 1;
+const BORDER_WIDTH = 0.5; // Thinner lines for cleaner look
 const BLACK = rgb(0, 0, 0);
 
 // Row heights from HTML (in points)
