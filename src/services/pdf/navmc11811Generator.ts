@@ -25,10 +25,10 @@ export interface Navmc11811Data {
 // NAVMC 118(11) has: left box for remarks, right box (unused), name/edipi at bottom
 const FIELDS = {
   // NAME field at bottom left
-  name: { x: 73, y: 129, maxWidth: 200 },
+  name: { x: 97, y: 129, maxWidth: 200 },
 
   // EDIPI/DOD ID NUMBER field at bottom right
-  edipi: { x: 480, y: 129, maxWidth: 100 },
+  edipi: { x: 468, y: 129, maxWidth: 100 },
 
   // Left remarks box (main entry area)
   remarks: {
