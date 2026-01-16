@@ -49,7 +49,7 @@ const PAGE2_FIELDS = {
   orgStation: { x: 320, y: 660, maxWidth: 265 },
 
   // Field 6: Via
-  via: { x: 32, y: 615, maxWidth: 550 },
+  via: { x: 32, y: 627, maxWidth: 550 },
 
   // Field 7: To (has a bracket structure)
   to: { x: 70, y: 569, maxWidth: 210 },
@@ -58,13 +58,13 @@ const PAGE2_FIELDS = {
   natureOfAction: { x: 368, y: 582, maxWidth: 217 },
 
   // Field 9: Copy To
-  copyTo: { x: 344, y: 551, maxWidth: 241 },
+  copyTo: { x: 356, y: 539, maxWidth: 229 },
 
   // Field 10: Reference or Authority
   references: { x: 32, y: 493, maxWidth: 265, lineHeight: 12 },
 
-  // Field 11: Enclosures
-  enclosures: { x: 320, y: 445, maxWidth: 265, lineHeight: 12 },
+  // Field 11: Enclosures (aligned with Field 10)
+  enclosures: { x: 320, y: 493, maxWidth: 265, lineHeight: 12 },
 
   // Field 12: Supplemental Information (large text area)
   supplementalInfo: {

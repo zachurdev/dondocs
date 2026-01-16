@@ -1,4 +1,5 @@
-import { ClipboardList, Download, RotateCcw } from 'lucide-react';
+import { useState } from 'react';
+import { ClipboardList, Download, RotateCcw, BookOpen, Building2, Library } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,15 +12,24 @@ import {
 } from '@/components/ui/accordion';
 import { useFormStore } from '@/stores/formStore';
 import { generateNavmc10274Pdf, loadNavmc10274Templates } from '@/services/pdf/navmc10274Generator';
+import { SSICLookupModal } from '@/components/modals/SSICLookupModal';
+import { UnitLookupModal } from '@/components/modals/UnitLookupModal';
+import { FormReferenceLibraryModal } from '@/components/modals/FormReferenceLibraryModal';
+import type { UnitInfo } from '@/data/unitDirectory';
 
 export function Form6105Section() {
   const { navmc10274, setNavmc10274Field, resetNavmc10274 } = useFormStore();
+
+  // Modal states
+  const [ssicModalOpen, setSSICModalOpen] = useState(false);
+  const [unitModalOpen, setUnitModalOpen] = useState(false);
+  const [referenceModalOpen, setReferenceModalOpen] = useState(false);
 
   const handleDownload = async () => {
     try {
       // Load the template PDFs
       const templates = await loadNavmc10274Templates();
-      
+
       // Generate the filled PDF
       const pdfBytes = await generateNavmc10274Pdf(
         {
@@ -41,7 +51,7 @@ export function Form6105Section() {
         templates.page2,
         templates.page3
       );
-      
+
       // Download
       const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
@@ -55,6 +65,32 @@ export function Form6105Section() {
     } catch (error) {
       console.error('Failed to generate PDF:', error);
       alert('Failed to generate PDF. Make sure the template files exist in /templates/');
+    }
+  };
+
+  const handleSSICSelect = (code: string) => {
+    setNavmc10274Field('ssicFileNo', code);
+  };
+
+  const handleUnitSelect = (unit: UnitInfo) => {
+    // Format unit info for the Organization/Station field
+    const unitText = [
+      unit.name,
+      unit.address,
+    ].filter(Boolean).join('\n');
+    setNavmc10274Field('orgStation', unitText);
+  };
+
+  const handleReferenceSelect = (reference: string) => {
+    // Add reference to existing references with proper lettering
+    const currentRefs = navmc10274.references.trim();
+    if (!currentRefs) {
+      setNavmc10274Field('references', `(a) ${reference}`);
+    } else {
+      // Count existing references to determine next letter
+      const refLines = currentRefs.split('\n').filter(line => line.trim());
+      const nextLetter = String.fromCharCode(97 + refLines.length); // a=97, b=98, etc.
+      setNavmc10274Field('references', `${currentRefs}\n(${nextLetter}) ${reference}`);
     }
   };
 
@@ -101,12 +137,22 @@ export function Form6105Section() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="ssicFileNo">2. SSIC/File No.</Label>
-                <Input
-                  id="ssicFileNo"
-                  value={navmc10274.ssicFileNo}
-                  onChange={(e) => setNavmc10274Field('ssicFileNo', e.target.value)}
-                  placeholder="e.g., 1610"
-                />
+                <div className="flex gap-1">
+                  <Input
+                    id="ssicFileNo"
+                    value={navmc10274.ssicFileNo}
+                    onChange={(e) => setNavmc10274Field('ssicFileNo', e.target.value)}
+                    placeholder="e.g., 1610"
+                  />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setSSICModalOpen(true)}
+                    title="Browse SSIC Codes"
+                  >
+                    <BookOpen className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="date">3. Date</Label>
@@ -140,13 +186,25 @@ export function Form6105Section() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="orgStation">5. Organization/Station</Label>
-                <Textarea
-                  id="orgStation"
-                  value={navmc10274.orgStation}
-                  onChange={(e) => setNavmc10274Field('orgStation', e.target.value)}
-                  placeholder="Unit and location"
-                  rows={2}
-                />
+                <div className="flex gap-1">
+                  <Textarea
+                    id="orgStation"
+                    value={navmc10274.orgStation}
+                    onChange={(e) => setNavmc10274Field('orgStation', e.target.value)}
+                    placeholder="Unit and location"
+                    rows={2}
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setUnitModalOpen(true)}
+                    title="Browse Unit Directory"
+                    className="h-auto self-stretch"
+                  >
+                    <Building2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -229,13 +287,25 @@ export function Form6105Section() {
           <AccordionContent className="space-y-4 pt-2">
             <div className="space-y-2">
               <Label htmlFor="references">10. References/Authority</Label>
-              <Textarea
-                id="references"
-                value={navmc10274.references}
-                onChange={(e) => setNavmc10274Field('references', e.target.value)}
-                placeholder="e.g., MCO 1610.7A, MCO 1070.12K"
-                rows={2}
-              />
+              <div className="flex gap-1">
+                <Textarea
+                  id="references"
+                  value={navmc10274.references}
+                  onChange={(e) => setNavmc10274Field('references', e.target.value)}
+                  placeholder="e.g., MCO 1610.7A, MCO 1070.12K"
+                  rows={2}
+                  className="flex-1"
+                />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setReferenceModalOpen(true)}
+                  title="Browse Reference Library"
+                  className="h-auto self-stretch"
+                >
+                  <Library className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -270,6 +340,25 @@ export function Form6105Section() {
           Any misuse or unauthorized disclosure can result in both civil and criminal penalties.
         </p>
       </div>
+
+      {/* Modals */}
+      <SSICLookupModal
+        open={ssicModalOpen}
+        onOpenChange={setSSICModalOpen}
+        onSelect={handleSSICSelect}
+      />
+
+      <UnitLookupModal
+        open={unitModalOpen}
+        onOpenChange={setUnitModalOpen}
+        onSelect={handleUnitSelect}
+      />
+
+      <FormReferenceLibraryModal
+        open={referenceModalOpen}
+        onOpenChange={setReferenceModalOpen}
+        onSelect={handleReferenceSelect}
+      />
     </div>
   );
 }
