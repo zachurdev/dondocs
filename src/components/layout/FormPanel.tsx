@@ -14,6 +14,7 @@ import { MOASection } from '@/components/editor/MOASection';
 import { JointLetterSection } from '@/components/editor/JointLetterSection';
 import { JointMemoSection } from '@/components/editor/JointMemoSection';
 import { Form6105Section } from '@/components/editor/Form6105Section';
+import { Form11811Section } from '@/components/editor/Form11811Section';
 import { useDocumentStore } from '@/stores/documentStore';
 import { DOC_TYPE_CONFIG } from '@/types/document';
 
@@ -38,7 +39,8 @@ export function FormPanel() {
           {isFormsMode ? (
             <>
               {/* Forms UI */}
-              {formType === 'form_6105' && <Form6105Section />}
+              {formType === 'navmc_10274' && <Form6105Section />}
+              {formType === 'navmc_118_11' && <Form11811Section />}
             </>
           ) : isMOAMode ? (
             <>

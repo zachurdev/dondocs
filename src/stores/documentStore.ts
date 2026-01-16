@@ -224,7 +224,7 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
   documentMode: 'compliant',
   documentCategory: 'correspondence',
   docType: 'naval_letter',
-  formType: 'form_6105',
+  formType: 'navmc_10274',
   formData: { ...DEFAULT_FORM_DATA },
   references: [...DEFAULT_REFERENCES],
   enclosures: [...DEFAULT_ENCLOSURES],
@@ -661,7 +661,7 @@ export function restoreSession(): boolean {
       documentMode: session.documentMode,
       documentCategory: session.documentCategory || 'correspondence',
       docType: session.docType,
-      formType: session.formType || 'form_6105',
+      formType: session.formType || 'navmc_10274',
       formData: session.formData,
       references: session.references,
       enclosures: session.enclosures.map(enc => ({

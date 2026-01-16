@@ -53,7 +53,7 @@ export function Form6105Section() {
       </div>
 
       <p className="text-sm text-muted-foreground">
-        6105 Counseling / Administrative Action Form (MCO 5216.19A)
+        Administrative Action Form per MCO 5216.19A. Used for counseling, requests, and other administrative actions.
       </p>
 
       <Accordion type="multiple" defaultValue={['header', 'addressing', 'content']} className="space-y-2">

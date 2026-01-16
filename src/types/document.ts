@@ -4,16 +4,17 @@ export type DocumentMode = 'compliant' | 'custom';
 export type DocumentCategory = 'correspondence' | 'forms';
 
 // Form types
-export type FormType = 'form_6105';
+export type FormType = 'navmc_10274' | 'navmc_118_11';
 
 export const FORM_TYPE_LABELS: Record<FormType, string> = {
-  form_6105: 'NAVPERS 6105/1 - Page 13 Entry',
+  navmc_10274: 'NAVMC 10274 - Administrative Action',
+  navmc_118_11: 'NAVMC 118 (11) - Administrative Remarks (6105)',
 };
 
 export const FORM_TYPE_CATEGORIES: { category: string; types: FormType[] }[] = [
   {
     category: 'Administrative',
-    types: ['form_6105'],
+    types: ['navmc_10274', 'navmc_118_11'],
   },
 ];
 

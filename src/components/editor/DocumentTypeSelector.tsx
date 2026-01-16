@@ -308,9 +308,9 @@ export function DocumentTypeSelector() {
           </Select>
         </div>
 
-        <div className="border rounded-md p-3 text-xs bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:border-amber-800">
-          <div className="text-amber-700 dark:text-amber-400">
-            Forms are coming soon. The form editor will appear here when you select a form type.
+        <div className="border rounded-md p-3 text-xs bg-blue-50 border-blue-200 dark:bg-blue-950/30 dark:border-blue-800">
+          <div className="text-blue-700 dark:text-blue-400">
+            Select a form type above to edit. The form editor will appear below.
           </div>
         </div>
         </>
