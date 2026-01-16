@@ -36,7 +36,7 @@ export interface Navmc10274Data {
 // Letter size: 612 x 792 points
 const PAGE2_FIELDS = {
   // Row 1: Action No, SSIC/File No
-  actionNo: { x: 475, y: 720 },
+  actionNo: { x: 445, y: 714 },
   ssicFileNo: { x: 521, y: 714 },
 
   // Row 2: Date
@@ -52,7 +52,7 @@ const PAGE2_FIELDS = {
   via: { x: 32, y: 615, maxWidth: 550 },
 
   // Field 7: To (has a bracket structure)
-  to: { x: 70, y: 557, maxWidth: 210 },
+  to: { x: 70, y: 569, maxWidth: 210 },
 
   // Field 8: Nature of Action/Subject
   natureOfAction: { x: 368, y: 570, maxWidth: 217 },
@@ -61,7 +61,7 @@ const PAGE2_FIELDS = {
   copyTo: { x: 320, y: 515, maxWidth: 265 },
 
   // Field 10: Reference or Authority
-  references: { x: 32, y: 445, maxWidth: 265, lineHeight: 12 },
+  references: { x: 32, y: 493, maxWidth: 265, lineHeight: 12 },
 
   // Field 11: Enclosures
   enclosures: { x: 320, y: 445, maxWidth: 265, lineHeight: 12 },
