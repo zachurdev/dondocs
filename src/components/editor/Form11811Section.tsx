@@ -28,6 +28,7 @@ export function Form11811Section() {
         edipi: navmc11811.edipi,
         remarksText: navmc11811.remarksText,
         entryDate: navmc11811.entryDate,
+        box11: navmc11811.box11,
       }, templateBytes);
       
       // Download
@@ -109,7 +110,7 @@ export function Form11811Section() {
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="edipi">EDIPI</Label>
                 <Input
@@ -127,6 +128,16 @@ export function Form11811Section() {
                   type="date"
                   value={navmc11811.entryDate}
                   onChange={(e) => setNavmc11811Field('entryDate', e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="box11">Box 11</Label>
+                <Input
+                  id="box11"
+                  value={navmc11811.box11}
+                  onChange={(e) => setNavmc11811Field('box11', e.target.value)}
+                  placeholder="Initials"
+                  maxLength={5}
                 />
               </div>
             </div>

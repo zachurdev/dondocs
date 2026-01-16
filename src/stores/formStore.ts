@@ -6,12 +6,15 @@ export interface Navmc11811Data {
   firstName: string;
   middleName: string;
   edipi: string;
-  
+
   // The main 6105 entry content
   remarksText: string;
-  
+
   // Entry date
   entryDate: string;
+
+  // Box 11 - short field (initials, 5 chars max)
+  box11: string;
 }
 
 export interface NavmcForm10274Data {
@@ -130,6 +133,7 @@ Acknowledged receipt of NAVMC 10274 dtd 15 Jan 25.
 //S//
 J. A. SMITH, SSgt, USMC`,
   entryDate: new Date().toISOString().split('T')[0],
+  box11: 'JAS',
 };
 
 export const useFormStore = create<FormStore>((set) => ({

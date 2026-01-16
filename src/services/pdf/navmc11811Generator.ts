@@ -9,13 +9,16 @@ export interface Navmc11811Data {
   firstName: string;
   middleName: string;
   edipi: string;
-  
+
   // The main 6105 entry content
   remarksText: string;
-  
+
   // Entry date (appears at end of entry)
   entryDate: string;
-  
+
+  // Box 11 - short field (initials or similar, 5 chars max)
+  box11: string;
+
   // Signature info (for the counseling signature line)
   signatureName?: string;
 }
@@ -25,10 +28,13 @@ export interface Navmc11811Data {
 // NAVMC 118(11) has: left box for remarks, right box (unused), name/edipi at bottom
 const FIELDS = {
   // NAME field at bottom left
-  name: { x: 97, y: 129, maxWidth: 200 },
+  name: { x: 121, y: 129, maxWidth: 200 },
 
   // EDIPI/DOD ID NUMBER field at bottom right
   edipi: { x: 468, y: 129, maxWidth: 100 },
+
+  // Box 11 - short field (initials, 5 chars max)
+  box11: { x: 280, y: 129, maxWidth: 50 },
 
   // Left remarks box (main entry area)
   remarks: {
@@ -119,6 +125,17 @@ export async function generateNavmc11811Pdf(
     page.drawText(data.edipi, {
       x: FIELDS.edipi.x,
       y: FIELDS.edipi.y,
+      size: FONT_SIZE,
+      font,
+      color: BLACK,
+    });
+  }
+
+  // Fill in Box 11 field
+  if (data.box11) {
+    page.drawText(data.box11.toUpperCase(), {
+      x: FIELDS.box11.x,
+      y: FIELDS.box11.y,
       size: FONT_SIZE,
       font,
       color: BLACK,
