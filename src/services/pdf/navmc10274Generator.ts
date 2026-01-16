@@ -52,7 +52,7 @@ const PAGE2_FIELDS = {
   via: { x: 32, y: 627, maxWidth: 550 },
 
   // Field 7: To (has a bracket structure)
-  to: { x: 70, y: 569, maxWidth: 210 },
+  to: { x: 70, y: 593, maxWidth: 210 },
 
   // Field 8: Nature of Action/Subject
   natureOfAction: { x: 368, y: 582, maxWidth: 217 },
