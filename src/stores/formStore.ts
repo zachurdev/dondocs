@@ -72,18 +72,45 @@ const DEFAULT_NAVMC_10274: NavmcForm10274Data = {
    c. 3-Mile Run: 28:45 (maximum 28:00 required)
    d. Total Score: 195 (3rd Class, failing)
 
-2. As a Marine infantryman, physical fitness is fundamental to your ability to perform your duties and maintain combat readiness. This failure reflects a lack of dedication to maintaining the standards expected of all Marines.
+2. As a Marine infantryman, physical fitness is fundamental to your ability to perform your duties and maintain combat readiness. The Marine Corps physical fitness standards exist to ensure that every Marine is capable of meeting the physical demands of combat operations. This failure reflects a lack of dedication to maintaining the standards expected of all Marines and calls into question your commitment to your profession.
 
-3. You were previously counseled on 01 November 2024 regarding unsatisfactory PT performance and provided remedial PT opportunities. Despite these efforts, you have failed to demonstrate improvement.
+3. Your PFT history demonstrates a pattern of declining performance:
+   a. January 2024: 245 (2nd Class)
+   b. July 2024: 215 (3rd Class)
+   c. January 2025: 195 (Failing)
 
-4. You are hereby directed to:
-   a. Participate in the Remedial PT Program effective immediately
-   b. Report to the Company Gunny daily at 0500 for additional PT
-   c. Achieve a passing PFT score within 90 days
+4. You were previously counseled on the following dates regarding unsatisfactory PT performance:
+   a. 15 July 2024 - Informal counseling regarding declining PFT scores
+   b. 01 September 2024 - Formal counseling regarding failure to meet weight standards
+   c. 01 November 2024 - Formal counseling with assignment to unit remedial PT
 
-5. Failure to achieve a passing score on your next scheduled PFT may result in administrative separation processing under reference (b), or other adverse administrative action as deemed appropriate.
+Despite these counseling efforts and remedial PT opportunities, you have failed to demonstrate improvement and have continued on a downward trajectory.
 
-6. Your signature below acknowledges receipt of this counseling. You have the right to submit a written rebuttal within 10 working days.`,
+5. Reference (a) establishes the minimum PFT standards for all Marines. As a Lance Corporal with over two years of service, you are expected to not only meet but exceed these minimum standards. Your current performance is unacceptable and reflects poorly on yourself, this platoon, and the Marine Corps as a whole.
+
+6. You are hereby directed to:
+   a. Participate in the Battalion Remedial PT Program effective immediately
+   b. Report to the Company Gunnery Sergeant daily at 0500 for additional PT
+   c. Maintain a food and exercise log to be reviewed weekly by your squad leader
+   d. Attend nutritional counseling with the Battalion Medical Officer
+   e. Achieve a passing PFT score (minimum 235 points, 3rd Class) within 90 days
+   f. Achieve a 2nd Class PFT score (minimum 250 points) within 180 days
+
+7. Your chain of command will conduct weekly progress evaluations to assess your improvement. These evaluations will include:
+   a. Weekly weigh-ins every Monday at 0600
+   b. Bi-weekly mock PFT events to track progress
+   c. Monthly counseling sessions to document improvement or lack thereof
+
+8. Failure to achieve a passing score on your next scheduled PFT, or failure to comply with the remedial program requirements outlined above, may result in one or more of the following adverse administrative actions:
+   a. Processing for administrative separation under reference (b)
+   b. Recommendation for non-judicial punishment under Article 92, UCMJ
+   c. Adverse Page 11 (6105) entry documenting continued substandard performance
+   d. Removal from promotion consideration
+   e. Assignment to less desirable duties within the company
+
+9. This counseling is intended to clearly communicate the seriousness of your current situation and to provide you with every opportunity to correct your deficiencies. The Marine Corps invests significant resources in training and developing Marines, and it is your responsibility to maintain the standards that justify that investment.
+
+10. Your signature below acknowledges receipt of this counseling and indicates that you understand the requirements and potential consequences outlined herein. Your signature does not constitute agreement with the contents of this counseling. You have the right to submit a written rebuttal within 10 working days of the date of this counseling.`,
   proposedAction: 'Request entry of adverse Page 11 (6105) entry per MCO 1610.7A. Recommend assignment to Remedial PT Program and monthly progress evaluations.',
 };
 
