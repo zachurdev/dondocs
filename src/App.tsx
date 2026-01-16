@@ -27,7 +27,7 @@ import { useLogStore } from '@/stores/logStore';
 import { useLatexEngine, useServiceWorker } from '@/hooks';
 import { generateAllLatexFiles, type GeneratedFiles } from '@/services/latex/generator';
 import { generateDocx } from '@/services/docx/generator';
-import { generateNavmc10274Pdf } from '@/services/pdf/navmc10274Generator';
+import { generateNavmc10274Pdf, loadNavmc10274Templates } from '@/services/pdf/navmc10274Generator';
 import { mergeEnclosures } from '@/services/pdf/mergeEnclosures';
 import type { ClassificationInfo, EnclosureError } from '@/services/pdf/mergeEnclosures';
 import { addSignatureField, addDualSignatureFields, type DualSignatureFieldConfig, type SignatureFieldConfig } from '@/services/pdf/addSignatureField';
@@ -335,8 +335,24 @@ function App() {
   ]);
 
   // Generate form PDF preview when in forms mode
+  // Note: Templates need to be loaded async, so we cache them
+  const [formTemplates, setFormTemplates] = useState<{
+    page1: ArrayBuffer;
+    page2: ArrayBuffer;
+    page3: ArrayBuffer;
+  } | null>(null);
+
+  // Load form templates when entering forms mode
   useEffect(() => {
-    if (documentCategory !== 'forms') return;
+    if (documentCategory === 'forms' && !formTemplates) {
+      loadNavmc10274Templates()
+        .then(setFormTemplates)
+        .catch(err => console.error('Failed to load form templates:', err));
+    }
+  }, [documentCategory, formTemplates]);
+
+  useEffect(() => {
+    if (documentCategory !== 'forms' || !formTemplates) return;
 
     if (formCompileTimeoutRef.current) {
       clearTimeout(formCompileTimeoutRef.current);
@@ -344,7 +360,12 @@ function App() {
 
     formCompileTimeoutRef.current = setTimeout(async () => {
       try {
-        const pdfBytes = await generateNavmc10274Pdf(formStore.navmc10274);
+        const pdfBytes = await generateNavmc10274Pdf(
+          formStore.navmc10274,
+          formTemplates.page1,
+          formTemplates.page2,
+          formTemplates.page3
+        );
 
         const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
@@ -366,7 +387,7 @@ function App() {
         clearTimeout(formCompileTimeoutRef.current);
       }
     };
-  }, [documentCategory, formStore.navmc10274]);
+  }, [documentCategory, formStore.navmc10274, formTemplates]);
 
   // Track if download is in progress to prevent double downloads
   const downloadInProgressRef = useRef(false);
