@@ -1,8 +1,14 @@
-import { ClipboardList, Download, RotateCcw } from 'lucide-react';
+import { ClipboardList, Download, RotateCcw, ChevronDown, Trash2, FileText } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Accordion,
   AccordionContent,
@@ -13,7 +19,7 @@ import { useFormStore } from '@/stores/formStore';
 import { generateNavmc11811Pdf, loadNavmc11811Template } from '@/services/pdf/navmc11811Generator';
 
 export function Form11811Section() {
-  const { navmc11811, setNavmc11811Field, resetNavmc11811 } = useFormStore();
+  const { navmc11811, setNavmc11811Field, resetNavmc11811, clearNavmc11811 } = useFormStore();
 
   const handleDownload = async () => {
     try {
@@ -57,10 +63,25 @@ export function Form11811Section() {
           NAVMC 118(11) - Administrative Remarks
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={resetNavmc11811}>
-            <RotateCcw className="h-4 w-4 mr-1" />
-            Reset
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <RotateCcw className="h-4 w-4 mr-1" />
+                Reset
+                <ChevronDown className="h-3 w-3 ml-1" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={resetNavmc11811}>
+                <FileText className="h-4 w-4 mr-2" />
+                Reset to Example
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={clearNavmc11811}>
+                <Trash2 className="h-4 w-4 mr-2" />
+                Clear All Fields
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button size="sm" onClick={handleDownload}>
             <Download className="h-4 w-4 mr-1" />
             Download PDF

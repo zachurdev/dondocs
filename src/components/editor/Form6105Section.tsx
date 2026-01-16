@@ -1,9 +1,16 @@
 import { useState } from 'react';
-import { ClipboardList, Download, RotateCcw, BookOpen, Building2, Library } from 'lucide-react';
+import { ClipboardList, Download, RotateCcw, ChevronDown, Trash2, FileText } from 'lucide-react';
+import { BookOpen, Building2, Library } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Accordion,
   AccordionContent,
@@ -18,7 +25,7 @@ import { FormReferenceLibraryModal } from '@/components/modals/FormReferenceLibr
 import type { UnitInfo } from '@/data/unitDirectory';
 
 export function Form6105Section() {
-  const { navmc10274, setNavmc10274Field, resetNavmc10274 } = useFormStore();
+  const { navmc10274, setNavmc10274Field, resetNavmc10274, clearNavmc10274 } = useFormStore();
 
   // Modal states
   const [ssicModalOpen, setSSICModalOpen] = useState(false);
@@ -103,10 +110,25 @@ export function Form6105Section() {
           NAVMC 10274 - Administrative Action
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={resetNavmc10274}>
-            <RotateCcw className="h-4 w-4 mr-1" />
-            Reset
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <RotateCcw className="h-4 w-4 mr-1" />
+                Reset
+                <ChevronDown className="h-3 w-3 ml-1" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={resetNavmc10274}>
+                <FileText className="h-4 w-4 mr-2" />
+                Reset to Example
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={clearNavmc10274}>
+                <Trash2 className="h-4 w-4 mr-2" />
+                Clear All Fields
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button size="sm" onClick={handleDownload}>
             <Download className="h-4 w-4 mr-1" />
             Download PDF

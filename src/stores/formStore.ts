@@ -50,11 +50,40 @@ interface FormStore {
   navmc10274: NavmcForm10274Data;
   setNavmc10274Field: <K extends keyof NavmcForm10274Data>(key: K, value: NavmcForm10274Data[K]) => void;
   resetNavmc10274: () => void;
-  
+  clearNavmc10274: () => void;
+
   navmc11811: Navmc11811Data;
   setNavmc11811Field: <K extends keyof Navmc11811Data>(key: K, value: Navmc11811Data[K]) => void;
   resetNavmc11811: () => void;
+  clearNavmc11811: () => void;
 }
+
+// Empty defaults for "Clear All" functionality
+const EMPTY_NAVMC_10274: NavmcForm10274Data = {
+  actionNo: '',
+  ssicFileNo: '',
+  date: '',
+  from: '',
+  via: '',
+  orgStation: '',
+  to: '',
+  natureOfAction: '',
+  copyTo: '',
+  references: '',
+  enclosures: '',
+  supplementalInfo: '',
+  proposedAction: '',
+};
+
+const EMPTY_NAVMC_11811: Navmc11811Data = {
+  lastName: '',
+  firstName: '',
+  middleName: '',
+  edipi: '',
+  remarksText: '',
+  entryDate: '',
+  box11: '',
+};
 
 const DEFAULT_NAVMC_10274: NavmcForm10274Data = {
   actionNo: '001-25',
@@ -147,6 +176,10 @@ export const useFormStore = create<FormStore>((set) => ({
     navmc10274: { ...DEFAULT_NAVMC_10274 },
   }),
 
+  clearNavmc10274: () => set({
+    navmc10274: { ...EMPTY_NAVMC_10274 },
+  }),
+
   navmc11811: { ...DEFAULT_NAVMC_11811 },
 
   setNavmc11811Field: (key, value) => set((state) => ({
@@ -155,5 +188,9 @@ export const useFormStore = create<FormStore>((set) => ({
 
   resetNavmc11811: () => set({
     navmc11811: { ...DEFAULT_NAVMC_11811 },
+  }),
+
+  clearNavmc11811: () => set({
+    navmc11811: { ...EMPTY_NAVMC_11811 },
   }),
 }));
