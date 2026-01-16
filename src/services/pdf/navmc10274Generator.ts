@@ -70,7 +70,7 @@ const PAGE2_FIELDS = {
   supplementalInfo: {
     x: 32,
     y: 391,
-    maxWidth: 560,
+    maxWidth: 545,
     lineHeight: 12,
     maxLines: 27, // Lines that fit on page 2
   },
@@ -81,7 +81,7 @@ const PAGE3_FIELDS = {
   supplementalInfo: {
     x: 32,
     y: 699,
-    maxWidth: 560,
+    maxWidth: 545,
     lineHeight: 12,
     maxLines: 49, // More lines available on page 3
   },

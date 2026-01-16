@@ -115,11 +115,27 @@ Despite these counseling efforts and remedial PT opportunities, you have failed 
 };
 
 const DEFAULT_NAVMC_11811: Navmc11811Data = {
-  lastName: '',
-  firstName: '',
-  middleName: '',
-  edipi: '',
-  remarksText: '',
+  lastName: 'DOE',
+  firstName: 'JOHN',
+  middleName: 'MICHAEL',
+  edipi: '0987654321',
+  remarksText: `ADVERSE PAGE 11 ENTRY (6105)
+
+On 15 January 2025, LCpl Doe failed to achieve the minimum standards on the Physical Fitness Test (PFT) as required by MCO 6100.13A W/CH 1. His scores were: Pull-ups: 2 (minimum 4 required); Crunches: 85; 3-Mile Run: 28:45 (maximum 28:00 required); Total Score: 195 (3rd Class, failing).
+
+LCpl Doe's PFT history demonstrates a pattern of declining performance: January 2024: 245 (2nd Class); July 2024: 215 (3rd Class); January 2025: 195 (Failing).
+
+LCpl Doe was previously counseled on 15 July 2024 (informal), 01 September 2024 (formal - weight standards), and 01 November 2024 (formal - assignment to remedial PT). Despite these counseling efforts and remedial PT opportunities, he has failed to demonstrate improvement.
+
+LCpl Doe has been directed to: participate in the Battalion Remedial PT Program; report to the Company Gunnery Sergeant daily at 0500 for additional PT; maintain a food and exercise log; attend nutritional counseling; and achieve a passing PFT score within 90 days.
+
+Failure to achieve a passing score may result in administrative separation processing, non-judicial punishment, removal from promotion consideration, or other adverse administrative action.
+
+This entry is made in accordance with MCO 1610.7A. LCpl Doe acknowledged receipt of formal counseling (NAVMC 10274) on 15 January 2025 and was advised of his right to submit a written rebuttal within 10 working days.
+
+//SIGNED//
+J. A. SMITH
+SSgt, USMC`,
   entryDate: new Date().toISOString().split('T')[0],
 };
 
