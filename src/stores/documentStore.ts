@@ -165,14 +165,14 @@ const EXAMPLE_FORM_DATA: Partial<DocumentData> = {
   sealType: 'dod',
   letterheadColor: 'blue',
   // Document identification
-  ssic: '3502',
-  serial: '0847',
+  ssic: '1000',
+  serial: '0123',
   date: formatMilitaryDate(new Date()),
   // Addressing
   from: 'Commanding Officer, 1st Battalion, 6th Marines',
   to: 'Commanding General, 2d Marine Division',
-  via: 'Commanding Officer, 6th Marine Regiment',
-  subject: 'AFTER ACTION REPORT FOR EXERCISE STEEL KNIGHT 25-1',
+  via: '',
+  subject: 'REQUEST FOR ADDITIONAL COMMUNICATIONS PERSONNEL',
   // Signature
   sigFirst: 'John',
   sigMiddle: 'A',
@@ -194,21 +194,14 @@ const EXAMPLE_FORM_DATA: Partial<DocumentData> = {
 
 // Example references for demo document
 const EXAMPLE_REFERENCES: Reference[] = [
-  { letter: 'a', title: 'MCO 3502.6A', url: '' },
-  { letter: 'b', title: 'MCRP 3-30B.1 Ground Combat Operations', url: '' },
-  { letter: 'c', title: '2d MarDiv FRAGO 25-0147 dtd 15 Nov 25', url: '' },
+  { letter: 'a', title: 'MCO 5311.1E', url: '' },
 ];
 
-// Example paragraphs for demo document
+// Example paragraphs for demo document (short and simple)
 const EXAMPLE_PARAGRAPHS: Paragraph[] = [
-  { header: 'Purpose', text: 'Per reference (a), this letter provides the after action report for Exercise Steel Knight 25-1, conducted 3-17 December 2025 at Camp Lejeune.', level: 0 },
-  { header: 'Background', text: 'Exercise Steel Knight 25-1 was a battalion-level combined arms exercise to validate combat readiness of 1st Battalion, 6th Marines per reference (b).', level: 0 },
-  { header: 'Execution Summary', text: 'The exercise was executed in three phases:', level: 0 },
-  { text: 'Phase I (3-6 Dec): Pre-deployment preparation and certifications.', level: 1 },
-  { text: 'Phase II (7-12 Dec): Force-on-force operations against 2d LAR Battalion.', level: 1 },
-  { text: 'Phase III (13-17 Dec): Live-fire combined arms training.', level: 1 },
-  { header: 'Recommendation', text: '1st Battalion, 6th Marines is assessed combat ready. Recommend certification for deployment.', level: 0 },
-  { header: 'Point of Contact', text: 'POC is the undersigned or Major J.Q. Smith, S-3, at (910) 451-0001.', level: 0 },
+  { text: 'Per reference (a), this command requests two additional 0621 billets to support increased operational requirements.', level: 0 },
+  { text: 'Current communications personnel are operating at maximum capacity. Additional billets will ensure adequate support for garrison and field operations.', level: 0 },
+  { text: 'Point of contact is the undersigned at (910) 451-0001.', level: 0 },
 ];
 
 // Default enclosures (empty - user adds as needed)

@@ -20,7 +20,7 @@ const EXAMPLE_FORM_DATA = {
   unitLine1: '1ST BATTALION, 6TH MARINES',
   unitLine2: '2D MARINE DIVISION, II MEF',
   unitAddress: 'PSC BOX 20123, CAMP LEJEUNE, NC 28542-0123',
-  ssic: '3502',
+  ssic: '1000',
   from: 'Commanding Officer, 1st Battalion, 6th Marines',
   sigFirst: 'John',
   sigMiddle: 'A',
