@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Profile } from '@/types/document';
 
-// Default profile for demonstration
+// Default profiles for demonstration
 const DEFAULT_PROFILES: Record<string, Profile> = {
   '23d Marine Regiment': {
     department: 'usmc',
@@ -17,6 +17,20 @@ const DEFAULT_PROFILES: Record<string, Profile> = {
     sigRank: 'Colonel',
     sigTitle: 'Commanding Officer',
     pocEmail: 'james.thompson@usmc.mil',
+  },
+  'Marine Innovation Unit': {
+    department: 'usmc',
+    unitLine1: 'MARINE INNOVATION UNIT',
+    unitLine2: 'MARINE FORCES RESERVE',
+    unitAddress: '10 MCDONALD STREET, NEWBURGH, NY 12550',
+    ssic: '5216',
+    from: 'Commanding Officer, Marine Innovation Unit',
+    sigFirst: '',
+    sigMiddle: '',
+    sigLast: '',
+    sigRank: '',
+    sigTitle: 'Commanding Officer',
+    pocEmail: '',
   },
 };
 
