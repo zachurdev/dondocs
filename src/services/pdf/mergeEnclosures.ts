@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts, PDFPage, PDFName, PDFArray, PDFNumber, PDFRef, PDFRawStream, PDFDict, PDFString } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts, PDFPage, PDFName, PDFArray, PDFNumber, PDFRef, PDFRawStream, PDFDict, PDFString, degrees } from 'pdf-lib';
 import pako from 'pako';
 
 export interface EnclosureData {
@@ -1209,6 +1209,15 @@ async function addPdfEnclosure(
       const srcPage = enclosurePdf.getPage(i);
       const { width: srcWidth, height: srcHeight } = srcPage.getSize();
 
+      // Get the page's rotation - we need to correct for this to display upright
+      const rotation = srcPage.getRotation().angle;
+      const isRotated = rotation === 90 || rotation === 270;
+
+      // For rotated pages, we need to swap width/height for layout calculations
+      // because the visual dimensions are swapped
+      const effectiveWidth = isRotated ? srcHeight : srcWidth;
+      const effectiveHeight = isRotated ? srcWidth : srcHeight;
+
       // Check if page has content before trying to embed
       const contents = srcPage.node.get(PDFName.of('Contents'));
       if (!contents) {
@@ -1233,24 +1242,45 @@ async function addPdfEnclosure(
       const embeddedPage = await mainPdf.embedPage(srcPage);
 
       // Calculate scaling and positioning based on page style
+      // Use effective dimensions that account for rotation
       const { scale, x, y, drawBorder } = calculatePageLayout(
-        srcWidth,
-        srcHeight,
+        effectiveWidth,
+        effectiveHeight,
         style
       );
 
-      // Draw the embedded page with calculated position and scale
+      // Calculate the position adjustments needed for rotation
+      // When rotating, we need to adjust the anchor point
+      let drawX = x;
+      let drawY = y;
+
+      if (rotation === 90) {
+        // 90 degree rotation: anchor shifts
+        drawX = x + effectiveWidth * scale;
+      } else if (rotation === 180) {
+        // 180 degree rotation: anchor shifts to opposite corner
+        drawX = x + effectiveWidth * scale;
+        drawY = y + effectiveHeight * scale;
+      } else if (rotation === 270) {
+        // 270 degree rotation: anchor shifts
+        drawY = y + effectiveHeight * scale;
+      }
+
+      // Draw the embedded page with calculated position, scale, and counter-rotation
+      // We apply negative rotation to correct the page's built-in rotation
       page.drawPage(embeddedPage, {
-        x,
-        y,
+        x: drawX,
+        y: drawY,
         xScale: scale,
         yScale: scale,
+        rotate: degrees(-rotation),
       });
 
       // Draw border if required
       if (drawBorder) {
-        const scaledWidth = srcWidth * scale;
-        const scaledHeight = srcHeight * scale;
+        // Use effective dimensions (accounts for rotation) for the border
+        const scaledWidth = effectiveWidth * scale;
+        const scaledHeight = effectiveHeight * scale;
         page.drawRectangle({
           x: x,
           y: y,
