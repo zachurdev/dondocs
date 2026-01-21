@@ -1210,13 +1210,13 @@ async function addPdfEnclosure(
       const { width: srcWidth, height: srcHeight } = srcPage.getSize();
 
       // PDF pages can have rotation metadata (90, 180, 270)
-      // This tells viewers to rotate content for display
-      // When we embed, rotation is lost - we must reapply it
+      // Viewers apply this rotation when displaying
+      // embedPage loses this metadata, so we reapply it manually
       const rotation = srcPage.getRotation().angle;
       const isRotated90or270 = rotation === 90 || rotation === 270;
 
       // Visual dimensions = what user sees after rotation
-      // 90°/270° rotation swaps width and height
+      // 90°/270° swaps width and height
       const visualWidth = isRotated90or270 ? srcHeight : srcWidth;
       const visualHeight = isRotated90or270 ? srcWidth : srcHeight;
 
@@ -1246,26 +1246,27 @@ async function addPdfEnclosure(
         style
       );
 
-      // Rotation shifts where content lands, so we offset the anchor point
-      // pdf-lib uses negative rotation to match PDF spec direction
+      // pdf-lib rotates around anchor point, shifting where content lands
+      // We use NEGATIVE rotation to correct orientation
+      // Anchor offsets calculated for where content ends up after negative rotation
       let drawX = x;
       let drawY = y;
 
       if (rotation === 90) {
-        // Content rotates right, anchor goes to bottom-right of target area
-        drawX = x + visualWidth * scale;
-        drawY = y;
+        // -90° (clockwise): content shifts down, anchor above target
+        drawX = x;
+        drawY = y + visualHeight * scale;
       } else if (rotation === 180) {
-        // Content flips, anchor goes to top-right
+        // -180°: content shifts left and down, anchor at top-right
         drawX = x + visualWidth * scale;
         drawY = y + visualHeight * scale;
       } else if (rotation === 270) {
-        // Content rotates left, anchor goes to top-left of target area
-        drawX = x;
-        drawY = y + visualHeight * scale;
+        // -270° (= +90° CCW): content shifts left, anchor right of target
+        drawX = x + visualWidth * scale;
+        drawY = y;
       }
 
-      // Draw with negative rotation to correct the page orientation
+      // Draw with negative rotation to display page upright
       page.drawPage(embeddedPage, {
         x: drawX,
         y: drawY,
