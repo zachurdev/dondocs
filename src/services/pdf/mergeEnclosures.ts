@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts, PDFPage, PDFName, PDFArray, PDFNumber, PDFRef, PDFRawStream, PDFDict, PDFString } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts, PDFPage, PDFName, PDFArray, PDFNumber, PDFRef, PDFRawStream, PDFDict, PDFString, degrees } from 'pdf-lib';
 import pako from 'pako';
 
 export interface EnclosureData {
@@ -1209,6 +1209,16 @@ async function addPdfEnclosure(
       const srcPage = enclosurePdf.getPage(i);
       const { width: srcWidth, height: srcHeight } = srcPage.getSize();
 
+      // Get the page's rotation metadata (tells PDF viewers how to display it)
+      const rotation = srcPage.getRotation().angle;
+      const hasRotation = rotation !== 0;
+      const isRotated90or270 = rotation === 90 || rotation === 270;
+
+      // Visual dimensions are what the user sees after rotation is applied
+      // For 90° or 270° rotation, width and height appear swapped
+      const visualWidth = isRotated90or270 ? srcHeight : srcWidth;
+      const visualHeight = isRotated90or270 ? srcWidth : srcHeight;
+
       // Check if page has content before trying to embed
       const contents = srcPage.node.get(PDFName.of('Contents'));
       if (!contents) {
@@ -1232,25 +1242,47 @@ async function addPdfEnclosure(
       // Embed the source page
       const embeddedPage = await mainPdf.embedPage(srcPage);
 
-      // Calculate scaling and positioning based on page style
+      // Calculate scaling and positioning based on VISUAL dimensions
+      // This ensures rotated content is properly sized for the output page
       const { scale, x, y, drawBorder } = calculatePageLayout(
-        srcWidth,
-        srcHeight,
+        visualWidth,
+        visualHeight,
         style
       );
 
-      // Draw the embedded page
+      // Calculate draw position accounting for rotation
+      // pdf-lib rotates counter-clockwise around the anchor point (drawX, drawY)
+      // We need to offset the anchor so the rotated result lands at (x, y)
+      let drawX = x;
+      let drawY = y;
+
+      if (rotation === 90) {
+        // 90° CCW: content shifts left, so anchor must be right of target
+        drawX = x + srcHeight * scale;
+        drawY = y;
+      } else if (rotation === 180) {
+        // 180°: content shifts left and down, anchor at top-right of target
+        drawX = x + srcWidth * scale;
+        drawY = y + srcHeight * scale;
+      } else if (rotation === 270) {
+        // 270° CCW (90° CW): content shifts down, anchor must be above target
+        drawX = x;
+        drawY = y + srcWidth * scale;
+      }
+
+      // Draw the embedded page with rotation to match how PDF viewers display it
       page.drawPage(embeddedPage, {
-        x,
-        y,
+        x: drawX,
+        y: drawY,
         xScale: scale,
         yScale: scale,
+        rotate: hasRotation ? degrees(rotation) : undefined,
       });
 
-      // Draw border if required
+      // Draw border if required (at visual position with visual dimensions)
       if (drawBorder) {
-        const scaledWidth = srcWidth * scale;
-        const scaledHeight = srcHeight * scale;
+        const scaledWidth = visualWidth * scale;
+        const scaledHeight = visualHeight * scale;
         page.drawRectangle({
           x: x,
           y: y,
