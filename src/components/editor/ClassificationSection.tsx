@@ -101,15 +101,12 @@ export function ClassificationSection() {
   }, [configLoaded, isCurrentLevelAllowed, classLevel]);
 
   const currentLevel = CLASSIFICATION_LEVELS.find((l) => l.value === classLevel);
-  const customUpper = formData.customClassification?.toUpperCase() || '';
 
-  // Show classified warning/fields if classLevel is classified OR custom contains CONFIDENTIAL
-  const isClassified = ['confidential', 'secret', 'top_secret', 'top_secret_sci'].includes(classLevel) ||
-    (classLevel === 'custom' && customUpper.includes('CONFIDENTIAL'));
+  // Show classified warning/fields only for actual classified levels (not custom)
+  const isClassified = ['confidential', 'secret', 'top_secret', 'top_secret_sci'].includes(classLevel);
 
-  // Show CUI fields if classLevel is 'cui' OR if custom contains 'CUI' (but not just as part of another word)
-  const isCUI = classLevel === 'cui' ||
-    (classLevel === 'custom' && customUpper.includes('CUI') && !customUpper.includes('CONFIDENTIAL'));
+  // Show CUI fields only for actual CUI level (not custom)
+  const isCUI = classLevel === 'cui';
 
   const isCustom = classLevel === 'custom';
 
