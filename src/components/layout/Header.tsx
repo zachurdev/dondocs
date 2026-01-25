@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, type ChangeEvent } from 'react';
-import { Moon, Sun, Download, FileText, RefreshCw, Github, Bug, Save, RotateCcw, Shield, HelpCircle, Info, Layers, FolderOpen, Search, Keyboard, Menu, FileDown, FileUp, ScrollText, SlidersHorizontal, Minimize2, Maximize2, Check, Palette, Anchor, Medal, Wrench, Settings, Undo2, Redo2, Eraser, Compass } from 'lucide-react';
+import { Moon, Sun, Download, FileText, RefreshCw, Github, Bug, Save, RotateCcw, Shield, HelpCircle, Info, Layers, Search, Keyboard, Menu, FileDown, FileUp, ScrollText, SlidersHorizontal, Minimize2, Maximize2, Check, Palette, Anchor, Medal, Settings, Undo2, Redo2, Eraser, Compass } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -30,11 +30,12 @@ interface HeaderProps {
   onDownloadDocx?: () => void;
   onRefreshPreview?: () => void;
   isCompiling?: boolean;
+  isFormsMode?: boolean;  // Whether we're in forms mode (hides LaTeX/DOCX options)
 }
 
-const GITHUB_REPO_URL = 'https://github.com/rchiofalo/libo-secured';
-const GITHUB_ISSUES_URL = 'https://github.com/rchiofalo/libo-secured/issues';
-const STORAGE_KEY = 'libo-secured-document';
+const GITHUB_REPO_URL = 'https://github.com/rchiofalo/dondocs';
+const GITHUB_ISSUES_URL = 'https://github.com/rchiofalo/dondocs/issues';
+const STORAGE_KEY = 'dondocs-document';
 
 export function Header({
   onDownloadPdf,
@@ -42,8 +43,9 @@ export function Header({
   onDownloadDocx,
   onRefreshPreview,
   isCompiling,
+  isFormsMode = false,
 }: HeaderProps) {
-  const { theme, toggleTheme, colorScheme, setColorScheme, density, setDensity, autoSaveStatus, setAboutModalOpen, setNistModalOpen, setBatchModalOpen, setTemplateLoaderOpen, setDocumentGuideOpen, setFindReplaceOpen, isMobile } = useUIStore();
+  const { theme, toggleTheme, colorScheme, setColorScheme, density, setDensity, autoSaveStatus, setAboutModalOpen, setNistModalOpen, setBatchModalOpen, setDocumentGuideOpen, setFindReplaceOpen, isMobile } = useUIStore();
   const documentStore = useDocumentStore();
   const { resetForm, applySnapshot, clearFieldsExceptLetterhead } = useDocumentStore();
   const { undo, redo, canUndo, canRedo } = useHistoryStore();
@@ -166,7 +168,7 @@ export function Header({
       const a = document.createElement('a');
       a.href = url;
       const date = new Date().toISOString().split('T')[0];
-      a.download = `libo-draft-${date}.json`;
+      a.download = `dondocs-draft-${date}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -192,7 +194,7 @@ export function Header({
         const content = e.target?.result as string;
         const data = JSON.parse(content);
 
-        // Validate it's a libo draft file
+        // Validate it's a dondocs draft file
         if (!data.version || !data.docType) {
           throw new Error('Invalid draft file format');
         }
@@ -386,30 +388,21 @@ export function Header({
                 <FileText className="h-4 w-4 mr-2" />
                 Download PDF
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={onDownloadDocx}>
-                <FileText className="h-4 w-4 mr-2" />
-                Download DOCX
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={onDownloadTex}>
-                <FileText className="h-4 w-4 mr-2" />
-                Download LaTeX
-              </DropdownMenuItem>
+              {/* LaTeX and DOCX only available for correspondence */}
+              {!isFormsMode && (
+                <>
+                  <DropdownMenuItem onClick={onDownloadDocx}>
+                    <FileText className="h-4 w-4 mr-2" />
+                    Download DOCX
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={onDownloadTex}>
+                    <FileText className="h-4 w-4 mr-2" />
+                    Download LaTeX
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
-
-          {/* Templates button - desktop only */}
-          {!isMobile && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 px-2 sm:px-3"
-              onClick={() => setTemplateLoaderOpen(true)}
-              title="Load document templates"
-            >
-              <FolderOpen className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Templates</span>
-            </Button>
-          )}
 
           {/* Guide button - desktop only */}
           {!isMobile && (
@@ -425,6 +418,20 @@ export function Header({
             </Button>
           )}
 
+          {/* Find & Replace button - desktop only */}
+          {!isMobile && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 px-2 sm:px-3"
+              onClick={() => setFindReplaceOpen(true)}
+              title="Find & Replace (Ctrl+H)"
+            >
+              <Search className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Find</span>
+            </Button>
+          )}
+
           {/* Batch Generation button - desktop only */}
           {!isMobile && (
             <Button
@@ -437,24 +444,6 @@ export function Header({
               <Layers className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Batch</span>
             </Button>
-          )}
-
-          {/* Tools dropdown - desktop only */}
-          {!isMobile && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 px-2 sm:px-3">
-                  <Wrench className="h-4 w-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Tools</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setFindReplaceOpen(true)}>
-                  <Search className="h-4 w-4 mr-2" />
-                  Find & Replace
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           )}
 
           {/* Help dropdown - desktop only */}
@@ -598,10 +587,6 @@ export function Header({
               <DropdownMenuSeparator />
               {/* Tools section */}
               <div className="px-2 py-1 text-xs text-muted-foreground font-medium">Tools</div>
-              <DropdownMenuItem onClick={() => setTemplateLoaderOpen(true)}>
-                <FolderOpen className="h-4 w-4 mr-2" />
-                Templates
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setDocumentGuideOpen(true)}>
                 <Compass className="h-4 w-4 mr-2" />
                 Document Guide

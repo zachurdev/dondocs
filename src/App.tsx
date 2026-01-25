@@ -211,7 +211,7 @@ function App() {
       if (!initialSetupDoneRef.current) {
         initialSetupDoneRef.current = true;
         // Check if user has a persisted preference (localStorage)
-        const stored = localStorage.getItem('libo_ui');
+        const stored = localStorage.getItem('dondocs_ui');
         const hasPersistedPreference = stored && JSON.parse(stored)?.state?.previewVisible !== undefined;
 
         if (!hasPersistedPreference) {
@@ -656,7 +656,64 @@ function App() {
     setPiiDetectionResult(null);
   }, []);
 
+  // Form-specific PDF download handler
+  const handleDownloadFormPdf = useCallback(async () => {
+    if (downloadInProgressRef.current) {
+      console.log('Download already in progress, ignoring click');
+      return;
+    }
+    downloadInProgressRef.current = true;
+
+    try {
+      let pdfBytes: Uint8Array | null = null;
+      let filename = 'form.pdf';
+
+      if (formType === 'navmc_10274' && navmc10274Templates) {
+        pdfBytes = await generateNavmc10274Pdf(
+          formStore.navmc10274,
+          navmc10274Templates.page1,
+          navmc10274Templates.page2,
+          navmc10274Templates.page3,
+          { includeCoverPage: formStore.includeCoverPage }
+        );
+        filename = `NAVMC-10274-${formStore.navmc10274.date || 'form'}.pdf`;
+      } else if (formType === 'navmc_118_11' && navmc11811Template) {
+        pdfBytes = await generateNavmc11811Pdf(
+          formStore.navmc11811,
+          navmc11811Template
+        );
+        const lastName = formStore.navmc11811.lastName || 'Marine';
+        filename = `NAVMC-118-11-${lastName}-${formStore.navmc11811.entryDate || 'entry'}.pdf`;
+      }
+
+      if (pdfBytes) {
+        const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        console.error('No PDF generated - missing templates or unsupported form type');
+      }
+    } catch (err) {
+      console.error('Form PDF download error:', err);
+    } finally {
+      downloadInProgressRef.current = false;
+    }
+  }, [formType, formStore.navmc10274, formStore.navmc11811, formStore.includeCoverPage, navmc10274Templates, navmc11811Template]);
+
   const handleDownloadPdf = useCallback(() => {
+    // Handle forms mode separately
+    if (documentCategory === 'forms') {
+      handleDownloadFormPdf();
+      return;
+    }
+
+    // Correspondence mode - check engine ready
     if (!isReady) {
       setCompileError('PDF engine not ready. Please wait for initialization.');
       return;
@@ -683,7 +740,7 @@ function App() {
 
     // No PII found, proceed with download
     handleDownloadPdfInternal();
-  }, [isReady, handleDownloadPdfInternal, documentStore, setPiiWarningOpen]);
+  }, [documentCategory, isReady, handleDownloadPdfInternal, handleDownloadFormPdf, documentStore, setPiiWarningOpen]);
 
   const handleDownloadTex = useCallback(() => {
     const { texFiles } = generateAllLatexFiles(documentStore);
@@ -693,12 +750,12 @@ function App() {
     // references.tex, reference-urls.tex, encl-config.tex, copyto-config.tex,
     // body.tex, classification.tex
     const combinedTex = `%=============================================================================
-% LIBO-SECURED CORRESPONDENCE EXPORT
+% DONDOCS CORRESPONDENCE EXPORT
 % Generated: ${new Date().toISOString()}
 %
 % This file contains all the configuration for your document.
 % The main.tex template (not included) uses \\input{} to load these files.
-% To compile: Use the libo-secured web app or a LaTeX distribution with
+% To compile: Use the dondocs web app or a LaTeX distribution with
 % the main.tex template.
 %=============================================================================
 
@@ -899,6 +956,7 @@ ${texFiles['body.tex'] || '% No body content'}
         onDownloadDocx={handleDownloadDocx}
         onRefreshPreview={compilePdf}
         isCompiling={isCompiling}
+        isFormsMode={documentCategory === 'forms'}
       />
 
       <main className="flex flex-1 overflow-hidden">

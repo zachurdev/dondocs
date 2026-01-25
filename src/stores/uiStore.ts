@@ -131,7 +131,7 @@ export const useUIStore = create<UIState>()(
       }),
     }),
     {
-      name: 'libo_ui',
+      name: 'dondocs_ui',
       partialize: (state) => ({
         theme: state.theme,
         colorScheme: state.colorScheme,

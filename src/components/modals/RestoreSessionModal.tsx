@@ -27,7 +27,7 @@ import { getDeviceInfo } from '@/utils/device';
 import { SW_AUTO_RESTORE_KEY } from '@/hooks/useServiceWorker';
 
 // Storage key to prevent showing modal in same session
-const RESTORE_SHOWN_KEY = 'libo-restore-shown-session';
+const RESTORE_SHOWN_KEY = 'dondocs-restore-shown-session';
 
 export function RestoreSessionModal() {
   const [open, setOpen] = useState(false);

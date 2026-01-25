@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
-const WELCOME_STORAGE_KEY = 'libo-secured-welcome-shown';
+const WELCOME_STORAGE_KEY = 'dondocs-welcome-shown';
 const WELCOME_VERSION = '1.0'; // Increment to show welcome again after major updates
 
 interface Feature {
