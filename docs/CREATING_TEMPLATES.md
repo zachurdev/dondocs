@@ -136,22 +136,23 @@ The `docType` field determines the document format:
 
 | docType | Description |
 |---------|-------------|
-| `naval_letter` | Standard naval letter format |
-| `mfr` | Memorandum for the Record |
-| `business_letter` | Business letter format |
-| `endorsement_1` | First endorsement |
-| `endorsement_2` | Second endorsement |
-| `endorsement_3` | Third endorsement |
-| `endorsement_4` | Fourth endorsement |
-| `point_paper` | Point paper format |
-| `plan_of_action` | Plan of Action and Milestones |
-| `award_citation` | Award citation format |
-| `joint_letter` | Joint letter (dual signatures) |
-| `moa` | Memorandum of Agreement |
-| `mou` | Memorandum of Understanding |
-| `iaw` | Interagency Agreement |
-| `sow` | Statement of Work |
-| `plain_paper_memo` | Plain paper memo |
+| `naval_letter` | Naval Letter (on letterhead) |
+| `standard_letter` | Standard Letter (plain paper) |
+| `business_letter` | Business Letter |
+| `multiple_address_letter` | Multiple Address Letter |
+| `joint_letter` | Joint Letter (dual signatures) |
+| `same_page_endorsement` | Same-Page Endorsement |
+| `new_page_endorsement` | New-Page Endorsement |
+| `mfr` | Memorandum for the Record (MFR) |
+| `mf` | Memorandum For (USMC format) |
+| `plain_paper_memorandum` | Plain Paper Memorandum |
+| `letterhead_memorandum` | Letterhead Memorandum |
+| `decision_memorandum` | Decision Memorandum |
+| `executive_memorandum` | Executive Memorandum |
+| `joint_memorandum` | Joint Memorandum (dual signatures) |
+| `moa` | Memorandum of Agreement (MOA) |
+| `mou` | Memorandum of Understanding (MOU) |
+| `executive_correspondence` | Executive Correspondence |
 
 ---
 
@@ -245,24 +246,43 @@ export const tadRequest: LetterTemplate = {
 
 ## Adding a New Category
 
-If you need a new category:
+Categories are **auto-discovered** from the `category` field in templates. When you use a new category name, it automatically appears in the template picker UI.
+
+To add a new category:
 
 1. Create the category folder:
    ```
    src/data/templates/newcategory/
    ```
 
-2. Create an `index.ts` to export templates:
+2. Create your template file with the new category name:
+   ```typescript
+   // src/data/templates/newcategory/my-template.ts
+   export const myTemplate: LetterTemplate = {
+     id: 'my-template',
+     category: 'New Category',  // This creates the category
+     // ...
+   };
+   ```
+
+3. Create an `index.ts` to export templates:
    ```typescript
    // src/data/templates/newcategory/index.ts
    export { myTemplate } from './my-template';
    ```
 
-3. Import in main index:
+4. Import in main index:
    ```typescript
    // src/data/templates/index.ts
    import { myTemplate } from './newcategory';
+
+   export const LETTER_TEMPLATES: LetterTemplate[] = [
+     // ...existing templates
+     myTemplate,
+   ];
    ```
+
+The template picker UI will automatically show the new category as a filter badge.
 
 ---
 
