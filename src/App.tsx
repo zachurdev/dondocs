@@ -2,6 +2,7 @@ import { useEffect, useCallback, useState, useRef } from 'react';
 import { Header } from '@/components/layout/Header';
 import { FormPanel } from '@/components/layout/FormPanel';
 import { PreviewPanel } from '@/components/layout/PreviewPanel';
+import { ResizableDivider } from '@/components/layout/ResizableDivider';
 import { ProfileModal } from '@/components/modals/ProfileModal';
 import { ReferenceLibraryModal } from '@/components/modals/ReferenceLibraryModal';
 import { MobilePreviewModal } from '@/components/modals/MobilePreviewModal';
@@ -130,8 +131,12 @@ function App() {
     theme,
     colorScheme,
     density,
+    isMobile,
     setIsMobile,
+    previewVisible,
+    previewWidth,
     setPreviewVisible,
+    setPreviewWidth,
     setFindReplaceOpen,
     setPiiWarningOpen,
     setTemplateLoaderOpen,
@@ -139,6 +144,7 @@ function App() {
     togglePreview,
     closeAllModals,
   } = useUIStore();
+  const mainContainerRef = useRef<HTMLElement>(null);
   const documentStore = useDocumentStore();
   const { documentCategory, formType } = useDocumentStore();
   const { setFormData, applySnapshot } = useDocumentStore();
@@ -950,6 +956,14 @@ ${texFiles['body.tex'] || '% No body content'}
 
   return (
     <div className="flex flex-col h-screen bg-background">
+      {/* Skip link for keyboard navigation - WCAG 2.4.1 */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+      >
+        Skip to main content
+      </a>
+
       <Header
         onDownloadPdf={handleDownloadPdf}
         onDownloadTex={handleDownloadTex}
@@ -958,16 +972,40 @@ ${texFiles['body.tex'] || '% No body content'}
         isFormsMode={documentCategory === 'forms'}
       />
 
-      <main className="flex flex-1 overflow-hidden">
-        <div className="flex-1 min-w-0">
+      <main id="main-content" ref={mainContainerRef} className="flex flex-1 overflow-hidden">
+        {/* Form Panel - takes remaining space when preview is visible */}
+        <div
+          className="min-w-0 overflow-hidden"
+          style={{
+            flex: previewVisible && !isMobile ? `0 0 ${100 - previewWidth}%` : '1 1 100%',
+          }}
+        >
           <FormPanel />
         </div>
 
-        <PreviewPanel
-          pdfUrl={documentCategory === 'forms' ? formPdfUrl : pdfUrl}
-          isCompiling={documentCategory === 'forms' ? false : (isCompiling || !isReady)}
-          error={documentCategory === 'forms' ? null : (compileError || engineError)}
-        />
+        {/* Resizable divider - only show on desktop when preview is visible */}
+        {previewVisible && !isMobile && (
+          <ResizableDivider
+            onResize={setPreviewWidth}
+            containerRef={mainContainerRef}
+            currentWidth={previewWidth}
+          />
+        )}
+
+        {/* Preview Panel - width controlled by previewWidth */}
+        <div
+          className="min-w-0 overflow-hidden"
+          style={{
+            flex: previewVisible && !isMobile ? `0 0 ${previewWidth}%` : undefined,
+            display: previewVisible || isMobile ? 'block' : 'none',
+          }}
+        >
+          <PreviewPanel
+            pdfUrl={documentCategory === 'forms' ? formPdfUrl : pdfUrl}
+            isCompiling={documentCategory === 'forms' ? false : (isCompiling || !isReady)}
+            error={documentCategory === 'forms' ? null : (compileError || engineError)}
+          />
+        </div>
       </main>
 
       {/* Modals */}

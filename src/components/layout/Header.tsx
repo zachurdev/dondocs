@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, type ChangeEvent } from 'react';
-import { Moon, Sun, Download, FileText, RefreshCw, Github, Bug, Save, RotateCcw, Shield, HelpCircle, Info, Layers, Search, Keyboard, Menu, FileDown, FileUp, ScrollText, SlidersHorizontal, Minimize2, Maximize2, Check, Palette, Anchor, Medal, Settings, Undo2, Redo2, Eraser, Compass } from 'lucide-react';
+import { Moon, Sun, Download, FileText, RefreshCw, Github, Bug, Save, RotateCcw, Shield, HelpCircle, Info, Layers, Search, Keyboard, Menu, FileDown, FileUp, ScrollText, SlidersHorizontal, Minimize2, Maximize2, Check, Palette, Anchor, Medal, Settings, Undo2, Redo2, Eraser, Compass, PanelRight, PanelRightClose } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -43,7 +43,7 @@ export function Header({
   isCompiling,
   isFormsMode = false,
 }: HeaderProps) {
-  const { theme, toggleTheme, colorScheme, setColorScheme, density, setDensity, autoSaveStatus, setAboutModalOpen, setNistModalOpen, setBatchModalOpen, setDocumentGuideOpen, setFindReplaceOpen, isMobile } = useUIStore();
+  const { theme, toggleTheme, colorScheme, setColorScheme, density, setDensity, autoSaveStatus, setAboutModalOpen, setNistModalOpen, setBatchModalOpen, setDocumentGuideOpen, setFindReplaceOpen, isMobile, previewVisible, togglePreview } = useUIStore();
   const documentStore = useDocumentStore();
   const { resetForm, applySnapshot, clearFieldsExceptLetterhead } = useDocumentStore();
   const { undo, redo, canUndo, canRedo } = useHistoryStore();
@@ -293,8 +293,12 @@ export function Header({
         </div>
 
         <div className="flex items-center gap-1 sm:gap-2">
+          {/* Aria-live region for status announcements - WCAG 4.1.3 */}
+          <div aria-live="polite" aria-atomic="true" className="sr-only">
+            {saveStatus || autoSaveStatus}
+          </div>
           {(autoSaveStatus || saveStatus) && (
-            <span className="text-xs text-muted-foreground animate-pulse hidden sm:inline">
+            <span className="text-xs text-muted-foreground animate-pulse hidden sm:inline" aria-hidden="true">
               {saveStatus || autoSaveStatus}
             </span>
           )}
@@ -305,20 +309,22 @@ export function Header({
             size="icon"
             onClick={handleUndo}
             disabled={!canUndo()}
+            aria-label="Undo (Ctrl+Z)"
             title="Undo (Ctrl+Z)"
             className="h-8 w-8 sm:h-9 sm:w-9"
           >
-            <Undo2 className="h-4 w-4" />
+            <Undo2 className="h-4 w-4" aria-hidden="true" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={handleRedo}
             disabled={!canRedo()}
+            aria-label="Redo (Ctrl+Y)"
             title="Redo (Ctrl+Y)"
             className="h-8 w-8 sm:h-9 sm:w-9"
           >
-            <Redo2 className="h-4 w-4" />
+            <Redo2 className="h-4 w-4" aria-hidden="true" />
           </Button>
 
           {/* Refresh - hidden on mobile/tablet, in hamburger menu */}
@@ -328,10 +334,30 @@ export function Header({
               size="icon"
               onClick={onRefreshPreview}
               disabled={isCompiling}
+              aria-label="Refresh Preview"
               title="Refresh Preview"
               className="h-8 w-8 sm:h-9 sm:w-9"
             >
-              <RefreshCw className={`h-4 w-4 ${isCompiling ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 ${isCompiling ? 'animate-spin' : ''}`} aria-hidden="true" />
+            </Button>
+          )}
+
+          {/* Preview toggle - desktop only */}
+          {!isMobile && (
+            <Button
+              variant={previewVisible ? "default" : "outline"}
+              size="sm"
+              onClick={togglePreview}
+              aria-label={previewVisible ? "Hide Preview (Ctrl+E)" : "Show Preview (Ctrl+E)"}
+              title={previewVisible ? "Hide Preview (Ctrl+E)" : "Show Preview (Ctrl+E)"}
+              className="h-8 px-2 sm:px-3"
+            >
+              {previewVisible ? (
+                <PanelRightClose className="h-4 w-4 sm:mr-2" aria-hidden="true" />
+              ) : (
+                <PanelRight className="h-4 w-4 sm:mr-2" aria-hidden="true" />
+              )}
+              <span className="hidden sm:inline">Preview</span>
             </Button>
           )}
 
@@ -442,8 +468,8 @@ export function Header({
           {!isMobile && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" title="Help & Info" className="h-8 w-8">
-                  <HelpCircle className="h-4 w-4" />
+                <Button variant="ghost" size="icon" aria-label="Help & Info" title="Help & Info" className="h-8 w-8">
+                  <HelpCircle className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-72">
@@ -498,8 +524,8 @@ export function Header({
           {!isMobile && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" title="Appearance" className="h-8 w-8 sm:h-9 sm:w-9">
-                  <Settings className="h-4 w-4" />
+                <Button variant="ghost" size="icon" aria-label="Appearance settings" title="Appearance" className="h-8 w-8 sm:h-9 sm:w-9">
+                  <Settings className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -566,8 +592,8 @@ export function Header({
           {isMobile && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <Menu className="h-4 w-4" />
+                <Button variant="ghost" size="icon" aria-label="Open menu" className="h-8 w-8">
+                  <Menu className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
