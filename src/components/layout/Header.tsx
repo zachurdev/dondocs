@@ -27,10 +27,9 @@ import { useLogStore } from '@/stores/logStore';
 interface HeaderProps {
   onDownloadPdf?: () => void;
   onDownloadTex?: () => void;
-  onDownloadDocx?: () => void;
   onRefreshPreview?: () => void;
   isCompiling?: boolean;
-  isFormsMode?: boolean;  // Whether we're in forms mode (hides LaTeX/DOCX options)
+  isFormsMode?: boolean;  // Whether we're in forms mode (hides LaTeX options)
 }
 
 const GITHUB_REPO_URL = 'https://github.com/rchiofalo/dondocs';
@@ -40,7 +39,6 @@ const STORAGE_KEY = 'dondocs-document';
 export function Header({
   onDownloadPdf,
   onDownloadTex,
-  onDownloadDocx,
   onRefreshPreview,
   isCompiling,
   isFormsMode = false,
@@ -388,18 +386,12 @@ export function Header({
                 <FileText className="h-4 w-4 mr-2" />
                 Download PDF
               </DropdownMenuItem>
-              {/* LaTeX and DOCX only available for correspondence */}
+              {/* LaTeX only available for correspondence */}
               {!isFormsMode && (
-                <>
-                  <DropdownMenuItem onClick={onDownloadDocx}>
-                    <FileText className="h-4 w-4 mr-2" />
-                    Download DOCX
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onDownloadTex}>
-                    <FileText className="h-4 w-4 mr-2" />
-                    Download LaTeX
-                  </DropdownMenuItem>
-                </>
+                <DropdownMenuItem onClick={onDownloadTex}>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Download LaTeX
+                </DropdownMenuItem>
               )}
             </DropdownMenuContent>
           </DropdownMenu>

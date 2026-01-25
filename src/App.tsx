@@ -26,7 +26,7 @@ import { useProfileStore } from '@/stores/profileStore';
 import { useLogStore } from '@/stores/logStore';
 import { useLatexEngine, useServiceWorker } from '@/hooks';
 import { generateAllLatexFiles, type GeneratedFiles } from '@/services/latex/generator';
-import { generateDocx } from '@/services/docx/generator';
+// import { generateDocx } from '@/services/docx/generator'; // DOCX temporarily disabled
 import { generateNavmc10274Pdf, loadNavmc10274Templates } from '@/services/pdf/navmc10274Generator';
 import { generateNavmc11811Pdf, loadNavmc11811Template } from '@/services/pdf/navmc11811Generator';
 import { mergeEnclosures } from '@/services/pdf/mergeEnclosures';
@@ -819,27 +819,27 @@ ${texFiles['body.tex'] || '% No body content'}
     URL.revokeObjectURL(url);
   }, [documentStore]);
 
-  const handleDownloadDocx = useCallback(async () => {
-    try {
-      const docxBytes = await generateDocx(documentStore);
-      // Convert to ArrayBuffer to avoid TypeScript issues with Uint8Array
-      const arrayBuffer = docxBytes.buffer.slice(
-        docxBytes.byteOffset,
-        docxBytes.byteOffset + docxBytes.byteLength
-      ) as ArrayBuffer;
-      const blob = new Blob([arrayBuffer], {
-        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'correspondence.docx';
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error('DOCX generation error:', err);
-    }
-  }, [documentStore]);
+  // DOCX download temporarily disabled - keeping code for potential future use
+  // const handleDownloadDocx = useCallback(async () => {
+  //   try {
+  //     const docxBytes = await generateDocx(documentStore);
+  //     const arrayBuffer = docxBytes.buffer.slice(
+  //       docxBytes.byteOffset,
+  //       docxBytes.byteOffset + docxBytes.byteLength
+  //     ) as ArrayBuffer;
+  //     const blob = new Blob([arrayBuffer], {
+  //       type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  //     });
+  //     const url = URL.createObjectURL(blob);
+  //     const a = document.createElement('a');
+  //     a.href = url;
+  //     a.download = 'correspondence.docx';
+  //     a.click();
+  //     URL.revokeObjectURL(url);
+  //   } catch (err) {
+  //     console.error('DOCX generation error:', err);
+  //   }
+  // }, [documentStore]);
 
   // Global keyboard shortcuts
   useEffect(() => {
@@ -953,7 +953,6 @@ ${texFiles['body.tex'] || '% No body content'}
       <Header
         onDownloadPdf={handleDownloadPdf}
         onDownloadTex={handleDownloadTex}
-        onDownloadDocx={handleDownloadDocx}
         onRefreshPreview={compilePdf}
         isCompiling={isCompiling}
         isFormsMode={documentCategory === 'forms'}
