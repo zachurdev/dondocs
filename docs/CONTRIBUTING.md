@@ -99,7 +99,11 @@ dondocs/
 │   │   ├── layout/               # Page layout
 │   │   ├── modals/               # Modal dialogs
 │   │   └── ui/                   # shadcn/ui components
-│   ├── data/                     # Units, SSIC, references, templates
+│   ├── data/
+│   │   ├── templates/            # Content templates (TypeScript)
+│   │   ├── units/                # Unit directory data
+│   │   ├── ssic/                 # SSIC codes
+│   │   └── references/           # Reference data
 │   ├── hooks/                    # Custom React hooks
 │   ├── lib/                      # Utility libraries
 │   ├── services/
@@ -392,7 +396,15 @@ Include:
 
 - Add/update unit directory entries
 - Add/update SSIC codes
-- Add document templates
+- Add content templates (see [CREATING_TEMPLATES.md](./CREATING_TEMPLATES.md))
+
+### Templates
+
+There are two types of templates in DonDocs:
+
+1. **Content Templates** (`src/data/templates/`) - TypeScript files that define pre-filled document content (subject lines, paragraphs, references). Most contributors work here. No LaTeX knowledge required.
+
+2. **Format Templates** (`tex/templates/`) - LaTeX files that define document layouts (date placement, signature blocks, page styles). Rarely need modification.
 
 ### Performance
 

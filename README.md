@@ -398,9 +398,9 @@ npm run build
 ### Project Structure
 ```
 dondocs/
-├── tex/                          # LaTeX source templates (standalone)
+├── tex/                          # LaTeX format templates (advanced)
 │   ├── main.tex                  # Main template
-│   └── templates/                # Document type templates
+│   └── templates/                # Document format templates (naval_letter, mfr, etc.)
 ├── public/
 │   ├── attachments/              # Seal images
 │   └── lib/
@@ -413,7 +413,11 @@ dondocs/
 │   │   ├── layout/               # Page layout
 │   │   ├── modals/               # Modal dialogs
 │   │   └── ui/                   # shadcn/ui components
-│   ├── data/                     # Units, SSIC, references
+│   ├── data/
+│   │   ├── templates/            # Content templates (TypeScript) - add new templates here
+│   │   ├── units/                # Unit directory
+│   │   ├── ssic/                 # SSIC codes
+│   │   └── references/           # Reference library
 │   ├── hooks/                    # Custom React hooks
 │   ├── lib/                      # Utility libraries
 │   ├── services/
@@ -479,11 +483,19 @@ The application generates PDFs through a multi-stage pipeline from UI input to f
   - `flags.tex` - Boolean flags for conditional sections
 
 **3. Template System**
+
+There are two types of templates:
+
+**Content Templates** (`src/data/templates/`) - TypeScript files defining pre-filled document content:
+- Award recommendations, personnel requests, administrative forms, etc.
+- Define subject lines, paragraphs, references, and SSIC codes
+- No LaTeX knowledge required - see `docs/CREATING_TEMPLATES.md`
+
+**Format Templates** (LaTeX) - Define document layouts:
 - `src/lib/latex-templates.js` contains all LaTeX templates as a JavaScript object
-- Templates are organized as:
-  - `tex/main.tex` - Main document structure, package imports, base commands
-  - `tex/templates/*.tex` - Document type-specific templates (17 types)
-- Each document type has its own template that defines:
+- `tex/main.tex` - Main document structure, package imports, base commands
+- `tex/templates/*.tex` - Document format templates (17 types: naval_letter, mfr, etc.)
+- Each format defines:
   - `\printDateAndTitle` - How date/SSIC block is formatted
   - `\printAddressBlock` - How From/To/Via/Subject appears
   - `\printSignature` - How signature block is rendered
