@@ -2,6 +2,10 @@
 
 Thank you for your interest in contributing to DonDocs! This document provides guidelines and instructions for contributing.
 
+**Official Repository:** [https://github.com/marinecoders/dondocs](https://github.com/marinecoders/dondocs)
+
+All contributions should be made to the Marine Coders organization repository, which is the official community open source location for DonDocs.
+
 ---
 
 ## Table of Contents
@@ -37,7 +41,7 @@ Thank you for your interest in contributing to DonDocs! This document provides g
 
 ### Fork and Clone
 
-1. Fork the repository on GitHub
+1. Fork the [Marine Coders repository](https://github.com/marinecoders/dondocs) on GitHub
 2. Clone your fork locally:
    ```bash
    git clone https://github.com/YOUR_USERNAME/dondocs.git
@@ -45,7 +49,7 @@ Thank you for your interest in contributing to DonDocs! This document provides g
    ```
 3. Add the upstream remote:
    ```bash
-   git remote add upstream https://github.com/rchiofalo/dondocs.git
+   git remote add upstream https://github.com/marinecoders/dondocs.git
    ```
 
 ---

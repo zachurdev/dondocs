@@ -223,7 +223,7 @@ export const APP_INFO = {
   NAME: 'DONDOCS',
   FULL_NAME: 'DoN Correspondence Generator',
   VERSION: '1.0.0',
-  GITHUB_URL: 'https://github.com/rchiofalo/dondocs',
+  GITHUB_URL: 'https://github.com/marinecoders/dondocs',
 } as const;
 
 /**

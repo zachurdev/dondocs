@@ -32,8 +32,8 @@ interface HeaderProps {
   isFormsMode?: boolean;  // Whether we're in forms mode (hides LaTeX options)
 }
 
-const GITHUB_REPO_URL = 'https://github.com/rchiofalo/dondocs';
-const GITHUB_ISSUES_URL = 'https://github.com/rchiofalo/dondocs/issues';
+const GITHUB_REPO_URL = 'https://github.com/marinecoders/dondocs';
+const GITHUB_ISSUES_URL = 'https://github.com/marinecoders/dondocs/issues';
 const STORAGE_KEY = 'dondocs-document';
 
 export function Header({

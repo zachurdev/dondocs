@@ -586,14 +586,16 @@ MIT License - See LICENSE file for details.
 
 ## Contributing
 
-Contributions welcome! Please open an issue or submit a pull request on [GitHub](https://github.com/rchiofalo/dondocs).
+Contributions welcome! Please open an issue or submit a pull request on the [Marine Coders GitHub](https://github.com/marinecoders/dondocs).
+
+See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed guidelines.
 
 ---
 
 ## Support
 
-- **Bug Reports** - [GitHub Issues](https://github.com/rchiofalo/dondocs/issues)
-- **Feature Requests** - [GitHub Issues](https://github.com/rchiofalo/dondocs/issues)
+- **Bug Reports** - [GitHub Issues](https://github.com/marinecoders/dondocs/issues)
+- **Feature Requests** - [GitHub Issues](https://github.com/marinecoders/dondocs/issues)
 
 ---
 
