@@ -593,13 +593,13 @@ export function BatchModal({ compile, isEngineReady, waitForReady }: BatchModalP
       // Correspondence mode: Add to document fields
       if (targetField === 'subject') {
         const currentSubject = documentStore.formData.subject || '';
-        documentStore.setFormField('subject', currentSubject ? `${currentSubject} ${variableText}` : variableText);
+        documentStore.setField('subject', currentSubject ? `${currentSubject} ${variableText}` : variableText);
       } else if (targetField === 'to') {
         const currentTo = documentStore.formData.to || '';
-        documentStore.setFormField('to', currentTo ? `${currentTo} ${variableText}` : variableText);
+        documentStore.setField('to', currentTo ? `${currentTo} ${variableText}` : variableText);
       } else if (targetField === 'from') {
         const currentFrom = documentStore.formData.from || '';
-        documentStore.setFormField('from', currentFrom ? `${currentFrom} ${variableText}` : variableText);
+        documentStore.setField('from', currentFrom ? `${currentFrom} ${variableText}` : variableText);
       } else if (targetField === 'paragraph') {
         // Add a new paragraph with the variable
         documentStore.addParagraph(variableText, 0);
